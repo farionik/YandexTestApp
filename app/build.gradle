@@ -54,4 +54,7 @@ dependencies {
 
     // sdp
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
+
+    // util
+    implementation 'com.blankj:utilcodex:1.30.5'
 }

@@ -15,21 +15,37 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_150sdp"
+            android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|snap"
             app:toolbarId="@+id/toolbar">
 
-            <SearchView
-                android:id="@+id/editText"
-                style="@style/SearchViewStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:queryHint="@string/find_company_or_ticker"
-                android:searchIcon="@drawable/ic_search"
-                android:textColorHint="@color/color_black"
-                app:layout_scrollFlags="scroll|snap|exitUntilCollapsed" />
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+                android:gravity="center">
+
+                <EditText
+                    android:id="@+id/editText"
+                    android:background="@drawable/edit_text_selector"
+                    android:hint="@string/find_company_or_ticker"
+                    android:textSize="16sp"
+                    android:textCursorDrawable="@drawable/edit_text_cursor_drawable"
+                    android:textColorHint="@color/color_black"
+                    android:drawableStart="@drawable/ic_search"
+                    android:paddingStart="@dimen/_16sdp"
+                    android:paddingEnd="@dimen/_16sdp"
+                    android:drawablePadding="@dimen/_16sdp"
+                    android:drawableEnd="@drawable/ic_close"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

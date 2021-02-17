@@ -13,4 +13,6 @@
 
     <color name="color_black">#1A1A1A</color>
     <color name="color_gray">#BABABA</color>
+
+    <color name="color_yellow">#FFCA1C</color>
 </resources>
