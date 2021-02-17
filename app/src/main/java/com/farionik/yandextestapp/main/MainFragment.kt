@@ -1,4 +1,4 @@
-package com.farionik.yandextestapp.snippet
+package com.farionik.yandextestapp.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,18 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.farionik.yandextestapp.databinding.FragmentSnippetBinding
+import com.farionik.yandextestapp.databinding.FragmentMainBinding
 
-class SnippetFragment : Fragment() {
+class MainFragment : Fragment() {
 
     private lateinit var adapter: SnippetAdapter
-    private lateinit var binding: FragmentSnippetBinding
+    private lateinit var binding: FragmentMainBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSnippetBinding.inflate(inflater, container, false)
+        binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
 

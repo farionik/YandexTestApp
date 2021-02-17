@@ -1,11 +1,9 @@
-package com.farionik.yandextestapp.snippet
+package com.farionik.yandextestapp.main
 
 import android.graphics.Rect
 import android.view.View
-import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.R
-
 
 class SpaceItemDecoration : RecyclerView.ItemDecoration() {
 
