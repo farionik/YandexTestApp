@@ -4,29 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:theme="@style/Theme.YandexTestApp.AppBarOverlay">
+        android:theme="@style/Theme.YandexTestApp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_150sdp"
             android:fitsSystemWindows="true"
-            app:layout_scrollFlags="scroll|snap"
             app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|snap"
             app:toolbarId="@+id/toolbar">
 
-            <EditText
+            <SearchView
                 android:id="@+id/editText"
+                style="@style/SearchViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:queryHint="@string/find_company_or_ticker"
+                android:searchIcon="@drawable/ic_search"
+                android:textColorHint="@color/color_black"
                 app:layout_scrollFlags="scroll|snap|exitUntilCollapsed" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -34,23 +36,27 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_margin="@dimen/_6sdp"
+            app:tabGravity="start"
+            app:tabIndicatorHeight="0dp"
+            app:tabMode="scrollable"
+            app:tabRippleColor="@null"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/_8sdp"
-            app:tabGravity="fill"
-            app:tabMode="scrollable">
+            app:tabSelectedTextColor="@color/color_black"
+            app:tabTextAppearance="@style/MainTabLayoutTheme"
+            app:tabTextColor="@color/color_gray">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Stocks" />
+                android:layout="@layout/menu_tab_item" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Favourite" />
+                android:layout="@layout/menu_tab_item" />
         </com.google.android.material.tabs.TabLayout>
-
 
     </com.google.android.material.appbar.AppBarLayout>
 
