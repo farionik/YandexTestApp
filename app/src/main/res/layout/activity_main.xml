@@ -40,7 +40,6 @@
                     android:paddingStart="@dimen/_16sdp"
                     android:paddingEnd="@dimen/_16sdp"
                     android:drawablePadding="@dimen/_16sdp"
-                    android:drawableEnd="@drawable/ic_close"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>

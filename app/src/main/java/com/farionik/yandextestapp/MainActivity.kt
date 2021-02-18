@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.databinding.ActivityMainBinding
+import com.farionik.yandextestapp.main.initSearchEditText
 import com.google.android.material.tabs.TabLayout
 
 
@@ -22,56 +23,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initTabLayout()
-        initSearchLayout()
-    }
-
-    private fun initSearchLayout() {
-        with(binding.editText) {
-            onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-                run {
-                    hint = if (hasFocus) {
-                        setCompoundDrawablesWithIntrinsicBounds(
-                            ContextCompat.getDrawable(
-                                this@MainActivity,
-                                R.drawable.ic_back
-                            ),
-                            null,
-                            ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_close),
-                            null
-                        )
-                        ""
-                    } else {
-                        getString(R.string.find_company_or_ticker)
-                    }
-                }
-            }
-
-            setOnTouchListener(object : View.OnTouchListener {
-                override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                    val DRAWABLE_LEFT = 0
-                    val DRAWABLE_RIGHT = 2
-
-                    if (event?.action == MotionEvent.ACTION_DOWN) {
-                        val x = event.x
-                        var width = compoundDrawables[DRAWABLE_RIGHT].bounds.width()
-                        val padding = resources.getDimensionPixelSize(R.dimen._16sdp)
-                        if (x >= (right - width - padding)) {
-                            Toast.makeText(this@MainActivity, "close clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            return true
-                        }
-
-                        width = compoundDrawables[DRAWABLE_LEFT].bounds.width()
-                        if (x <= (width + padding)) {
-                            clearFocus()
-                            KeyboardUtils.hideSoftInput(this@MainActivity)
-                            return true
-                        }
-                    }
-                    return false
-                }
-            })
-        }
+        binding.editText.initSearchEditText()
     }
 
     private fun initTabLayout() {
@@ -116,6 +68,8 @@ class MainActivity : AppCompatActivity() {
             textSize = 28f
             setTextColor(ContextCompat.getColor(this@MainActivity, R.color.color_black))
         }
+
+        KeyboardUtils.hideSoftInput(this@MainActivity)
     }
 
     private fun TabLayout.Tab.unselectTab() {
