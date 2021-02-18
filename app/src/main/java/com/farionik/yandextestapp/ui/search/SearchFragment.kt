@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.FragmentSearchBinding
 import com.farionik.yandextestapp.model.SearchModel
 import com.farionik.yandextestapp.ui.SearchedClickedListener

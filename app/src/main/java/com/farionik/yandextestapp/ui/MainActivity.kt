@@ -5,19 +5,28 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.ActivityMainBinding
 import com.farionik.yandextestapp.model.SearchModel
+import com.farionik.yandextestapp.ui.favourite.FavouriteFragment
+import com.farionik.yandextestapp.ui.main.MainFragment
 import com.farionik.yandextestapp.ui.main.SearchState
 import com.farionik.yandextestapp.ui.main.initSearchEditText
+import com.farionik.yandextestapp.ui.search.SearchFragment
+import com.farionik.yandextestapp.ui.search.SearchResultFragment
 import com.google.android.material.tabs.TabLayout
 
 
 class MainActivity : AppCompatActivity(), SearchedClickedListener {
 
     private lateinit var binding: ActivityMainBinding
+
+    private val mainFragment = MainFragment()
+    private val favouriteFragment = FavouriteFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,15 +38,16 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener {
         val lambda = { state: SearchState ->
             when (state) {
                 SearchState.ACTIVE -> {
-                    openScreen(R.id.searchFragment)
+                    openScreen(SearchFragment())
                     binding.tabLayout.visibility = View.GONE
                 }
                 SearchState.NOT_ACTIVE -> {
-                    openScreen(R.id.mainFragment)
+                    val selectedTabPosition = binding.tabLayout.selectedTabPosition
+                    binding.tabLayout.getTabAt(selectedTabPosition)?.selectTab()
                     binding.tabLayout.visibility = View.VISIBLE
                 }
                 SearchState.SEARCH -> {
-                    openScreen(R.id.searchResultFragment)
+                    openScreen(SearchResultFragment())
                     binding.tabLayout.visibility = View.GONE
                 }
             }
@@ -87,9 +97,9 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener {
             textSize = 28f
             setTextColor(ContextCompat.getColor(this@MainActivity, R.color.color_black))
         }
-        when (textView.text) {
-            "Stock" -> openScreen(R.id.mainFragment)
-            "Favourite" -> openScreen(R.id.favouriteFragment)
+        when (position) {
+            0 -> openScreen(mainFragment)
+            1 -> openScreen(favouriteFragment)
         }
         KeyboardUtils.hideSoftInput(this@MainActivity)
     }
@@ -102,9 +112,13 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener {
         }
     }
 
-    private fun openScreen(destination: Int) {
+    private fun openScreen(fragment: Fragment) {
         KeyboardUtils.hideSoftInput(this)
-        findNavController(R.id.nav_host_fragment).navigate(destination)
+
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.fragment_container_view, fragment)
+        }
     }
 
     override fun searchModelClicked(model: SearchModel) {
