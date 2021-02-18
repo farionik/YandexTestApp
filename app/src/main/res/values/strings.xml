@@ -2,6 +2,14 @@
     <string name="app_name">YandexTestApp</string>
     <string name="main_fragment_label">Main Fragment</string>
     <string name="favourite_fragment_label">Favourite Fragment</string>
-    
+
     <string name="find_company_or_ticker">Find company or ticker</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="popular_requests">Popular requests</string>
+    <string name="user_requests">You’ve searched for this</string>
+
+    <string name="stocks">Stocks</string>
+    <string name="show_more">Show more</string>
 </resources>

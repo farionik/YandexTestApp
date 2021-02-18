@@ -1,19 +1,21 @@
-package com.farionik.yandextestapp
+package com.farionik.yandextestapp.ui
 
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
 import com.blankj.utilcode.util.KeyboardUtils
+import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.ActivityMainBinding
-import com.farionik.yandextestapp.main.initSearchEditText
+import com.farionik.yandextestapp.model.SearchModel
+import com.farionik.yandextestapp.ui.main.SearchState
+import com.farionik.yandextestapp.ui.main.initSearchEditText
 import com.google.android.material.tabs.TabLayout
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SearchedClickedListener {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -23,7 +25,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initTabLayout()
-        binding.editText.initSearchEditText()
+
+        val lambda = { state: SearchState ->
+            when (state) {
+                SearchState.ACTIVE -> {
+                    openScreen(R.id.searchFragment)
+                    binding.tabLayout.visibility = View.GONE
+                }
+                SearchState.NOT_ACTIVE -> {
+                    openScreen(R.id.mainFragment)
+                    binding.tabLayout.visibility = View.VISIBLE
+                }
+                SearchState.SEARCH -> {
+                    openScreen(R.id.searchResultFragment)
+                    binding.tabLayout.visibility = View.GONE
+                }
+            }
+        }
+        binding.editText.initSearchEditText(lambda)
     }
 
     private fun initTabLayout() {
@@ -32,14 +51,14 @@ class MainActivity : AppCompatActivity() {
 
         val stockTab: TabLayout.Tab? = binding.tabLayout.getTabAt(0)
         stockTab?.let {
-            it.selectTab()
             it.setTabText("Stock")
+            it.selectTab()
         }
 
         val favouriteTab: TabLayout.Tab? = binding.tabLayout.getTabAt(1)
         favouriteTab?.let {
-            it.unselectTab()
             it.setTabText("Favourite")
+            it.unselectTab()
         }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -68,7 +87,10 @@ class MainActivity : AppCompatActivity() {
             textSize = 28f
             setTextColor(ContextCompat.getColor(this@MainActivity, R.color.color_black))
         }
-
+        when (textView.text) {
+            "Stock" -> openScreen(R.id.mainFragment)
+            "Favourite" -> openScreen(R.id.favouriteFragment)
+        }
         KeyboardUtils.hideSoftInput(this@MainActivity)
     }
 
@@ -77,6 +99,20 @@ class MainActivity : AppCompatActivity() {
         with(textView) {
             textSize = 18f
             setTextColor(ContextCompat.getColor(this@MainActivity, R.color.color_gray))
+        }
+    }
+
+    private fun openScreen(destination: Int) {
+        KeyboardUtils.hideSoftInput(this)
+        findNavController(R.id.nav_host_fragment).navigate(destination)
+    }
+
+    override fun searchModelClicked(model: SearchModel) {
+        with(binding.editText) {
+            model.name.let {
+                setText(it)
+                setSelection(it.length)
+            }
         }
     }
 }

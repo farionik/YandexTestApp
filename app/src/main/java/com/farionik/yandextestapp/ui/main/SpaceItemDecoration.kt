@@ -1,4 +1,4 @@
-package com.farionik.yandextestapp.main
+package com.farionik.yandextestapp.ui.main
 
 import android.graphics.Rect
 import android.view.View

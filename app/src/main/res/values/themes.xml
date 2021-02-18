@@ -47,4 +47,10 @@
         <item name="textAllCaps">false</item>
         <item name="android:fontFamily">@font/montserrat</item>
     </style>
+
+    <style name="SearchFragmentTitle">
+        <item name="android:textSize">@dimen/_18sdp</item>
+        <item name="android:textColor">@color/color_black</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

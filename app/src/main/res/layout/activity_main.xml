@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:animateLayoutChanges="true"
+    tools:context=".ui.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -26,38 +27,37 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
-                app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-                android:gravity="center">
+                android:gravity="center"
+                app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
 
                 <EditText
                     android:id="@+id/editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/edit_text_selector"
-                    android:hint="@string/find_company_or_ticker"
-                    android:textSize="16sp"
-                    android:textCursorDrawable="@drawable/edit_text_cursor_drawable"
-                    android:textColorHint="@color/color_black"
                     android:drawableStart="@drawable/ic_search"
+                    android:drawablePadding="@dimen/_16sdp"
+                    android:hint="@string/find_company_or_ticker"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
                     android:paddingStart="@dimen/_16sdp"
                     android:paddingEnd="@dimen/_16sdp"
-                    android:drawablePadding="@dimen/_16sdp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:textColorHint="@color/color_black"
+                    android:textCursorDrawable="@drawable/edit_text_cursor_drawable"
+                    android:textSize="16sp" />
             </LinearLayout>
-
-
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_32sdp"
+            android:layout_gravity="bottom"
             android:layout_margin="@dimen/_6sdp"
             app:tabGravity="start"
             app:tabIndicatorHeight="0dp"
             app:tabMode="scrollable"
             app:tabRippleColor="@null"
-            android:layout_gravity="bottom"
             app:tabSelectedTextColor="@color/color_black"
             app:tabTextAppearance="@style/MainTabLayoutTheme"
             app:tabTextColor="@color/color_gray">

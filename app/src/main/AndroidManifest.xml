@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.YandexTestApp">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.YandexTestApp.NoActionBar">

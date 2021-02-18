@@ -1,4 +1,4 @@
-package com.farionik.yandextestapp.main
+package com.farionik.yandextestapp.data
 
 data class SnippetEntity(
     val ticker: String,

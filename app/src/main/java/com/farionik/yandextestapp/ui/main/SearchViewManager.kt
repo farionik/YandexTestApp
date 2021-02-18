@@ -1,28 +1,32 @@
-package com.farionik.yandextestapp.main
+package com.farionik.yandextestapp.ui.main
 
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
+
 
 enum class SearchState {
     ACTIVE, NOT_ACTIVE, SEARCH
 }
 
-fun EditText.initSearchEditText() {
+fun EditText.initSearchEditText(callback: (SearchState) -> Unit) {
     apply {
-        initTextChangeListener()
+        initTextChangeListener(callback)
         initFilter()
-        initFocusListener()
         initTouchListener()
     }
 }
 
-private fun EditText.initTextChangeListener() {
+private fun EditText.initTextChangeListener(callback: (SearchState) -> Unit) {
     addTextChangedListener(object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         }
@@ -31,32 +35,50 @@ private fun EditText.initTextChangeListener() {
         }
 
         override fun afterTextChanged(s: Editable?) {
-            val text = s ?: ""
-            if (text.isNotEmpty()) {
-                changeEditTextState(SearchState.SEARCH)
-            } else {
+            if (s.isNullOrEmpty()) {
                 changeEditTextState(SearchState.ACTIVE)
+                callback(SearchState.ACTIVE)
             }
         }
     })
-}
 
-private fun EditText.initFilter() {
 
-}
+    setOnEditorActionListener(object : TextView.OnEditorActionListener {
+        override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                changeEditTextState(SearchState.SEARCH)
+                callback(SearchState.SEARCH)
+                return true
+            }
+            return false
+        }
 
-private fun EditText.initFocusListener() {
+    })
+
     onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
         run {
             hint = if (hasFocus) {
                 changeEditTextState(SearchState.ACTIVE)
+                callback(SearchState.ACTIVE)
                 ""
             } else {
                 changeEditTextState(SearchState.NOT_ACTIVE)
+                callback(SearchState.NOT_ACTIVE)
                 context.getString(R.string.find_company_or_ticker)
             }
         }
     }
+}
+
+private fun EditText.initFilter() {
+    // фильтровать ввод пробела как первого символа
+    val filter = InputFilter { source, start, end, dest, dstart, dend ->
+        if ((start == 0) and source.toString().isBlank()) {
+            return@InputFilter ""
+        }
+        return@InputFilter source
+    }
+    filters = arrayOf(filter)
 }
 
 private fun EditText.changeEditTextState(state: SearchState) {
@@ -86,7 +108,6 @@ private fun EditText.changeEditTextState(state: SearchState) {
             null
         )
     }
-
 
 }
 
