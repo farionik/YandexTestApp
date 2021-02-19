@@ -13,6 +13,7 @@ import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlin.math.roundToInt
 
 class MainFragment : Fragment() {
 
@@ -66,6 +67,9 @@ class MainFragment : Fragment() {
         })
     }
 
+
+    private lateinit var outlineProvider: TweakableOutlineProvider
+
     private fun initTabLayout() {
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -81,7 +85,22 @@ class MainFragment : Fragment() {
             }
         })
 
-        tabLayout.elevation
+        val cornerRadius = resources.getDimensionPixelSize(R.dimen._2sdp).toFloat()
+        outlineProvider = TweakableOutlineProvider(cornerRadius = cornerRadius, scaleX = 1f, scaleY = 1f, yShift = 0)
+        tabLayout.outlineProvider = outlineProvider
+
+
+
+        val elevationPixel = 8 * resources.displayMetrics.density
+        tabLayout.elevation = elevationPixel
+        val scale = 0
+//        outlineProvider.scaleX = 1 + scale / 100f
+//        outlineProvider.scaleX = 0f
+        outlineProvider.scaleY = 1 + -20 / 100f
+//        outlineProvider.scaleY = 0f
+        val adjustedShiftYPixel = 5 * resources.displayMetrics.density
+        outlineProvider.yShift = adjustedShiftYPixel.roundToInt()
+        tabLayout.invalidateOutline()
     }
 
     private fun TabLayout.Tab?.changeDisplay(asSelected: Boolean) {
