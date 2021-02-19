@@ -1,6 +1,7 @@
 package com.farionik.yandextestapp.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,14 +12,20 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
+import com.farionik.yandextestapp.ui.MainActivity
+import com.farionik.yandextestapp.ui.MainViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 
 class MainFragment : Fragment() {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
+
+    private val mainViewModel by sharedViewModel<MainViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +42,8 @@ class MainFragment : Fragment() {
 
         initTabLayout()
         initPagerAdapter()
+
+        mainViewModel.appBarOffsetMutableLiveData.observe(viewLifecycleOwner, { changeShadow(it) })
     }
 
     private fun initPagerAdapter() {
@@ -86,15 +95,20 @@ class MainFragment : Fragment() {
         })
 
         val cornerRadius = resources.getDimensionPixelSize(R.dimen._2sdp).toFloat()
-        outlineProvider = TweakableOutlineProvider(cornerRadius = cornerRadius, scaleX = 1f, scaleY = 1f, yShift = 0)
+        outlineProvider = TweakableOutlineProvider(
+            cornerRadius = cornerRadius,
+            scaleX = 1f,
+            scaleY = 1f,
+            yShift = 0
+        )
         tabLayout.outlineProvider = outlineProvider
+    }
 
-
-
+    private fun changeShadow(percent: Int) {
         val elevationPixel = 8 * resources.displayMetrics.density
         tabLayout.elevation = elevationPixel
-        outlineProvider.scaleY = 0.8f
-        val adjustedShiftYPixel = 5 * resources.displayMetrics.density
+        outlineProvider.scaleY = percent * 0.0085f
+        val adjustedShiftYPixel = percent / 20 * resources.displayMetrics.density
         outlineProvider.yShift = adjustedShiftYPixel.roundToInt()
         tabLayout.invalidateOutline()
     }

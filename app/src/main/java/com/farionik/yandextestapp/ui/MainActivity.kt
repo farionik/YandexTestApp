@@ -13,11 +13,14 @@ import com.farionik.yandextestapp.ui.main.MainFragment
 import com.farionik.yandextestapp.ui.main.SearchState
 import com.farionik.yandextestapp.ui.main.initSearchEditText
 import com.google.android.material.appbar.AppBarLayout
-
+import org.koin.android.viewmodel.compat.ScopeCompat.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), SearchedClickedListener {
 
     private lateinit var searchEditText: EditText
+
+    private val mainViewModel by viewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,14 +29,10 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener {
 
 
         val appBarLayout: AppBarLayout = findViewById(R.id.appBarLayout)
-        appBarLayout.addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
-            override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
-
-                val totalScrollRange = appBarLayout?.totalScrollRange ?: 1
-                val percent = (verticalOffset * -1F) / totalScrollRange * 100
-
-                Log.i("TAG", "onOffsetChanged: ${percent.toInt()}")
-            }
+        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val totalScrollRange = appBarLayout?.totalScrollRange ?: 1
+            val percent = (verticalOffset * -1F) / totalScrollRange * 100
+            mainViewModel.appBarOffsetMutableLiveData.postValue(percent.toInt())
         })
 
 
