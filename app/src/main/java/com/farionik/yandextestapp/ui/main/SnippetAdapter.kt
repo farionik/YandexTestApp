@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import coil.transform.RoundedCornersTransformation
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.databinding.RvItemShippetBinding
 import com.farionik.yandextestapp.data.SnippetEntity
+import com.farionik.yandextestapp.databinding.RvItemShippetBinding
 
 class SnippetAdapter(private val interaction: Interaction? = null) :
     ListAdapter<SnippetEntity, SnippetAdapter.SnippetHolder>(SnippetEntityDC()) {
@@ -49,14 +51,23 @@ class SnippetAdapter(private val interaction: Interaction? = null) :
 
         fun bind(item: SnippetEntity) = with(binding) {
             snippet.setBackgroundResource(
-                if (adapterPosition % 2 == 0) {
-                    R.drawable.snippet_background_dark
-                } else{
-                    R.drawable.snippet_background_light
-                }
+                if (adapterPosition % 2 == 0) R.drawable.snippet_background_dark
+                else R.drawable.snippet_background_light
+            )
+            image.load(R.mipmap.ic_launcher) {
+                crossfade(true)
+                crossfade(500)
+                transformations(RoundedCornersTransformation(52f))
+            }
+            favourite.load(
+                if (adapterPosition % 2 == 0) R.drawable.ic_star_gold
+                else R.drawable.ic_star_grey
             )
 
             ticker.text = item.ticker
+            name.text = item.company_name
+            price.text = item.price
+            percent.text = item.percent
         }
     }
 

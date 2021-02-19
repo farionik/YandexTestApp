@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/image"
-        android:src="@mipmap/ic_launcher"
+        tools:src="@mipmap/ic_launcher"
         android:layout_width="@dimen/_52sdp"
         android:layout_height="@dimen/_52sdp"
         android:layout_marginStart="@dimen/_8sdp"
@@ -29,6 +29,16 @@
         app:layout_constraintStart_toEndOf="@+id/image"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="YNDX" />
+
+    <ImageView
+        android:id="@+id/favourite"
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="@dimen/_16sdp"
+        android:layout_marginStart="@dimen/_6sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/ticker"
+        app:layout_constraintStart_toEndOf="@+id/ticker"
+        app:layout_constraintTop_toTopOf="@+id/ticker"
+        tools:src="@drawable/ic_star_grey" />
 
     <TextView
         android:id="@+id/name"
@@ -50,5 +60,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="4 764,6 P" />
+
+    <TextView
+        android:id="@+id/percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        tools:text="+$0.12 (1,15%)"
+        android:textStyle="bold"
+        android:textColor="@color/color_percent_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/price" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

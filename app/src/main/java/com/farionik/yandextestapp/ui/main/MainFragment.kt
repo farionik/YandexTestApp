@@ -12,7 +12,7 @@ class MainFragment : BaseFragment() {
 
         val data = mutableListOf<SnippetEntity>().apply {
             for (i in 0..30) {
-                add(SnippetEntity("Ticker $i", "name $i"))
+                add(SnippetEntity("Ticker $i", "name $i", "$10 000", "+$0.12 (1,15%)"))
             }
         }
         adapter.swapData(data)

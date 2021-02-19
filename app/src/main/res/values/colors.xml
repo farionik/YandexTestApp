@@ -17,4 +17,6 @@
     <color name="color_yellow">#FFCA1C</color>
 
     <color name="color_search_item_back">#F0F4F7</color>
+    <color name="color_percent_green">#24B25D</color>
+    <color name="color_percent_red">#B22424</color>
 </resources>

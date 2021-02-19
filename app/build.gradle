@@ -56,4 +56,7 @@ dependencies {
 
     // util
     implementation 'com.blankj:utilcodex:1.30.5'
+
+    // coil
+    implementation("io.coil-kt:coil:1.1.1")
 }
