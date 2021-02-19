@@ -46,32 +46,8 @@
                     android:textCursorDrawable="@drawable/edit_text_cursor_drawable"
                     android:textSize="16sp" />
             </LinearLayout>
+
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_32sdp"
-            android:layout_gravity="bottom"
-            android:layout_margin="@dimen/_6sdp"
-            app:tabGravity="start"
-            app:tabIndicatorHeight="0dp"
-            app:tabMode="scrollable"
-            app:tabRippleColor="@null"
-            app:tabSelectedTextColor="@color/color_black"
-            app:tabTextAppearance="@style/MainTabLayoutTheme"
-            app:tabTextColor="@color/color_gray">
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout="@layout/menu_tab_item" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout="@layout/menu_tab_item" />
-        </com.google.android.material.tabs.TabLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 

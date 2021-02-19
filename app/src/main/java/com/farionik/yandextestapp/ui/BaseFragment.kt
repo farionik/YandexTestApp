@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.databinding.FragmentMainBinding
 import com.farionik.yandextestapp.ui.main.SnippetAdapter
 import com.farionik.yandextestapp.ui.main.SpaceItemDecoration
 
@@ -21,7 +20,7 @@ abstract class BaseFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.fragment_stock, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
