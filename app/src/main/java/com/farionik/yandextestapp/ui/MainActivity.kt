@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener {
     }
 
     private fun initTabLayout() {
-
+        openScreen(PagerFragment())
         binding.tabLayout.getTabAt(0)
 
         val stockTab: TabLayout.Tab? = binding.tabLayout.getTabAt(0)
@@ -97,10 +97,10 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener {
             textSize = 28f
             setTextColor(ContextCompat.getColor(this@MainActivity, R.color.color_black))
         }
-        when (position) {
+/*        when (position) {
             0 -> openScreen(mainFragment)
             1 -> openScreen(favouriteFragment)
-        }
+        }*/
         KeyboardUtils.hideSoftInput(this@MainActivity)
     }
 
