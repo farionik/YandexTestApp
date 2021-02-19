@@ -93,11 +93,7 @@ class MainFragment : Fragment() {
 
         val elevationPixel = 8 * resources.displayMetrics.density
         tabLayout.elevation = elevationPixel
-        val scale = 0
-//        outlineProvider.scaleX = 1 + scale / 100f
-//        outlineProvider.scaleX = 0f
-        outlineProvider.scaleY = 1 + -20 / 100f
-//        outlineProvider.scaleY = 0f
+        outlineProvider.scaleY = 0.8f
         val adjustedShiftYPixel = 5 * resources.displayMetrics.density
         outlineProvider.yShift = adjustedShiftYPixel.roundToInt()
         tabLayout.invalidateOutline()
