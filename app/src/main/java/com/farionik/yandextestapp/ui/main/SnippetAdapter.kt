@@ -64,8 +64,8 @@ class SnippetAdapter(private val interaction: Interaction? = null) :
                 else R.drawable.ic_star_grey
             )
 
-            ticker.text = item.ticker
-            name.text = item.company_name
+            ticker.text = item.Symbol
+            name.text = item.Name
             price.text = item.price
             percent.text = item.percent
         }
@@ -79,19 +79,11 @@ class SnippetAdapter(private val interaction: Interaction? = null) :
         override fun areItemsTheSame(
             oldItem: StockEntity,
             newItem: StockEntity
-        ): Boolean {
-            TODO(
-                "not implemented"
-            )
-        }
+        ): Boolean = oldItem.Symbol == newItem.Symbol
 
         override fun areContentsTheSame(
             oldItem: StockEntity,
             newItem: StockEntity
-        ): Boolean {
-            TODO(
-                "not implemented"
-            )
-        }
+        ): Boolean = oldItem == newItem
     }
 }

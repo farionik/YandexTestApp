@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "StockTable")
 data class StockEntity(
     @PrimaryKey
-    val id: Int,
-    val ticker: String,
-    val company_name: String,
-    val price: String,
-    val percent: String
+    val Symbol: String,
+    val Sector: String,
+    val Name: String,
+    val price: String?,
+    val percent: String?
 )
