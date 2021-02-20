@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.data.SnippetEntity
+import com.farionik.yandextestapp.data.StockEntity
 import com.farionik.yandextestapp.databinding.RvItemShippetBinding
 
 class SnippetAdapter(private val interaction: Interaction? = null) :
-    ListAdapter<SnippetEntity, SnippetAdapter.SnippetHolder>(SnippetEntityDC()) {
+    ListAdapter<StockEntity, SnippetAdapter.SnippetHolder>(SnippetEntityDC()) {
 
     private lateinit var context: Context
 
@@ -29,7 +29,7 @@ class SnippetAdapter(private val interaction: Interaction? = null) :
     override fun onBindViewHolder(holder: SnippetHolder, position: Int) =
         holder.bind(getItem(position))
 
-    fun swapData(data: List<SnippetEntity>) {
+    fun swapData(data: List<StockEntity>) {
         submitList(data.toMutableList())
     }
 
@@ -49,7 +49,7 @@ class SnippetAdapter(private val interaction: Interaction? = null) :
             val clicked = getItem(adapterPosition)
         }
 
-        fun bind(item: SnippetEntity) = with(binding) {
+        fun bind(item: StockEntity) = with(binding) {
             snippet.setBackgroundResource(
                 if (adapterPosition % 2 == 0) R.drawable.snippet_background_dark
                 else R.drawable.snippet_background_light
@@ -75,10 +75,10 @@ class SnippetAdapter(private val interaction: Interaction? = null) :
 
     }
 
-    private class SnippetEntityDC : DiffUtil.ItemCallback<SnippetEntity>() {
+    private class SnippetEntityDC : DiffUtil.ItemCallback<StockEntity>() {
         override fun areItemsTheSame(
-            oldItem: SnippetEntity,
-            newItem: SnippetEntity
+            oldItem: StockEntity,
+            newItem: StockEntity
         ): Boolean {
             TODO(
                 "not implemented"
@@ -86,8 +86,8 @@ class SnippetAdapter(private val interaction: Interaction? = null) :
         }
 
         override fun areContentsTheSame(
-            oldItem: SnippetEntity,
-            newItem: SnippetEntity
+            oldItem: StockEntity,
+            newItem: StockEntity
         ): Boolean {
             TODO(
                 "not implemented"
