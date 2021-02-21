@@ -1,42 +1,93 @@
 package com.farionik.yandextestapp.ui
 
-import android.provider.MediaStore.Video
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.data.AppDatabase
-import com.farionik.yandextestapp.data.StockEntity
+import com.farionik.yandextestapp.data.CompanyEntity
 import com.farionik.yandextestapp.network.Api
+import com.farionik.yandextestapp.network.SPStoredModel
+import com.farionik.yandextestapp.network.TOKEN
 import com.farionik.yandextestapp.network.WebServicesProvider
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
-import okhttp3.*
-import java.io.IOException
-import java.util.concurrent.TimeUnit
 
 
 class MainViewModel(
+    private val context: Context,
     private val webServicesProvider: WebServicesProvider,
     private val api: Api,
     private val appDatabase: AppDatabase
 ) : ViewModel() {
 
     val appBarOffsetMutableLiveData = MutableLiveData<Int>()
-    var stockLiveData: LiveData<List<StockEntity>>
+    var companyLiveData: LiveData<List<CompanyEntity>> = appDatabase.companyDAO().companyLiveData()
 
     init {
-        subscribeToSocketEvents()
-        load_sp_500()
-        stockLiveData = appDatabase.stockDAO().stockLiveData()
+        loadCompanies()
     }
 
+    private fun loadSP500(): List<SPStoredModel> {
+        val fileInputStream = context.resources.openRawResource(R.raw.sp_500)
+        val bufferedReader = fileInputStream.bufferedReader()
+        var content: String
+        bufferedReader.use { content = it.readText() }
+
+        return Gson().fromJson(content, object : TypeToken<List<SPStoredModel?>?>() {}.type)
+    }
+
+    private fun loadCompanies() {
+
+        val handler = CoroutineExceptionHandler { _, t ->
+            Log.i("TAG", "throwable: ${t.message}")
+        }
+
+        viewModelScope.launch(handler) {
+            val models = loadSP500()
+
+            for (model in models) {
+                launch { loadCompany(model.ticker) }
+            }
+        }
+    }
+
+    private suspend fun loadCompany(symbol: String) {
+        coroutineScope {
+            val entity = appDatabase.companyDAO().companyEntity(symbol)
+
+            if (entity == null) {
+                Log.i("TAG", "start load: $symbol")
+                val companyRequest = async(IO) { api.loadCompany(symbol, TOKEN) }
+                val logoRequest = async(IO) { api.loadCompanyLogo(symbol, TOKEN) }
+
+                val companyResponse = companyRequest.await()
+                val logoResponse = logoRequest.await()
+
+                if (companyResponse.isSuccessful) {
+                    val companyEntity = companyResponse.body()
+
+                    if (logoResponse.isSuccessful) {
+                        companyEntity?.logo = logoResponse.body()?.url
+                    }
+                    if (companyEntity != null) {
+                        appDatabase.companyDAO().insert(companyEntity)
+                    }
+                }
+                Log.i("TAG", "loaded: $symbol")
+            }
+        }
+    }
+
+
     fun subscribeToSocketEvents() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(IO) {
             try {
                 webServicesProvider.startSocket().consumeEach {
                     if (it.exception == null) {
@@ -59,33 +110,5 @@ class MainViewModel(
     override fun onCleared() {
         webServicesProvider.stopSocket()
         super.onCleared()
-    }
-
-    fun load_sp_500() {
-        val okHttpClient = OkHttpClient.Builder()
-            .readTimeout(30, TimeUnit.SECONDS)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .build()
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            val request = Request.Builder()
-                .url("https://pkgstore.datahub.io/core/s-and-p-500-companies-financials/constituents_json/data/5ec6b99955047958b093bddd64df4bba/constituents_json.json")
-                .build()
-
-            okHttpClient.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    Log.i("TAG", "onFailure: ")
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    val body = response.body?.string()
-
-                    val models: List<StockEntity> =
-                        Gson().fromJson(body, object : TypeToken<List<StockEntity?>?>() {}.type)
-                    appDatabase.stockDAO().insertAll(models)
-                }
-            })
-        }
     }
 }

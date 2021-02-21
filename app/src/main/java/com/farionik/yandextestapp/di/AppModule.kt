@@ -4,11 +4,15 @@ import androidx.room.Room
 import com.farionik.yandextestapp.data.AppDatabase
 import com.farionik.yandextestapp.network.NetworkProvider
 import com.farionik.yandextestapp.network.WebServicesProvider
+import com.farionik.yandextestapp.repository.MainRepository
+import com.farionik.yandextestapp.repository.MainRepositoryImpl
 import com.farionik.yandextestapp.ui.MainViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+
+
     single { NetworkProvider().createApi() }
     single { WebServicesProvider() }
     single {
@@ -19,6 +23,6 @@ val appModule = module {
 
 
     viewModel {
-        MainViewModel(get(), get(), get())
+        MainViewModel(get(), get(), get(), get())
     }
 }

@@ -8,6 +8,7 @@
     android:background="@drawable/snippet_background_dark">
 
     <ImageView
+        android:scaleType="center"
         android:id="@+id/image"
         tools:src="@mipmap/ic_launcher"
         android:layout_width="@dimen/_52sdp"

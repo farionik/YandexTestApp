@@ -1,6 +1,7 @@
 package com.farionik.yandextestapp.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,12 +9,18 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.ui.main.SnippetAdapter
+import com.farionik.yandextestapp.ui.main.CompanyAdapter
 import com.farionik.yandextestapp.ui.main.SpaceItemDecoration
+import org.koin.android.viewmodel.ext.android.viewModel
 
 abstract class BaseFragment : Fragment() {
 
-    lateinit var adapter: SnippetAdapter
+    val mainViewModel by viewModel<MainViewModel>()
+
+
+    lateinit var adapter: CompanyAdapter
+    lateinit var layoutManager: LinearLayoutManager
+
     private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
@@ -30,9 +37,29 @@ abstract class BaseFragment : Fragment() {
     }
 
     private fun createAdapter() {
-        adapter = SnippetAdapter(object : SnippetAdapter.Interaction {})
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        adapter = CompanyAdapter(object : CompanyAdapter.Interaction {})
+        layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(SpaceItemDecoration())
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+
+                val range =
+                    adapter.currentList.subList(firstVisibleItemPosition, lastVisibleItemPosition)
+
+                Log.i(
+                    "TAG",
+                    "onScrolled: " +
+                            "firstVisible = $firstVisibleItemPosition " +
+                            "lastVisible = $lastVisibleItemPosition " +
+                            "range =  ${range.size}"
+                )
+            }
+        })
     }
 }
