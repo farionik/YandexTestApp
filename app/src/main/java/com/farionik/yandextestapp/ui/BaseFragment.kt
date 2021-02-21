@@ -5,23 +5,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.ui.main.CompanyAdapter
 import com.farionik.yandextestapp.ui.main.SpaceItemDecoration
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 abstract class BaseFragment : Fragment() {
 
-    val mainViewModel by viewModel<MainViewModel>()
-
+    val mainViewModel by sharedViewModel<MainViewModel>()
 
     lateinit var adapter: CompanyAdapter
     lateinit var layoutManager: LinearLayoutManager
 
     private lateinit var recyclerView: RecyclerView
+    lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +35,7 @@ abstract class BaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.recyclerView)
+        progressBar = view.findViewById(R.id.progressBar)
         createAdapter()
     }
 

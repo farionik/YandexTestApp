@@ -28,6 +28,7 @@ class MainViewModel(
 ) : ViewModel() {
 
     val appBarOffsetMutableLiveData = MutableLiveData<Int>()
+    var loadingAllDataProgress = MutableLiveData<Boolean>()
     var companyLiveData: LiveData<List<CompanyEntity>> = appDatabase.companyDAO().companyLiveData()
 
     init {
@@ -50,11 +51,18 @@ class MainViewModel(
         }
 
         viewModelScope.launch(handler) {
-            val models = loadSP500()
+            loadingAllDataProgress.postValue(true)
 
-            for (model in models) {
-                launch { loadCompany(model.ticker) }
+            val models = loadSP500()
+            val deferred = models.map {
+                async {
+                    loadCompany(it.ticker)
+                }
             }
+
+            val result = awaitAll(*deferred.toTypedArray())
+
+            loadingAllDataProgress.postValue(false)
         }
     }
 
@@ -62,26 +70,27 @@ class MainViewModel(
         coroutineScope {
             val entity = appDatabase.companyDAO().companyEntity(symbol)
 
-            if (entity == null) {
-                Log.i("TAG", "start load: $symbol")
-                val companyRequest = async(IO) { api.loadCompany(symbol, TOKEN) }
-                val logoRequest = async(IO) { api.loadCompanyLogo(symbol, TOKEN) }
-
-                val companyResponse = companyRequest.await()
-                val logoResponse = logoRequest.await()
-
-                if (companyResponse.isSuccessful) {
-                    val companyEntity = companyResponse.body()
-
-                    if (logoResponse.isSuccessful) {
-                        companyEntity?.logo = logoResponse.body()?.url
-                    }
-                    if (companyEntity != null) {
-                        appDatabase.companyDAO().insert(companyEntity)
-                    }
-                }
-                Log.i("TAG", "loaded: $symbol")
+            if (entity != null) {
+                return@coroutineScope entity
             }
+
+            val companyRequest = async(IO) { api.loadCompany(symbol, TOKEN) }
+            val logoRequest = async(IO) { api.loadCompanyLogo(symbol, TOKEN) }
+
+            val companyResponse = companyRequest.await()
+            val logoResponse = logoRequest.await()
+
+            if (companyResponse.isSuccessful) {
+                val companyEntity = companyResponse.body()
+
+                if (logoResponse.isSuccessful) {
+                    companyEntity?.logo = logoResponse.body()?.url
+                }
+                if (companyEntity != null) {
+                    appDatabase.companyDAO().insert(companyEntity)
+                }
+            }
+            return@coroutineScope companyResponse
         }
     }
 

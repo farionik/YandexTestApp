@@ -8,6 +8,10 @@ class StockFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainViewModel.companyLiveData.observe(viewLifecycleOwner, {adapter.swapData(it)})
+        mainViewModel.companyLiveData.observe(viewLifecycleOwner, { adapter.swapData(it) })
+        /*mainViewModel.loadingAllDataProgress.observe(
+            viewLifecycleOwner,
+            { progressBar.visibility = if (it) View.VISIBLE else View.GONE }
+        )*/
     }
 }
