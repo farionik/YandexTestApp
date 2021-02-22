@@ -46,6 +46,7 @@ class MainFragment : Fragment() {
     private fun initPagerAdapter() {
         val pagerAdapter = ScreenSlidePagerAdapter(this)
         viewPager.adapter = pagerAdapter
+        viewPager.isSaveEnabled = false
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             with(tab) {
                 val customTab: TextView =
@@ -63,14 +64,6 @@ class MainFragment : Fragment() {
                 }
             }
         }.attach()
-
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-
-
-            }
-        })
     }
 
 
@@ -132,15 +125,13 @@ class MainFragment : Fragment() {
 
     private inner class ScreenSlidePagerAdapter(fragment: Fragment) :
         FragmentStateAdapter(fragment) {
-        private val mainFragment = CompanyFragment()
-        private val favouriteFragment = FavouriteFragment()
 
         override fun getItemCount(): Int = 2
 
         override fun createFragment(position: Int): Fragment = when (position) {
-            0 -> mainFragment
-            1 -> favouriteFragment
-            else -> CompanyFragment()
+            0 -> CompanyFragment.newInstance()
+            1 -> FavouriteFragment.newInstance()
+            else -> throw IllegalStateException()
         }
     }
 }

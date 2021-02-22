@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|snap"
+            app:layout_scrollFlags="scroll|snap|enterAlways"
             app:toolbarId="@+id/toolbar">
 
             <LinearLayout
@@ -28,8 +28,7 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
-                android:gravity="center"
-                app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
+                android:gravity="center">
 
                 <EditText
                     android:id="@+id/editText"

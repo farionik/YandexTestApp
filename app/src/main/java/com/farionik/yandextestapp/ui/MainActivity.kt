@@ -1,7 +1,6 @@
 package com.farionik.yandextestapp.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -11,9 +10,11 @@ import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.model.SearchModel
 import com.farionik.yandextestapp.ui.main.MainFragment
 import com.farionik.yandextestapp.ui.main.SearchState
+import com.farionik.yandextestapp.ui.main.SearchState.*
 import com.farionik.yandextestapp.ui.main.initSearchEditText
+import com.farionik.yandextestapp.ui.search.SearchFragment
+import com.farionik.yandextestapp.ui.search.SearchResultFragment
 import com.google.android.material.appbar.AppBarLayout
-import org.koin.android.viewmodel.compat.ScopeCompat.viewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), SearchedClickedListener {
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener {
     private lateinit var searchEditText: EditText
 
     private val mainViewModel by viewModel<MainViewModel>()
+
+    private val mainFragment = MainFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,26 +40,15 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener {
 
 
         val lambda = { state: SearchState ->
-            /*when (state) {
-                SearchState.ACTIVE -> {
-                    openScreen(SearchFragment())
-                    binding.tabLayout.visibility = View.GONE
-                }
-                SearchState.NOT_ACTIVE -> {
-                    val selectedTabPosition = binding.tabLayout.selectedTabPosition
-                    binding.tabLayout.getTabAt(selectedTabPosition)?.selectTab()
-                    binding.tabLayout.visibility = View.VISIBLE
-                }
-                SearchState.SEARCH -> {
-                    openScreen(SearchResultFragment())
-                    binding.tabLayout.visibility = View.GONE
-                }
-            }*/
+            when (state) {
+                ACTIVE -> openScreen(SearchFragment())
+                NOT_ACTIVE -> openScreen(mainFragment)
+                SEARCH -> openScreen(SearchResultFragment())
+            }
         }
         searchEditText.initSearchEditText(lambda)
-        openScreen(MainFragment())
+        openScreen(mainFragment)
     }
-
 
     private fun openScreen(fragment: Fragment) {
         KeyboardUtils.hideSoftInput(this)
