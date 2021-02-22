@@ -12,4 +12,7 @@ abstract class CompanyDao : BaseDao<CompanyEntity> {
 
     @Query("SELECT * FROM CompanyTable")
     abstract fun companyLiveData(): LiveData<List<CompanyEntity>>
+
+    @Query("SELECT * FROM CompanyTable WHERE isFavourite IS 1")
+    abstract fun favouriteCompanyLiveData(): LiveData<List<CompanyEntity>>
 }

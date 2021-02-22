@@ -33,9 +33,9 @@
 
     <ImageView
         android:id="@+id/favourite"
-        android:layout_width="@dimen/_16sdp"
-        android:layout_height="@dimen/_16sdp"
-        android:layout_marginStart="@dimen/_6sdp"
+        android:layout_width="@dimen/_22sdp"
+        android:layout_height="@dimen/_22sdp"
+        android:padding="@dimen/_3sdp"
         app:layout_constraintBottom_toBottomOf="@+id/ticker"
         app:layout_constraintStart_toEndOf="@+id/ticker"
         app:layout_constraintTop_toTopOf="@+id/ticker"

@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.farionik.yandextestapp.R
@@ -45,6 +44,7 @@ class CompanyAdapter(private val interaction: Interaction? = null) :
 
         init {
             itemView.setOnClickListener(this)
+            binding.favourite.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
@@ -52,6 +52,10 @@ class CompanyAdapter(private val interaction: Interaction? = null) :
             if (adapterPosition == RecyclerView.NO_POSITION) return
 
             val clicked = getItem(adapterPosition)
+
+            if (v?.id == R.id.favourite) {
+                interaction?.likeCompany(clicked, adapterPosition)
+            }
         }
 
         fun bind(item: CompanyEntity) = with(binding) {
@@ -69,7 +73,7 @@ class CompanyAdapter(private val interaction: Interaction? = null) :
                 .apply(RequestOptions.bitmapTransform(RoundedCorners(52)))
                 .into(image)
 
-            favourite.run {
+            favourite.apply {
                 if (item.isFavourite) setImageResource(R.drawable.ic_star_gold)
                 else setImageResource(R.drawable.ic_star_grey)
             }
@@ -82,7 +86,7 @@ class CompanyAdapter(private val interaction: Interaction? = null) :
     }
 
     interface Interaction {
-
+        fun likeCompany(companyEntity: CompanyEntity, position: Int)
     }
 
     private class CompanyEntityDC : DiffUtil.ItemCallback<CompanyEntity>() {

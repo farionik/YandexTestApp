@@ -30,5 +30,5 @@ data class CompanyEntity(
     val phone: String?,
     var logo: String?,
 
-    val isFavourite: Boolean = false
+    var isFavourite: Boolean = false
 )

@@ -30,6 +30,7 @@ class MainViewModel(
     val appBarOffsetMutableLiveData = MutableLiveData<Int>()
     var loadingAllDataProgress = MutableLiveData<Boolean>()
     var companyLiveData: LiveData<List<CompanyEntity>> = appDatabase.companyDAO().companyLiveData()
+    var favouriteCompanyLiveData = appDatabase.companyDAO().favouriteCompanyLiveData()
 
     init {
         loadCompanies()
@@ -119,5 +120,12 @@ class MainViewModel(
     override fun onCleared() {
         webServicesProvider.stopSocket()
         super.onCleared()
+    }
+
+    fun likeCompany(companyEntity: CompanyEntity) {
+        companyEntity.isFavourite = !companyEntity.isFavourite
+        viewModelScope.launch(IO) {
+            appDatabase.companyDAO().update(companyEntity)
+        }
     }
 }

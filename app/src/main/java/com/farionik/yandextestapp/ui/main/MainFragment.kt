@@ -1,7 +1,6 @@
 package com.farionik.yandextestapp.ui.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +11,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.ui.MainActivity
 import com.farionik.yandextestapp.ui.MainViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.android.viewmodel.ext.android.sharedViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 
 class MainFragment : Fragment() {
@@ -135,7 +132,7 @@ class MainFragment : Fragment() {
 
     private inner class ScreenSlidePagerAdapter(fragment: Fragment) :
         FragmentStateAdapter(fragment) {
-        private val mainFragment = StockFragment()
+        private val mainFragment = CompanyFragment()
         private val favouriteFragment = FavouriteFragment()
 
         override fun getItemCount(): Int = 2
@@ -143,7 +140,7 @@ class MainFragment : Fragment() {
         override fun createFragment(position: Int): Fragment = when (position) {
             0 -> mainFragment
             1 -> favouriteFragment
-            else -> StockFragment()
+            else -> CompanyFragment()
         }
     }
 }
