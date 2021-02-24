@@ -13,4 +13,7 @@ interface Api {
 
     @GET("stable/stock/{symbol}/logo")
     suspend fun loadCompanyLogo(@Path("symbol") symbol: String, @Query("token") token: String): Response<LogoResponse>
+
+    @GET("stable/stock/{symbol}/quote")
+    suspend fun loadCompanyPrice(@Path("symbol") symbol: String, @Query("token") token: String): Response<PriceResponse>
 }

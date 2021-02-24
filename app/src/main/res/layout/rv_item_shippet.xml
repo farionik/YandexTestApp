@@ -63,12 +63,24 @@
         tools:text="4 764,6 P" />
 
     <TextView
-        android:id="@+id/percent"
+        android:id="@+id/change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_percent_green"
+        android:textSize="@dimen/_12sdp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/percentChange"
+        app:layout_constraintEnd_toStartOf="@+id/percentChange"
+        app:layout_constraintTop_toTopOf="@+id/percentChange"
+        tools:text="+$0.12 " />
+
+    <TextView
+        android:id="@+id/percentChange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/_12sdp"
         android:layout_marginEnd="@dimen/_12sdp"
-        tools:text="+$0.12 (1,15%)"
+        tools:text=" (1,15%)"
         android:textStyle="bold"
         android:textColor="@color/color_percent_green"
         app:layout_constraintEnd_toEndOf="parent"

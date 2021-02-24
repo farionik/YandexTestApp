@@ -2,11 +2,14 @@ package com.farionik.yandextestapp.ui.main
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.farionik.yandextestapp.ui.BaseFragment
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class FavouriteFragment : BaseFragment() {
 
-    companion object{
+    companion object {
         fun newInstance(): FavouriteFragment {
             val args = Bundle()
 
@@ -18,6 +21,11 @@ class FavouriteFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mainViewModel.favouriteCompanyLiveData.observe(viewLifecycleOwner, { adapter.swapData(it) })
+
+        lifecycleScope.launch {
+            mainViewModel.favouriteCompanyLiveData.collect {
+                adapter.swapData(it)
+            }
+        }
     }
 }

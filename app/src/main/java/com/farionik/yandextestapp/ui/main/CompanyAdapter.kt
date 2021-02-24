@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -64,13 +66,14 @@ class CompanyAdapter(private val interaction: Interaction? = null) :
                 else R.drawable.snippet_background_light
             )
 
-
             Glide
                 .with(image)
                 .load(item.logo)
                 .priority(Priority.HIGH)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .apply(RequestOptions.bitmapTransform(RoundedCorners(52)))
+                .error(R.drawable.ic_broken_image)
+                .fallback(R.drawable.ic_broken_image)
                 .into(image)
 
             favourite.apply {
@@ -78,10 +81,28 @@ class CompanyAdapter(private val interaction: Interaction? = null) :
                 else setImageResource(R.drawable.ic_star_grey)
             }
 
+            binding.price.text = "$${item.price}"
+
+            item.price?.let {
+                val changeText = "$$it"
+                binding.change.text = changeText
+                binding.change.setTextColor(getColorForTextView(it))
+            }
+
+            item.changePercent?.let {
+                val percentText = " ($it)"
+                binding.percentChange.text = percentText
+                binding.percentChange.setTextColor(getColorForTextView(it))
+            }
+
             ticker.text = item.symbol
             name.text = item.companyName
-            //price.text = item.price
-            //percent.text = item.percent
+        }
+
+        private fun getColorForTextView(value: Double) = run {
+            if (value > 0.0) ContextCompat.getColor(context, R.color.color_percent_green)
+            if (value < 0.0) ContextCompat.getColor(context, R.color.color_percent_red)
+            ContextCompat.getColor(context, R.color.color_black)
         }
     }
 

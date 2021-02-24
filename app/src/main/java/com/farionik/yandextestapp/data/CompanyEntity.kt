@@ -30,5 +30,9 @@ data class CompanyEntity(
     val phone: String?,
     var logo: String?,
 
+    var price: Double?,
+    var change: Double?,
+    var changePercent: Double?,
+
     var isFavourite: Boolean = false
 )

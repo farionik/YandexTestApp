@@ -2,7 +2,6 @@ package com.farionik.yandextestapp.ui
 
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +17,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.Flow
 
 
 class MainViewModel(
@@ -29,20 +29,20 @@ class MainViewModel(
 
     val appBarOffsetMutableLiveData = MutableLiveData<Int>()
     var loadingAllDataProgress = MutableLiveData<Boolean>()
-    var companyLiveData: LiveData<List<CompanyEntity>> = appDatabase.companyDAO().companyLiveData()
+    var companyLiveData: Flow<List<CompanyEntity>> = appDatabase.companyDAO().companyFlow()
     var favouriteCompanyLiveData = appDatabase.companyDAO().favouriteCompanyLiveData()
 
     init {
         loadCompanies()
     }
 
-    private fun loadSP500(): List<SPStoredModel> {
+    private fun loadSP500(): MutableList<SPStoredModel> {
         val fileInputStream = context.resources.openRawResource(R.raw.sp_500)
         val bufferedReader = fileInputStream.bufferedReader()
         var content: String
         bufferedReader.use { content = it.readText() }
 
-        return Gson().fromJson(content, object : TypeToken<List<SPStoredModel?>?>() {}.type)
+        return Gson().fromJson(content, object : TypeToken<MutableList<SPStoredModel?>?>() {}.type)
     }
 
     private fun loadCompanies() {
@@ -55,7 +55,8 @@ class MainViewModel(
             loadingAllDataProgress.postValue(true)
 
             val models = loadSP500()
-            val deferred = models.map {
+            models.add(0, SPStoredModel("YNDX", "Yandex"))
+            val deferred = models.take(4).map {
                 async {
                     loadCompany(it.ticker)
                 }
@@ -72,6 +73,7 @@ class MainViewModel(
             val entity = appDatabase.companyDAO().companyEntity(symbol)
 
             if (entity != null) {
+                loadStockPrice(symbol)
                 return@coroutineScope entity
             }
 
@@ -81,17 +83,37 @@ class MainViewModel(
             val companyResponse = companyRequest.await()
             val logoResponse = logoRequest.await()
 
+
             if (companyResponse.isSuccessful) {
                 val companyEntity = companyResponse.body()
 
                 if (logoResponse.isSuccessful) {
                     companyEntity?.logo = logoResponse.body()?.url
                 }
+
                 if (companyEntity != null) {
                     appDatabase.companyDAO().insert(companyEntity)
+                    loadStockPrice(symbol)
                 }
             }
             return@coroutineScope companyResponse
+        }
+    }
+
+    private suspend fun loadStockPrice(symbol: String) {
+        coroutineScope {
+            val priceRequest = async(IO) { api.loadCompanyPrice(symbol, TOKEN) }
+            val priceResponse = priceRequest.await()
+            if (priceResponse.isSuccessful) {
+                val body = priceResponse.body()
+                val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
+                entity?.let {
+                    it.price = body?.latestPrice
+                    it.change = body?.change
+                    it.changePercent = body?.changePercent
+                    appDatabase.companyDAO().update(it)
+                }
+            }
         }
     }
 
