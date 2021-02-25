@@ -10,8 +10,8 @@
         android:id="@+id/popularTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_16sdp"
-        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="20dp"
         style="@style/SearchFragmentTitle"
         android:text="@string/popular_requests"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,8 +20,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/popularRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_100sdp"
-        android:layout_marginTop="@dimen/_11sdp"
+        android:layout_height="100dp"
+        android:layout_marginTop="11dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/popularTitle" />
@@ -29,7 +29,7 @@
     <TextView
         android:id="@+id/userRequestTitle"
         style="@style/SearchFragmentTitle"
-        android:layout_marginTop="@dimen/_28sdp"
+        android:layout_marginTop="28dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/user_requests"
@@ -39,8 +39,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/userRequestRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_100sdp"
-        android:layout_marginTop="@dimen/_11sdp"
+        android:layout_height="100dp"
+        android:layout_marginTop="11dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userRequestTitle" />

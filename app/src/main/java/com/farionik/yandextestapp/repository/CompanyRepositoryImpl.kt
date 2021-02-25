@@ -27,7 +27,7 @@ class CompanyRepositoryImpl(
         coroutineScope {
             loadSP500().collect {
                 it.add(0, SPStoredModel("YNDX", "Yandex"))
-                val range = it.take(3)
+                val range = it.take(20)
                 for (item in range) {
                     launch(IO) {
                         item.run {

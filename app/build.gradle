@@ -55,7 +55,6 @@ dependencies {
 
     // util
     implementation 'com.blankj:utilcodex:1.30.5'
-    implementation 'com.intuit.sdp:sdp-android:1.0.6'
 
     // glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'

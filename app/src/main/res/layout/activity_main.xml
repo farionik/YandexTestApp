@@ -11,8 +11,8 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="0dp"
-        android:theme="@style/Theme.YandexTestApp">
+        android:theme="@style/Theme.YandexTestApp"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
@@ -25,9 +25,9 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_50sdp"
-                android:layout_marginStart="@dimen/_16sdp"
-                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:gravity="center">
 
                 <EditText
@@ -36,12 +36,12 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/edit_text_selector"
                     android:drawableStart="@drawable/ic_search"
-                    android:drawablePadding="@dimen/_16sdp"
+                    android:drawablePadding="16dp"
+                    android:gravity="center_vertical"
                     android:hint="@string/find_company_or_ticker"
                     android:imeOptions="actionDone"
                     android:inputType="text"
-                    android:paddingStart="@dimen/_16sdp"
-                    android:paddingEnd="@dimen/_16sdp"
+                    android:padding="16dp"
                     android:textColorHint="@color/color_black"
                     android:textCursorDrawable="@drawable/edit_text_cursor_drawable"
                     android:textSize="16sp" />
