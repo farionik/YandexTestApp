@@ -11,10 +11,10 @@ import com.farionik.yandextestapp.network.TOKEN
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class CompanyRepositoryImpl(
@@ -30,11 +30,22 @@ class CompanyRepositoryImpl(
                 val range = it.take(3)
                 for (item in range) {
                     launch(IO) {
-                        val loadCompany = async(IO) {
-                            loadCompany(item.ticker)
+                        item.run {
+                            val entity = appDatabase.companyDAO().companyEntity(ticker)
+                            if (entity != null) {
+                                loadStockPrice(ticker)
+                            } else {
+
+                                //val loadCompany = async {
+                                loadCompany(ticker)
+                                loadCompanyLogo(ticker)
+                                loadStockPrice(ticker)
+                                //}
+                                //val companyLoaded = loadCompany.await()
+                                //launch { loadCompanyLogo(ticker) }
+                                //launch { loadStockPrice(ticker) }
+                            }
                         }
-                        val companyLoaded = loadCompany.await()
-                        loadCompanyDetail(item.ticker)
                     }
                 }
             }
@@ -51,39 +62,21 @@ class CompanyRepositoryImpl(
     }
 
     private suspend fun loadCompany(symbol: String) {
-        val entity = appDatabase.companyDAO().companyEntity(symbol)
-
-        if (entity != null) {
-            loadStockPrice(symbol)
-        }
-
-        Log.i("TAG", "loadCompany: start load $symbol")
-//        val companyRequest = async(IO) { api.loadCompany(symbol, TOKEN) }
-//        val companyResponse = companyRequest.await()
-        val response = api.loadCompany(symbol, TOKEN)
-        Log.i("TAG", "loadCompany: $symbol code=${response.code()}")
-        if (response.isSuccessful) {
-            val companyEntity = response.body()
-            if (companyEntity != null) {
-                appDatabase.companyDAO().insert(companyEntity)
-            }
-        }
-    }
-
-    private suspend fun loadCompanyDetail(symbol: String) {
         coroutineScope {
-            launch(IO) {
-                loadCompanyLogo(symbol)
-            }
-            launch(IO) {
-                loadStockPrice(symbol)
+            val response = api.loadCompany(symbol, TOKEN)
+            Log.i("TAG", "loadCompany: $symbol code=${response.code()}")
+            if (response.isSuccessful) {
+                val companyEntity = response.body()
+                if (companyEntity != null) {
+                    appDatabase.companyDAO().insert(companyEntity)
+                }
             }
         }
+
     }
 
     private suspend fun loadCompanyLogo(symbol: String) {
         coroutineScope {
-            Log.i("TAG", "loadCompanyLogo: start load logo $symbol")
             val response = api.loadCompanyLogo(symbol, TOKEN)
             Log.i("TAG", "loadCompanyLogo: $symbol code=${response.code()}")
             if (response.isSuccessful) {
@@ -98,7 +91,6 @@ class CompanyRepositoryImpl(
 
     private suspend fun loadStockPrice(symbol: String) {
         coroutineScope {
-            Log.i("TAG", "loadStockPrice: start load $symbol")
             val response = api.loadCompanyPrice(symbol, TOKEN)
             Log.i("TAG", "loadStockPrice: $symbol code=${response.code()}")
             if (response.isSuccessful) {
