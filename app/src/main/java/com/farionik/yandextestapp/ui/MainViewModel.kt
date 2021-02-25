@@ -77,43 +77,63 @@ class MainViewModel(
                 return@coroutineScope entity
             }
 
+            Log.i("TAG", "loadCompany: start load $symbol")
             val companyRequest = async(IO) { api.loadCompany(symbol, TOKEN) }
-            val logoRequest = async(IO) { api.loadCompanyLogo(symbol, TOKEN) }
-
             val companyResponse = companyRequest.await()
-            val logoResponse = logoRequest.await()
-
 
             if (companyResponse.isSuccessful) {
+                Log.i("TAG", "loadCompany: loaded $symbol")
                 val companyEntity = companyResponse.body()
-
-                if (logoResponse.isSuccessful) {
-                    companyEntity?.logo = logoResponse.body()?.url
-                }
-
                 if (companyEntity != null) {
                     appDatabase.companyDAO().insert(companyEntity)
-                    loadStockPrice(symbol)
+                    loadCompanyDetail(symbol)
                 }
             }
             return@coroutineScope companyResponse
         }
     }
 
-    private suspend fun loadStockPrice(symbol: String) {
+    private suspend fun loadCompanyDetail(symbol: String) {
         coroutineScope {
-            val priceRequest = async(IO) { api.loadCompanyPrice(symbol, TOKEN) }
-            val priceResponse = priceRequest.await()
-            if (priceResponse.isSuccessful) {
-                val body = priceResponse.body()
+            launch(IO) {
+                loadCompanyLogo(symbol)
+            }
+            launch(IO) {
+                loadStockPrice(symbol)
+            }
+        }
+    }
+
+    private suspend fun loadCompanyLogo(symbol: String) {
+        coroutineScope {
+            Log.i("TAG", "loadCompanyLogo: start load logo $symbol")
+            val response = api.loadCompanyLogo(symbol, TOKEN)
+            if (response.isSuccessful) {
                 val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
-                entity?.let {
-                    it.price = body?.latestPrice
-                    it.change = body?.change
-                    it.changePercent = body?.changePercent
-                    appDatabase.companyDAO().update(it)
+                entity?.run {
+                    logo = response.body()?.url
+                    appDatabase.companyDAO().update(this)
                 }
             }
+            Log.i("TAG", "loadCompanyLogo: logo for $symbol loaded")
+        }
+    }
+
+    private suspend fun loadStockPrice(symbol: String) {
+        coroutineScope {
+            Log.i("TAG", "loadStockPrice: start load $symbol")
+            val response = api.loadCompanyPrice(symbol, TOKEN)
+            if (response.isSuccessful) {
+                val body = response.body()
+                val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
+                entity?.run {
+                    price = body?.latestPrice
+                    change = body?.change
+                    changePercent = body?.changePercent
+                    appDatabase.companyDAO().update(this)
+                }
+            }
+            Log.i("TAG", "loadStockPrice: loaded $symbol")
         }
     }
 
