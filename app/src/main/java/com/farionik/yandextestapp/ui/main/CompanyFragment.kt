@@ -2,10 +2,7 @@ package com.farionik.yandextestapp.ui.main
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.lifecycleScope
 import com.farionik.yandextestapp.ui.BaseFragment
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 class CompanyFragment : BaseFragment() {
 
@@ -20,11 +17,6 @@ class CompanyFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        lifecycleScope.launch {
-            mainViewModel.companyLiveData.collect {
-                adapter.swapData(it)
-            }
-        }
+        mainViewModel.companiesLiveData.observe(viewLifecycleOwner, { adapter.swapData(it) })
     }
 }

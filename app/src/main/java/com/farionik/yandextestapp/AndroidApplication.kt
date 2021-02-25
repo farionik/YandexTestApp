@@ -1,7 +1,10 @@
 package com.farionik.yandextestapp
 
 import android.app.Application
-import com.farionik.yandextestapp.di.appModule
+import com.farionik.yandextestapp.di.appApiModule
+import com.farionik.yandextestapp.di.appDatabaseModule
+import com.farionik.yandextestapp.di.appRepositoryModule
+import com.farionik.yandextestapp.di.appViewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -14,7 +17,14 @@ class AndroidApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@AndroidApplication)
-            modules(appModule)
+            modules(
+                listOf(
+                    appApiModule,
+                    appDatabaseModule,
+                    appRepositoryModule,
+                    appViewModelModule
+                )
+            )
         }
     }
 }

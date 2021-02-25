@@ -100,8 +100,8 @@ class CompanyAdapter(private val interaction: Interaction? = null) :
         }
 
         private fun getColorForTextView(value: Double) = run {
-            if (value > 0.0) ContextCompat.getColor(context, R.color.color_percent_green)
-            if (value < 0.0) ContextCompat.getColor(context, R.color.color_percent_red)
+            if (value > 0.0) return@run ContextCompat.getColor(context, R.color.color_percent_green)
+            if (value < 0.0) return@run ContextCompat.getColor(context, R.color.color_percent_red)
             ContextCompat.getColor(context, R.color.color_black)
         }
     }

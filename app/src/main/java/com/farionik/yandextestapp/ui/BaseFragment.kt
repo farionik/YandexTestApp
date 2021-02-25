@@ -40,7 +40,8 @@ abstract class BaseFragment : Fragment() {
     private fun createAdapter() {
         adapter = CompanyAdapter(object : CompanyAdapter.Interaction {
             override fun likeCompany(companyEntity: CompanyEntity, position: Int) {
-                mainViewModel.likeCompany(companyEntity)
+                mainViewModel.
+                likeCompany(companyEntity)
                 if (this@BaseFragment is CompanyFragment) {
                     adapter.notifyItemChanged(position, companyEntity)
                 }

@@ -21,11 +21,8 @@ class FavouriteFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        lifecycleScope.launch {
-            mainViewModel.favouriteCompanyLiveData.collect {
-                adapter.swapData(it)
-            }
-        }
+        mainViewModel.favouriteCompaniesLiveData.observe(viewLifecycleOwner, {
+            adapter.swapData(it)
+        })
     }
 }
