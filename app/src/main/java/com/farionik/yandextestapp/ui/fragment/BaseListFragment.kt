@@ -22,7 +22,9 @@ abstract class BaseListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.recyclerView)
+
         createAdapter()
+
         dataSource.observe(viewLifecycleOwner, { adapter.swapData(it) })
     }
 
