@@ -46,7 +46,6 @@ class MainFragment : Fragment() {
     private fun initPagerAdapter() {
         val pagerAdapter = ScreenSlidePagerAdapter(this)
         viewPager.adapter = pagerAdapter
-        viewPager.isSaveEnabled = false
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             with(tab) {
                 val customTab: TextView =

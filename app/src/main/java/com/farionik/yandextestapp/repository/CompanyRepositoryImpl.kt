@@ -49,7 +49,7 @@ class CompanyRepositoryImpl(
             launch(IO) {
                 val entity = appDatabase.companyDAO().companyEntity(symbol)
                 if (entity != null) {
-                    loadStockPrice(symbol)
+                    //loadStockPrice(symbol)
                 } else {
                     loadCompanyInfo(symbol)
                     loadCompanyLogo(symbol)

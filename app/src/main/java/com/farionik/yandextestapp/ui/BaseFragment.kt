@@ -31,7 +31,7 @@ abstract class BaseFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_stock, container, false)
+        return inflater.inflate(R.layout.fragment_company, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,7 +51,7 @@ abstract class BaseFragment : Fragment() {
 
             override fun openCompanyDetail(companyEntity: CompanyEntity) {
                 mainViewModel.setCompanyDetail(companyEntity)
-                mainActivityListener?.openDetailScreen(CompanyDetailFragment())
+                mainActivityListener?.openScreen(CompanyDetailFragment())
             }
         })
         layoutManager = LinearLayoutManager(context)
