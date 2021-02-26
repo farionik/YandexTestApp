@@ -25,7 +25,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:gravity="center">
@@ -33,7 +33,7 @@
                 <EditText
                     android:id="@+id/editText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:background="@drawable/edit_text_selector"
                     android:drawableStart="@drawable/ic_search"
                     android:drawablePadding="16dp"
@@ -41,7 +41,8 @@
                     android:hint="@string/find_company_or_ticker"
                     android:imeOptions="actionDone"
                     android:inputType="text"
-                    android:padding="16dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
                     android:textColorHint="@color/color_black"
                     android:textCursorDrawable="@drawable/edit_text_cursor_drawable"
                     android:textSize="16sp" />

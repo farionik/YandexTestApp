@@ -27,26 +27,9 @@ class CompanyRepositoryImpl(
         coroutineScope {
             loadSP500().collect {
                 it.add(0, SPStoredModel("YNDX", "Yandex"))
-                val range = it.take(20)
+                val range = it.take(10)
                 for (item in range) {
-                    launch(IO) {
-                        item.run {
-                            val entity = appDatabase.companyDAO().companyEntity(ticker)
-                            if (entity != null) {
-                                loadStockPrice(ticker)
-                            } else {
-
-                                //val loadCompany = async {
-                                loadCompany(ticker)
-                                loadCompanyLogo(ticker)
-                                loadStockPrice(ticker)
-                                //}
-                                //val companyLoaded = loadCompany.await()
-                                //launch { loadCompanyLogo(ticker) }
-                                //launch { loadStockPrice(ticker) }
-                            }
-                        }
-                    }
+                    loadCompany(item.ticker)
                 }
             }
         }
@@ -63,45 +46,53 @@ class CompanyRepositoryImpl(
 
     private suspend fun loadCompany(symbol: String) {
         coroutineScope {
-            val response = api.loadCompany(symbol, TOKEN)
-            Log.i("TAG", "loadCompany: $symbol code=${response.code()}")
-            if (response.isSuccessful) {
-                val companyEntity = response.body()
-                if (companyEntity != null) {
-                    appDatabase.companyDAO().insert(companyEntity)
+            launch(IO) {
+                val entity = appDatabase.companyDAO().companyEntity(symbol)
+                if (entity != null) {
+                    loadStockPrice(symbol)
+                } else {
+                    loadCompanyInfo(symbol)
+                    loadCompanyLogo(symbol)
+                    loadStockPrice(symbol)
                 }
             }
         }
+    }
 
+    private suspend fun loadCompanyInfo(symbol: String) {
+        val response = api.loadCompany(symbol, TOKEN)
+        Log.i("TAG", "loadCompany: $symbol code=${response.code()}")
+        if (response.isSuccessful) {
+            val companyEntity = response.body()
+            if (companyEntity != null) {
+                appDatabase.companyDAO().insert(companyEntity)
+            }
+        }
     }
 
     private suspend fun loadCompanyLogo(symbol: String) {
-        coroutineScope {
-            val response = api.loadCompanyLogo(symbol, TOKEN)
-            Log.i("TAG", "loadCompanyLogo: $symbol code=${response.code()}")
-            if (response.isSuccessful) {
-                val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
-                entity?.run {
-                    logo = response.body()?.url
-                    appDatabase.companyDAO().update(this)
-                }
+        val response = api.loadCompanyLogo(symbol, TOKEN)
+        Log.i("TAG", "loadCompanyLogo: $symbol code=${response.code()}")
+        if (response.isSuccessful) {
+            val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
+            entity?.run {
+                logo = response.body()?.url
+                appDatabase.companyDAO().update(this)
             }
         }
     }
 
     private suspend fun loadStockPrice(symbol: String) {
-        coroutineScope {
-            val response = api.loadCompanyPrice(symbol, TOKEN)
-            Log.i("TAG", "loadStockPrice: $symbol code=${response.code()}")
-            if (response.isSuccessful) {
-                val body = response.body()
-                val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
-                entity?.run {
-                    price = body?.latestPrice
-                    change = body?.change
-                    changePercent = body?.changePercent
-                    appDatabase.companyDAO().update(this)
-                }
+        val response = api.loadCompanyPrice(symbol, TOKEN)
+        Log.i("TAG", "loadStockPrice: $symbol code=${response.code()}")
+        if (response.isSuccessful) {
+            val body = response.body()
+            val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
+            entity?.run {
+                price = body?.latestPrice
+                change = body?.change
+                changePercent = body?.changePercent
+                appDatabase.companyDAO().update(this)
             }
         }
     }

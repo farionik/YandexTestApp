@@ -38,10 +38,9 @@ abstract class BaseFragment : Fragment() {
     }
 
     private fun createAdapter() {
-        adapter = CompanyAdapter(object : CompanyAdapter.Interaction {
+        adapter = CompanyAdapter(interaction = object : CompanyAdapter.Interaction {
             override fun likeCompany(companyEntity: CompanyEntity, position: Int) {
-                mainViewModel.
-                likeCompany(companyEntity)
+                mainViewModel.likeCompany(companyEntity)
                 if (this@BaseFragment is CompanyFragment) {
                     adapter.notifyItemChanged(position, companyEntity)
                 }
@@ -52,24 +51,5 @@ abstract class BaseFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(SpaceItemDecoration())
-
-        /* recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                 super.onScrolled(recyclerView, dx, dy)
-                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                 val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-
-                 val range =
-                     adapter.currentList.subList(firstVisibleItemPosition, lastVisibleItemPosition)
-
-                 Log.i(
-                     "TAG",
-                     "onScrolled: " +
-                             "firstVisible = $firstVisibleItemPosition " +
-                             "lastVisible = $lastVisibleItemPosition " +
-                             "range =  ${range.size}"
-                 )
-             }
-         })*/
     }
 }

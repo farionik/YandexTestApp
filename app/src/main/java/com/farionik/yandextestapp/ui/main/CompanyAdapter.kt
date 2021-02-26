@@ -21,8 +21,10 @@ import com.farionik.yandextestapp.data.CompanyEntity
 import com.farionik.yandextestapp.databinding.RvItemShippetBinding
 import java.util.*
 
-
-class CompanyAdapter(private val interaction: Interaction? = null) :
+class CompanyAdapter(
+    private val isSearch: Boolean = false,
+    private val interaction: Interaction? = null
+) :
     ListAdapter<CompanyEntity, CompanyAdapter.CompanyHolder>(CompanyEntityDC()) {
 
     private lateinit var context: Context
@@ -64,8 +66,16 @@ class CompanyAdapter(private val interaction: Interaction? = null) :
 
         fun bind(item: CompanyEntity) = with(binding) {
             snippet.setBackgroundResource(
-                if (adapterPosition % 2 == 0) R.drawable.snippet_background_dark
-                else R.drawable.snippet_background_light
+                when (isSearch) {
+                    true -> {
+                        if (item.isFavourite) R.drawable.snippet_background_light
+                        else R.drawable.snippet_background_dark
+                    }
+                    false -> {
+                        if (adapterPosition % 2 == 0) R.drawable.snippet_background_dark
+                        else R.drawable.snippet_background_light
+                    }
+                }
             )
 
             Glide
@@ -78,7 +88,7 @@ class CompanyAdapter(private val interaction: Interaction? = null) :
                 .fallback(R.drawable.ic_broken_image)
                 .into(image)
 
-            favourite.apply {
+            favourite.run {
                 if (item.isFavourite) setImageResource(R.drawable.ic_star_gold)
                 else setImageResource(R.drawable.ic_star_grey)
             }
@@ -102,12 +112,11 @@ class CompanyAdapter(private val interaction: Interaction? = null) :
             name.text = item.companyName
         }
 
-        private fun getColorForTextView(value: Double) = run {
-            if (value > 0.0) return@run ContextCompat.getColor(context, R.color.color_percent_green)
-            if (value < 0.0) return@run ContextCompat.getColor(context, R.color.color_percent_red)
-            ContextCompat.getColor(context, R.color.color_black)
-        }
+        private fun getColorForTextView(value: Double) =
+            if (value >= 0.0) ContextCompat.getColor(context, R.color.color_percent_green)
+            else ContextCompat.getColor(context, R.color.color_percent_red)
     }
+
 
     interface Interaction {
         fun likeCompany(companyEntity: CompanyEntity, position: Int)
