@@ -61,7 +61,9 @@ class CompanyAdapter(
 
             if (v?.id == R.id.favourite) {
                 interaction?.likeCompany(clicked, adapterPosition)
+                return
             }
+            interaction?.openCompanyDetail(clicked)
         }
 
         fun bind(item: CompanyEntity) = with(binding) {
@@ -120,6 +122,8 @@ class CompanyAdapter(
 
     interface Interaction {
         fun likeCompany(companyEntity: CompanyEntity, position: Int)
+
+        fun openCompanyDetail(companyEntity: CompanyEntity)
     }
 
     private class CompanyEntityDC : DiffUtil.ItemCallback<CompanyEntity>() {

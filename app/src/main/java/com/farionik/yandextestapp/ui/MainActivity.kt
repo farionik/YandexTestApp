@@ -17,7 +17,7 @@ import com.farionik.yandextestapp.ui.search.SearchResultFragment
 import com.google.android.material.appbar.AppBarLayout
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity(), SearchedClickedListener {
+class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityListener {
 
     private lateinit var searchEditText: EditText
 
@@ -50,6 +50,18 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener {
         openScreen(mainFragment)
     }
 
+    override fun searchModelClicked(model: SearchModel) {
+        with(searchEditText) {
+            model.name.let {
+                setText(it)
+                setSelection(it.length)
+            }
+        }
+    }
+
+
+
+
     private fun openScreen(fragment: Fragment) {
         KeyboardUtils.hideSoftInput(this)
 
@@ -59,12 +71,13 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener {
         }
     }
 
-    override fun searchModelClicked(model: SearchModel) {
-        with(searchEditText) {
-            model.name.let {
-                setText(it)
-                setSelection(it.length)
-            }
+    override fun openDetailScreen(fragment: Fragment) {
+        KeyboardUtils.hideSoftInput(this)
+
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            addToBackStack(null)
+            replace(R.id.fragment_container_view, fragment)
         }
     }
 }

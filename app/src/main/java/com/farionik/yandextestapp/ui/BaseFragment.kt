@@ -1,5 +1,6 @@
 package com.farionik.yandextestapp.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.data.CompanyEntity
 import com.farionik.yandextestapp.ui.main.CompanyAdapter
+import com.farionik.yandextestapp.ui.main.CompanyDetailFragment
 import com.farionik.yandextestapp.ui.main.CompanyFragment
-import com.farionik.yandextestapp.ui.main.FavouriteFragment
 import com.farionik.yandextestapp.ui.main.SpaceItemDecoration
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
@@ -23,6 +24,8 @@ abstract class BaseFragment : Fragment() {
     lateinit var layoutManager: LinearLayoutManager
 
     lateinit var recyclerView: RecyclerView
+
+    protected var mainActivityListener: MainActivityListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,11 +48,23 @@ abstract class BaseFragment : Fragment() {
                     adapter.notifyItemChanged(position, companyEntity)
                 }
             }
+
+            override fun openCompanyDetail(companyEntity: CompanyEntity) {
+                mainViewModel.setCompanyDetail(companyEntity)
+                mainActivityListener?.openDetailScreen(CompanyDetailFragment())
+            }
         })
         layoutManager = LinearLayoutManager(context)
         recyclerView.hasFixedSize()
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(SpaceItemDecoration())
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is MainActivityListener) {
+            mainActivityListener = context
+        }
     }
 }
