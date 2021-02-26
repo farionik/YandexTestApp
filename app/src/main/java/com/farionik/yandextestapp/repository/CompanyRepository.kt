@@ -1,6 +1,6 @@
 package com.farionik.yandextestapp.repository
 
-import com.farionik.yandextestapp.data.CompanyEntity
+import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import kotlinx.coroutines.flow.Flow
 
 interface CompanyRepository {

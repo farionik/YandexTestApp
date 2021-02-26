@@ -3,11 +3,11 @@ package com.farionik.yandextestapp.repository
 import android.content.Context
 import android.util.Log
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.data.AppDatabase
-import com.farionik.yandextestapp.data.CompanyEntity
-import com.farionik.yandextestapp.network.Api
-import com.farionik.yandextestapp.network.SPStoredModel
-import com.farionik.yandextestapp.network.TOKEN
+import com.farionik.yandextestapp.repository.database.AppDatabase
+import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.network.Api
+import com.farionik.yandextestapp.repository.network.SPStoredModel
+import com.farionik.yandextestapp.repository.network.TOKEN
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers.IO

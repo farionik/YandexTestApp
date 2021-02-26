@@ -1,12 +1,11 @@
 package com.farionik.yandextestapp.di
 
 import androidx.room.Room
-import com.farionik.yandextestapp.data.AppDatabase
-import com.farionik.yandextestapp.network.NetworkProvider
-import com.farionik.yandextestapp.network.WebServicesProvider
+import com.farionik.yandextestapp.repository.database.AppDatabase
+import com.farionik.yandextestapp.repository.network.NetworkProvider
 import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.CompanyRepositoryImpl
-import com.farionik.yandextestapp.ui.MainViewModel
+import com.farionik.yandextestapp.view_model.CompanyViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -29,6 +28,6 @@ val appRepositoryModule = module {
 
 val appViewModelModule = module {
     viewModel {
-        MainViewModel(get())
+        CompanyViewModel(get())
     }
 }
