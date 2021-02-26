@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.ui.fragment.main.CompanyAdapter
-import com.farionik.yandextestapp.ui.fragment.detail.CompanyDetailFragment
 import com.farionik.yandextestapp.ui.fragment.main.CompanyFragment
 import com.farionik.yandextestapp.ui.fragment.list_item_decorator.CompanySpaceItemDecoration
 
@@ -31,15 +30,14 @@ abstract class BaseListFragment : BaseFragment() {
     private fun createAdapter() {
         adapter = CompanyAdapter(interaction = object : CompanyAdapter.Interaction {
             override fun likeCompany(companyEntity: CompanyEntity, position: Int) {
-                mainViewModel.likeCompany(companyEntity)
+                companyViewModel.likeCompany(companyEntity)
                 if (this@BaseListFragment is CompanyFragment) {
                     adapter.notifyItemChanged(position, companyEntity)
                 }
             }
 
             override fun openCompanyDetail(companyEntity: CompanyEntity) {
-                mainViewModel.setCompanyDetail(companyEntity)
-                mainActivityListener?.openScreen(CompanyDetailFragment())
+                mainActivityListener?.openDetailScreen(companyEntity.symbol)
             }
         })
         layoutManager = LinearLayoutManager(context)

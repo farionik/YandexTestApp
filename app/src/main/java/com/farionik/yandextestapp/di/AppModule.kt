@@ -28,6 +28,6 @@ val appRepositoryModule = module {
 
 val appViewModelModule = module {
     viewModel {
-        CompanyViewModel(get())
+        CompanyViewModel(get(), get())
     }
 }

@@ -3,11 +3,14 @@ package com.farionik.yandextestapp.view_model
 import androidx.lifecycle.*
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.CompanyRepository
+import com.farionik.yandextestapp.repository.database.AppDatabase
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 
 class CompanyViewModel(
-    private val companyRepository: CompanyRepository
+    private val companyRepository: CompanyRepository,
+    private val appDatabase: AppDatabase
 ) : ViewModel() {
 
     // величина скрола toolBar
@@ -45,7 +48,12 @@ class CompanyViewModel(
         }
     }
 
-    fun setCompanyDetail(companyEntity: CompanyEntity) {
-        _companyDetailModelLiveData.value = companyEntity
+    fun setCompanyDetail(symbol: String) {
+        viewModelScope.launch(Main) {
+            val companyEntity = appDatabase.companyDAO().companyEntity(symbol)
+            companyEntity?.let {
+                _companyDetailModelLiveData.value = it
+            }
+        }
     }
 }

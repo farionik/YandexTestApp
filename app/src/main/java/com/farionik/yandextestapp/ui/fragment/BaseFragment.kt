@@ -14,7 +14,7 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 abstract class BaseFragment : Fragment() {
 
-    val mainViewModel by sharedViewModel<CompanyViewModel>()
+    val companyViewModel by sharedViewModel<CompanyViewModel>()
     lateinit var layoutManager: LinearLayoutManager
 
     protected var mainActivityListener: MainActivityListener? = null

@@ -1,5 +1,6 @@
 package com.farionik.yandextestapp.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
     private lateinit var searchEditText: EditText
     private lateinit var searchViewManager: SearchViewManager
 
-    private val mainViewModel by viewModel<CompanyViewModel>()
+    private val companyViewModel by viewModel<CompanyViewModel>()
 
     private val mainFragment = MainFragment()
 
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
         appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val totalScrollRange = appBarLayout?.totalScrollRange ?: 1
             val percent = (verticalOffset * -1F) / totalScrollRange * 100
-            mainViewModel.appBarOffsetMutableLiveData.postValue(percent.toInt())
+            companyViewModel.appBarOffsetMutableLiveData.postValue(percent.toInt())
         })
 
         searchViewManager = SearchViewManager(searchEditText, this)
@@ -53,6 +54,13 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
                 setSelection(it.length)
             }
         }
+    }
+
+    override fun openDetailScreen(symbol: String) {
+        val intent = Intent(this, CompanyDetailActivity::class.java).apply {
+            putExtra(DETAIL_COMPANY_SYMBOL, symbol)
+        }
+        startActivity(intent)
     }
 
     override fun openScreen(fragment: Fragment, addToBackStack: Boolean) {

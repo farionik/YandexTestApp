@@ -137,8 +137,8 @@ class SearchViewManager(
                     var width = compoundDrawables[DRAWABLE_RIGHT]?.bounds?.width()
                     val padding = resources.getDimensionPixelSize(R.dimen._16sdp)
 
-                    if (width != null) {
-                        if (x >= (right - width - padding)) {
+                    width?.let {
+                        if (x >= (right - it - padding)) {
                             setText("")
                             activityListener.backClicked()
                             return true

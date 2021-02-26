@@ -6,5 +6,5 @@ import com.farionik.yandextestapp.ui.fragment.BaseListFragment
 
 class FavouriteFragment : BaseListFragment() {
     override val dataSource: LiveData<List<CompanyEntity>>
-        get() = mainViewModel.favouriteCompaniesLiveData
+        get() = companyViewModel.favouriteCompaniesLiveData
 }
