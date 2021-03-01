@@ -29,9 +29,14 @@ class CompanyViewModel(
         get() = _favouriteCompaniesLiveData
 
     // выбранная компания на просмотр
-    private val _companyDetailModelLiveData = MutableLiveData<CompanyEntity>()
+    private val _companyDetailSymbolLiveData = MutableLiveData<String>()
     val companyDetailModelLiveData: LiveData<CompanyEntity>
-        get() = _companyDetailModelLiveData
+        get() = Transformations.switchMap(_companyDetailSymbolLiveData) {
+            if (it.isNullOrEmpty()) {
+                return@switchMap null
+            }
+            return@switchMap appDatabase.companyDAO().companyEntityLiveData(it)
+        }
 
 
     init {
@@ -42,18 +47,16 @@ class CompanyViewModel(
         }
     }
 
-    fun likeCompany(companyEntity: CompanyEntity) {
+    fun likeCompany(symbol: String) {
         viewModelScope.launch(IO) {
-            companyRepository.likeCompany(companyEntity)
+            val companyEntity = appDatabase.companyDAO().companyEntity(symbol)
+            companyEntity?.let {
+                companyRepository.likeCompany(companyEntity)
+            }
         }
     }
 
     fun setCompanyDetail(symbol: String) {
-        viewModelScope.launch(Main) {
-            val companyEntity = appDatabase.companyDAO().companyEntity(symbol)
-            companyEntity?.let {
-                _companyDetailModelLiveData.value = it
-            }
-        }
+        _companyDetailSymbolLiveData.value = symbol
     }
 }

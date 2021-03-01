@@ -30,7 +30,7 @@ abstract class BaseListFragment : BaseFragment() {
     private fun createAdapter() {
         adapter = CompanyAdapter(interaction = object : CompanyAdapter.Interaction {
             override fun likeCompany(companyEntity: CompanyEntity, position: Int) {
-                companyViewModel.likeCompany(companyEntity)
+                companyViewModel.likeCompany(companyEntity.symbol)
                 if (this@BaseListFragment is CompanyFragment) {
                     adapter.notifyItemChanged(position, companyEntity)
                 }
