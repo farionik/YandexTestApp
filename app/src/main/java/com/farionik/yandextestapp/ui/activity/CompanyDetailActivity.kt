@@ -1,16 +1,19 @@
 package com.farionik.yandextestapp.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.farionik.yandextestapp.R
+import com.farionik.yandextestapp.databinding.ActivityCompanyDetailBinding
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.ui.fragment.detail.*
+import com.farionik.yandextestapp.ui.util.*
 import com.farionik.yandextestapp.view_model.CompanyViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -19,12 +22,16 @@ const val DETAIL_COMPANY_SYMBOL = "DETAIL_COMPANY_SYMBOL"
 class CompanyDetailActivity : AppCompatActivity() {
 
     private val companyViewModel by viewModel<CompanyViewModel>()
+
     private lateinit var companyID: String
     private var companyEntity: CompanyEntity? = null
 
+    private lateinit var binding: ActivityCompanyDetailBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_company_detail)
+        binding = ActivityCompanyDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         companyID = intent.extras?.getString(DETAIL_COMPANY_SYMBOL) ?: ""
         if (companyID.isEmpty()) {
@@ -34,16 +41,65 @@ class CompanyDetailActivity : AppCompatActivity() {
             companyViewModel.setCompanyDetail(companyID)
         }
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar).apply {
-            navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_back)
-        }
-        setSupportActionBar(toolbar)
+        initViews()
+        subscribeUI()
+    }
 
+    private fun initViews() {
+        binding.toolbar.run {
+            navigationIcon = ContextCompat.getDrawable(context, R.drawable.ic_back)
+            setSupportActionBar(this)
+        }
+
+        initPagerAdapter()
+    }
+
+    private fun initPagerAdapter() {
+
+        val tabTitles = listOf(
+            getString(R.string.tab_chart),
+            getString(R.string.tab_summary),
+            getString(R.string.tab_news),
+            getString(R.string.tab_forecast),
+            getString(R.string.tab_ideas)
+        )
+        val fragments = listOf(
+            ChartFragment(),
+            SummaryFragment(),
+            NewsFragment(),
+            ForecastFragment(),
+            IdeasFragment()
+        )
+
+        for (name in tabTitles) {
+            binding.tabLayout.run {
+                val tab = newTab()
+                val customTab: TextView =
+                    layoutInflater.inflate(R.layout.menu_tab_item, null, false) as TextView
+                customTab.text = name
+                tab.customView = customTab
+                addTab(tab)
+            }
+        }
+
+        binding.tabLayout.run {
+            addTabChangeListener(TabLayoutScreenType.DETAIL_SCREEN)
+            binding.viewPager.adapter = ScreenPagerAdapter(this@CompanyDetailActivity, fragments)
+            initTabLayoutMediator(
+                this,
+                binding.viewPager,
+                TabLayoutScreenType.MAIN_SCREEN,
+                tabTitles
+            )
+        }
+    }
+
+    private fun subscribeUI() {
         companyViewModel.companyDetailModelLiveData.observe(this, {
-            with(toolbar) {
+            with(binding) {
                 companyEntity = it
-                findViewById<TextView>(R.id.tvSymbol).text = it.symbol
-                findViewById<TextView>(R.id.tvCompanyName).text = it.companyName
+                tvSymbol.text = it.symbol
+                tvCompanyName.text = it.companyName
                 invalidateOptionsMenu()
             }
         })
@@ -92,5 +148,13 @@ class CompanyDetailActivity : AppCompatActivity() {
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    inner class ScreenPagerAdapter(
+        activity: FragmentActivity,
+        private val fragments: List<Fragment>
+    ) : FragmentStateAdapter(activity) {
+        override fun getItemCount(): Int = fragments.size
+        override fun createFragment(position: Int): Fragment = fragments[position]
     }
 }
