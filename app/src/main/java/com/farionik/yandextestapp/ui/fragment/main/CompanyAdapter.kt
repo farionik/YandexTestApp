@@ -17,6 +17,9 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.databinding.RvItemShippetBinding
+import com.farionik.yandextestapp.ui.util.formatChangeValue
+import com.farionik.yandextestapp.ui.util.formatPercentValue
+import com.farionik.yandextestapp.ui.util.formatPriceValue
 
 class CompanyAdapter(
     private val isSearch: Boolean = false,
@@ -92,30 +95,14 @@ class CompanyAdapter(
                 else setImageResource(R.drawable.ic_star_grey)
             }
 
-            val totalPriceText = "$${item.price}"
-            binding.price.text = totalPriceText
-
-            item.change?.let {
-                val changeText = "$$it"
-                binding.change.text = changeText
-                binding.change.setTextColor(getColorForTextView(it))
-            }
-
-            item.changePercent?.let {
-                val percentText = " ($it)"
-                binding.percentChange.text = percentText
-                binding.percentChange.setTextColor(getColorForTextView(it))
-            }
+            binding.price.formatPriceValue(item)
+            binding.change.formatChangeValue(item)
+            binding.percentChange.formatPercentValue(item)
 
             ticker.text = item.symbol
             name.text = item.companyName
         }
-
-        private fun getColorForTextView(value: Double) =
-            if (value >= 0.0) ContextCompat.getColor(context, R.color.color_percent_green)
-            else ContextCompat.getColor(context, R.color.color_percent_red)
     }
-
 
     interface Interaction {
         fun likeCompany(companyEntity: CompanyEntity, position: Int)
