@@ -30,10 +30,10 @@ fun initTabLayoutMediator(
             customView = customTab
             customTab.text = titles[position]
 
-            when (position) {
+            /*when (position) {
                 0 -> tab.changeDisplay(true, tabLayoutScreenType)
                 else -> tab.changeDisplay(false, tabLayoutScreenType)
-            }
+            }*/
         }
     }.attach()
 }
@@ -41,11 +41,11 @@ fun initTabLayoutMediator(
 fun TabLayout.addTabChangeListener(tabLayoutScreenType: TabLayoutScreenType) {
     addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
-            tab.changeDisplay(true, tabLayoutScreenType)
+            //tab.changeDisplay(true, tabLayoutScreenType)
         }
 
         override fun onTabUnselected(tab: TabLayout.Tab?) {
-            tab.changeDisplay(false, tabLayoutScreenType)
+            //tab.changeDisplay(false, tabLayoutScreenType)
         }
 
         override fun onTabReselected(tab: TabLayout.Tab?) {

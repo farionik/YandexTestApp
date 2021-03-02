@@ -66,9 +66,7 @@
         android:id="@+id/change"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/color_percent_green"
-        android:textSize="12dp"
-        android:textStyle="bold"
+        style="@style/Snippet.StockPrice"
         app:layout_constraintBottom_toBottomOf="@+id/percentChange"
         app:layout_constraintEnd_toStartOf="@+id/percentChange"
         app:layout_constraintTop_toTopOf="@+id/percentChange"
@@ -78,11 +76,9 @@
         android:id="@+id/percentChange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
         android:layout_marginEnd="12dp"
         tools:text=" (1,15%)"
-        android:textStyle="bold"
-        android:textColor="@color/color_percent_green"
+        style="@style/Snippet.StockPrice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/price" />
 
