@@ -5,6 +5,7 @@ import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.network.NetworkProvider
 import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.CompanyRepositoryImpl
+import com.farionik.yandextestapp.view_model.CompanyDetailViewModel
 import com.farionik.yandextestapp.view_model.CompanyViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -29,5 +30,9 @@ val appRepositoryModule = module {
 val appViewModelModule = module {
     viewModel {
         CompanyViewModel(get(), get())
+    }
+
+    viewModel {
+        CompanyDetailViewModel(get(), get())
     }
 }

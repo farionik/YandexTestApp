@@ -7,5 +7,7 @@ interface MainActivityListener {
 
     fun openScreen(fragment: Fragment, addToBackStack: Boolean = true)
 
+    fun searchAction(request: String)
+
     fun backClicked()
 }

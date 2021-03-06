@@ -89,6 +89,10 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
         }
     }
 
+    override fun searchAction(request: String) {
+        companyViewModel.searchCompanies(request)
+    }
+
     override fun backClicked() {
         lifecycleScope.launch(Dispatchers.Main) {
             delay(200)

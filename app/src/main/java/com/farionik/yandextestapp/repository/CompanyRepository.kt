@@ -7,6 +7,8 @@ interface CompanyRepository {
 
     suspend fun fetchCompanies()
 
+    suspend fun searchCompanies(searchRequest: String)
+
     fun companiesFlow(): Flow<List<CompanyEntity>>
 
     fun favouriteCompaniesFlow(): Flow<List<CompanyEntity>>

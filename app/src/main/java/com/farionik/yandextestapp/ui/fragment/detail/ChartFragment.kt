@@ -27,13 +27,14 @@ class ChartFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        companyViewModel.companyDetailModelLiveData.observe(viewLifecycleOwner, {
+        companyDetailViewModel.companyDetailModelLiveData.observe(viewLifecycleOwner, {
             with(binding) {
                 lastPrice.formatPriceValue(it)
                 tvChange.formatChangeValue(it)
                 tvPercentChange.formatPercentValue(it)
 
-                btnBuy.text = "Buy for $${it.price}"
+                val buyButtonText = "Buy for $${it.price}"
+                btnBuy.text = buyButtonText
             }
         })
     }

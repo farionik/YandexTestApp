@@ -10,11 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.view_model.CompanyViewModel
 import com.farionik.yandextestapp.ui.activity.MainActivityListener
+import com.farionik.yandextestapp.view_model.CompanyDetailViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 abstract class BaseFragment : Fragment() {
 
     val companyViewModel by sharedViewModel<CompanyViewModel>()
+    val companyDetailViewModel by sharedViewModel<CompanyDetailViewModel>()
+
     lateinit var layoutManager: LinearLayoutManager
 
     protected var mainActivityListener: MainActivityListener? = null

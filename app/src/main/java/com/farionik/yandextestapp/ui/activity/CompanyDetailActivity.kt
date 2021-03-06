@@ -14,14 +14,14 @@ import com.farionik.yandextestapp.databinding.ActivityCompanyDetailBinding
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.ui.fragment.detail.*
 import com.farionik.yandextestapp.ui.util.*
-import com.farionik.yandextestapp.view_model.CompanyViewModel
+import com.farionik.yandextestapp.view_model.CompanyDetailViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 const val DETAIL_COMPANY_SYMBOL = "DETAIL_COMPANY_SYMBOL"
 
 class CompanyDetailActivity : AppCompatActivity() {
 
-    private val companyViewModel by viewModel<CompanyViewModel>()
+    private val viewModel by viewModel<CompanyDetailViewModel>()
 
     private lateinit var companyID: String
     private var companyEntity: CompanyEntity? = null
@@ -38,7 +38,7 @@ class CompanyDetailActivity : AppCompatActivity() {
             finish()
             return
         } else {
-            companyViewModel.setCompanyDetail(companyID)
+            viewModel.setCompanyDetail(companyID)
         }
 
         initViews()
@@ -95,7 +95,7 @@ class CompanyDetailActivity : AppCompatActivity() {
     }
 
     private fun subscribeUI() {
-        companyViewModel.companyDetailModelLiveData.observe(this, {
+        viewModel.companyDetailModelLiveData.observe(this, {
             with(binding) {
                 companyEntity = it
                 tvSymbol.text = it.symbol
@@ -144,7 +144,7 @@ class CompanyDetailActivity : AppCompatActivity() {
             true
         }
         R.id.action_favorite -> {
-            companyViewModel.likeCompany(companyID)
+            viewModel.likeCompany(companyID)
             true
         }
         else -> super.onOptionsItemSelected(item)

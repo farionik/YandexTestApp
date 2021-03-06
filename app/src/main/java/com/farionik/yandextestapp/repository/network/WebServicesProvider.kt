@@ -15,29 +15,30 @@ class WebServicesProvider {
         .connectTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    @ExperimentalCoroutinesApi
     private var _webSocketListener: SocketListener? = null
 
-    @ExperimentalCoroutinesApi
     fun startSocket(): Channel<SocketUpdate> =
         with(SocketListener()) {
             startSocket(this)
             this@with.socketEventChannel
         }
 
-    @ExperimentalCoroutinesApi
     fun startSocket(webSocketListener: SocketListener) {
         _webSocketListener = webSocketListener
+
+//        val url = "https://cloud-sse.iexapis.com/stable/stock/yndx&token=${TOKEN}"
+        val url = "https://cloud-sse.iexapis.com/stable/stocksUS?symbols=spy&token=${TOKEN}"
+
         webSocket = socketOkHttpClient.newWebSocket(
             Request.Builder()
-                .url("wss://ws.finnhub.io?token=c0od4cn48v6qah6s5q7g")
+                .url(url)
+                .addHeader("Accept", "text/event-stream")
                 .build(),
             webSocketListener
         )
         socketOkHttpClient.dispatcher.executorService.shutdown()
     }
 
-    @ExperimentalCoroutinesApi
     fun stopSocket() {
         try {
             webSocket?.close(NORMAL_CLOSURE_STATUS, null)

@@ -58,6 +58,7 @@ class SearchViewManager(
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     changeEditTextState(SearchState.SEARCH)
+                    activityListener.searchAction(text.toString())
                     activityListener.openScreen(SearchResultFragment())
                     return true
                 }

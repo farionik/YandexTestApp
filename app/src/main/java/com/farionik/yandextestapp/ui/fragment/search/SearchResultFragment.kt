@@ -24,7 +24,7 @@ class SearchResultFragment : BaseListFragment() {
     }
 
     override val dataSource: LiveData<List<CompanyEntity>>
-        get() = TODO("Not yet implemented")
+        get() = companyViewModel.searchedCompaniesLiveData
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

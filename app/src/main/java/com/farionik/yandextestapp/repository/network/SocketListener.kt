@@ -17,10 +17,10 @@ class SocketListener : WebSocketListener() {
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         Log.i("TAG", "onOpen: ${response.code}")
-        val jsonObject = JSONObject()
+        /*val jsonObject = JSONObject()
         val key = response.headers["Sec-WebSocket-Accept"]
         jsonObject.put("type", "trade")
-        webSocket.send(jsonObject.toString())
+        webSocket.send(jsonObject.toString())*/
     }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {

@@ -35,6 +35,13 @@ class CompanyRepositoryImpl(
         }
     }
 
+    override suspend fun searchCompanies(searchRequest: String) {
+        coroutineScope {
+            val searchCompanies = api.searchCompanies(searchRequest, TOKEN)
+            Log.i("TAG", "searchCompanies: ")
+        }
+    }
+
     private fun loadSP500(): Flow<MutableList<SPStoredModel>> = flow {
         val fileInputStream = context.resources.openRawResource(R.raw.sp_500)
         val bufferedReader = fileInputStream.bufferedReader()
