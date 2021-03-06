@@ -13,5 +13,9 @@ interface CompanyRepository {
 
     fun favouriteCompaniesFlow(): Flow<List<CompanyEntity>>
 
+    // добавить в избранное
     suspend fun likeCompany(companyEntity: CompanyEntity)
+
+    // получить гравики компании
+    suspend fun loadCompanyCharts(symbol: String)
 }

@@ -32,4 +32,11 @@ interface Api {
         @Path("fragment") fragment: String,
         @Query("token") token: String
     ): Response<Any>
+
+    @GET("stable/stock/{symbol}/chart/{range}")
+    suspend fun loadChart(
+        @Path("symbol") symbol: String,
+        @Path("range") range: String,
+        @Query("token") token: String
+    ): Response<List<ChartResponse>>
 }

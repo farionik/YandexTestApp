@@ -3,9 +3,13 @@ package com.farionik.yandextestapp.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import androidx.lifecycle.viewModelScope
 import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 class CompanyDetailViewModel(
     private val companyRepository: CompanyRepository,
@@ -24,5 +28,8 @@ class CompanyDetailViewModel(
 
     fun setCompanyDetail(symbol: String) {
         _companyDetailSymbolLiveData.value = symbol
+        viewModelScope.launch(IO) {
+            companyRepository.loadCompanyCharts(symbol)
+        }
     }
 }

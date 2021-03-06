@@ -7,7 +7,7 @@ import com.farionik.yandextestapp.repository.database.BaseDao
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class CompanyDao : BaseDao<CompanyEntity> {
+abstract class CompanyDAO : BaseDao<CompanyEntity> {
 
     @Query("SELECT * FROM CompanyTable WHERE symbol =:symbol")
     abstract suspend fun companyEntity(symbol: String): CompanyEntity?

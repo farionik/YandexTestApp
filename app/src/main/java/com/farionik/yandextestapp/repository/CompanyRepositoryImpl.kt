@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.AppDatabase
+import com.farionik.yandextestapp.repository.database.chart.ChartEntity
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.Api
 import com.farionik.yandextestapp.repository.network.SPStoredModel
@@ -113,5 +114,28 @@ class CompanyRepositoryImpl(
     override suspend fun likeCompany(companyEntity: CompanyEntity) {
         companyEntity.isFavourite = !companyEntity.isFavourite
         appDatabase.companyDAO().update(companyEntity)
+    }
+
+    override suspend fun loadCompanyCharts(symbol: String) {
+        val ranges = listOf("1d", "7d", "1m", "6m", "1y", "max")
+        coroutineScope {
+            appDatabase.chartDAO().cleanTable()
+
+            ranges.forEach { range ->
+                launch(IO) {
+                    val result = api.loadChart(symbol, range, TOKEN)
+
+                    if (result.isSuccessful) {
+                        val chartList: List<ChartEntity>? = result.body()?.map {
+                            return@map ChartEntity(null, range = range, average = it.average)
+                        }
+                        if (chartList != null) {
+                            appDatabase.chartDAO().insertAll(chartList)
+                            Log.i("TAG", "loadCompanyCharts: $range complete")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
