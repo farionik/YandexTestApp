@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.TextView
 import com.farionik.yandextestapp.R
+import com.farionik.yandextestapp.repository.database.chart.ChartEntity
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
@@ -16,19 +17,16 @@ class ChartMarkerView(context: Context, layoutResource: Int) : MarkerView(contex
     private var tvDate: TextView = findViewById(R.id.tvDate)
 
     override fun refreshContent(e: Entry?, highlight: Highlight?) {
-
-
-        val price = e?.x
-        val date = e?.y
-
-        tvPrice.text = "$123.45"
-        tvDate.text = "3 nov 2020"
-
+        val data = e?.data
+        if (data is ChartEntity) {
+            val priceText = "$${data.price}"
+            tvPrice.text = priceText
+            tvDate.text = data.label
+        }
         super.refreshContent(e, highlight)
     }
 
     override fun getOffset(): MPPointF {
         return MPPointF((-(width / 2)).toFloat(), (-height + 4).toFloat())
     }
-
 }

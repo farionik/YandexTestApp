@@ -86,8 +86,6 @@ class CompanyAdapter(
                 .priority(Priority.HIGH)
                 .transform(CenterCrop(), RoundedCorners(52))
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .error(R.drawable.ic_broken_image)
-                .fallback(R.drawable.ic_broken_image)
                 .into(image)
 
             favourite.run {

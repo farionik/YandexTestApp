@@ -127,7 +127,7 @@ class CompanyRepositoryImpl(
 
                     if (result.isSuccessful) {
                         val chartList: List<ChartEntity>? = result.body()?.map {
-                            return@map ChartEntity(null, range = range, price = it.high)
+                            return@map ChartEntity(range = range, price = it.high, label = it.label)
                         }
                         if (chartList != null) {
                             appDatabase.chartDAO().insertAll(chartList)

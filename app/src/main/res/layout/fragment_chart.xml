@@ -52,13 +52,13 @@
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="40dp"
-        app:layout_constraintTop_toBottomOf="@id/changeRoot"
-        app:layout_constraintBottom_toTopOf="@id/buttonsRoot"
         android:layout_width="0dp"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonsRoot"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/changeRoot" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonsRoot"
@@ -69,12 +69,11 @@
         android:layout_marginBottom="52dp"
         app:layout_constraintBottom_toTopOf="@+id/btnBuy"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
+        <RadioButton
             android:id="@+id/btnChartDay"
-            style="@style/ButtonGreySmall"
+            style="@style/RadioButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_chart_day"
@@ -82,9 +81,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <RadioButton
             android:id="@+id/btnChartWeek"
-            style="@style/ButtonGreySmall"
+            style="@style/RadioButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_chart_week"
@@ -94,9 +93,9 @@
             app:layout_constraintStart_toEndOf="@id/btnChartDay"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <RadioButton
             android:id="@+id/btnChartMonth"
-            style="@style/ButtonGreySmall"
+            style="@style/RadioButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_chart_month"
@@ -106,9 +105,9 @@
             app:layout_constraintStart_toEndOf="@id/btnChartWeek"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <RadioButton
             android:id="@+id/btnChart6Month"
-            style="@style/ButtonGreySmall"
+            style="@style/RadioButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_chart_6_month"
@@ -118,9 +117,9 @@
             app:layout_constraintStart_toEndOf="@id/btnChartMonth"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <RadioButton
             android:id="@+id/btnChartYear"
-            style="@style/ButtonGreySmall"
+            style="@style/RadioButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_chart_year"
@@ -130,16 +129,15 @@
             app:layout_constraintStart_toEndOf="@id/btnChart6Month"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <RadioButton
             android:id="@+id/btnChartAll"
-            style="@style/ButtonBlackSmall"
+            style="@style/RadioButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_chart_all"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

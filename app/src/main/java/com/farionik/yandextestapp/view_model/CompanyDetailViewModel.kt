@@ -1,14 +1,16 @@
 package com.farionik.yandextestapp.view_model
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
+import com.farionik.yandextestapp.repository.database.chart.ChartEntity
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
+import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class CompanyDetailViewModel(
@@ -26,10 +28,21 @@ class CompanyDetailViewModel(
             return@switchMap appDatabase.companyDAO().companyEntityLiveData(it)
         }
 
+    private val _selectedRangeLiveData = MutableLiveData<ChartRange>()
+    val chartLiveData: LiveData<List<ChartEntity>>
+        get() = Transformations.switchMap(_selectedRangeLiveData) {
+            return@switchMap appDatabase.chartDAO().chartLiveData(it)
+        }
+
+
+    fun setChartRange(range: ChartRange) {
+        _selectedRangeLiveData.value = range
+    }
+
     fun setCompanyDetail(symbol: String) {
         _companyDetailSymbolLiveData.value = symbol
         viewModelScope.launch(IO) {
-//            companyRepository.loadCompanyCharts(symbol)
+            //companyRepository.loadCompanyCharts(symbol)
         }
     }
 }
