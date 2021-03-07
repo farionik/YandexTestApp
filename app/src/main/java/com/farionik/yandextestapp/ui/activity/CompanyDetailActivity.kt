@@ -14,6 +14,7 @@ import com.farionik.yandextestapp.databinding.ActivityCompanyDetailBinding
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.ui.fragment.detail.*
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartFragment
+import com.farionik.yandextestapp.ui.fragment.detail.news.NewsFragment
 import com.farionik.yandextestapp.ui.util.*
 import com.farionik.yandextestapp.view_model.CompanyDetailViewModel
 import org.koin.android.viewmodel.ext.android.viewModel

@@ -34,7 +34,9 @@ class CompanyRepositoryImpl(
                 it.add(0, SPStoredModel("YNDX", "Yandex"))
                 val range = it.take(10)
                 for (item in range) {
-                    loadCompany(item.ticker)
+                    launch(IO) {
+                        loadCompany(item.ticker)
+                    }
                 }
             }
         }
@@ -58,15 +60,11 @@ class CompanyRepositoryImpl(
 
     private suspend fun loadCompany(symbol: String) {
         coroutineScope {
-            launch(IO) {
-                val entity = appDatabase.companyDAO().companyEntity(symbol)
-                if (entity != null) {
-                    //loadStockPrice(symbol)
-                } else {
-                    loadCompanyInfo(symbol)
-                    launch { loadCompanyLogo(symbol) }
-                    launch { loadStockPrice(symbol) }
-                }
+            val entity = appDatabase.companyDAO().companyEntity(symbol)
+            if (entity != null) {
+                //loadStockPrice(symbol)
+            } else {
+                loadCompanyInfo(symbol)
             }
         }
     }
@@ -78,6 +76,10 @@ class CompanyRepositoryImpl(
             val companyEntity = response.body()
             if (companyEntity != null) {
                 appDatabase.companyDAO().insert(companyEntity)
+                coroutineScope {
+                    launch { loadCompanyLogo(symbol) }
+                    launch { loadStockPrice(symbol) }
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.farionik.yandextestapp.repository.network
 
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -47,4 +48,10 @@ interface Api {
         @Query("chartSimplify") chartSimplify: Boolean,
         @Query("token") token: String
     ): Response<List<ChartResponse>>
+
+    @GET("stable/stock/{symbol}/news")
+    suspend fun loadNews(
+        @Path("symbol") symbol: String,
+        @Query("token") token: String
+    ): Response<List<NewsEntity>>
 }

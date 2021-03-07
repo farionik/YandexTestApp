@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +14,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.farionik.yandextestapp.R
+import com.farionik.yandextestapp.databinding.RvItemCompanyBinding
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
-import com.farionik.yandextestapp.databinding.RvItemShippetBinding
 import com.farionik.yandextestapp.ui.util.formatChangeValue
 import com.farionik.yandextestapp.ui.util.formatPercentValue
 import com.farionik.yandextestapp.ui.util.formatPriceValue
@@ -32,7 +31,7 @@ class CompanyAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CompanyHolder {
         context = parent.context
         val layoutInflater = LayoutInflater.from(context)
-        val binding = RvItemShippetBinding.inflate(layoutInflater, parent, false)
+        val binding = RvItemCompanyBinding.inflate(layoutInflater, parent, false)
         return CompanyHolder(binding, interaction)
     }
 
@@ -44,7 +43,7 @@ class CompanyAdapter(
     }
 
     inner class CompanyHolder(
-        private val binding: RvItemShippetBinding,
+        private val binding: RvItemCompanyBinding,
         private val interaction: Interaction?
     ) : RecyclerView.ViewHolder(binding.root), OnClickListener {
 

@@ -2,10 +2,12 @@ package com.farionik.yandextestapp.view_model
 
 import androidx.lifecycle.*
 import com.farionik.yandextestapp.repository.CompanyRepository
+import com.farionik.yandextestapp.repository.NewsRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.chart.ChartEntity
 import com.farionik.yandextestapp.repository.database.chart.createChartID
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import com.farionik.yandextestapp.ui.fragment.detail.chart.apiRange
 import com.github.mikephil.charting.data.Entry
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 
 class CompanyDetailViewModel(
     private val companyRepository: CompanyRepository,
+    private val newsRepository: NewsRepository,
     private val appDatabase: AppDatabase
 ) : CompanyViewModel(companyRepository, appDatabase) {
 
@@ -39,6 +42,13 @@ class CompanyDetailViewModel(
             }
         }
 
+    // новости компании
+    val newsLiveData: LiveData<List<NewsEntity>> =
+        Transformations.switchMap(_companyDetailSymbolLiveData) {
+            appDatabase.newsDAO().newsLiveData(it)
+        }
+
+
     fun setChartRange(symbol: String, range: ChartRange) {
         _selectedRangeLiveData.value = range
         viewModelScope.launch(IO) {
@@ -48,5 +58,8 @@ class CompanyDetailViewModel(
 
     fun setCompanyDetail(symbol: String) {
         _companyDetailSymbolLiveData.value = symbol
+        viewModelScope.launch(IO) {
+            newsRepository.fetchNews(symbol)
+        }
     }
 }
