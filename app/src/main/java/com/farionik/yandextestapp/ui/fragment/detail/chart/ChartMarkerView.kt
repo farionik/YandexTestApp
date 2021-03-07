@@ -5,6 +5,7 @@ import android.content.Context
 import android.widget.TextView
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.chart.ChartEntity
+import com.farionik.yandextestapp.repository.database.chart.ChartValues
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
@@ -18,7 +19,7 @@ class ChartMarkerView(context: Context, layoutResource: Int) : MarkerView(contex
 
     override fun refreshContent(e: Entry?, highlight: Highlight?) {
         val data = e?.data
-        if (data is ChartEntity) {
+        if (data is ChartValues) {
             val priceText = "$${data.price}"
             tvPrice.text = priceText
             tvDate.text = data.label

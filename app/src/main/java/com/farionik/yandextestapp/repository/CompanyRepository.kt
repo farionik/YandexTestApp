@@ -1,6 +1,7 @@
 package com.farionik.yandextestapp.repository
 
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import kotlinx.coroutines.flow.Flow
 
 interface CompanyRepository {
@@ -14,8 +15,8 @@ interface CompanyRepository {
     fun favouriteCompaniesFlow(): Flow<List<CompanyEntity>>
 
     // добавить в избранное
-    suspend fun likeCompany(companyEntity: CompanyEntity)
+    suspend fun likeCompany(symbol: String)
 
     // получить гравики компании
-    suspend fun loadCompanyCharts(symbol: String)
+    suspend fun loadCompanyCharts(symbol: String, chartRange: ChartRange)
 }

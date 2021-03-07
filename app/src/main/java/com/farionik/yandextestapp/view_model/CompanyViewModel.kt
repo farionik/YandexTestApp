@@ -56,10 +56,7 @@ open class CompanyViewModel(
 
     fun likeCompany(symbol: String) {
         viewModelScope.launch(IO) {
-            val companyEntity = appDatabase.companyDAO().companyEntity(symbol)
-            companyEntity?.let {
-                companyRepository.likeCompany(companyEntity)
-            }
+            companyRepository.likeCompany(symbol)
         }
     }
 

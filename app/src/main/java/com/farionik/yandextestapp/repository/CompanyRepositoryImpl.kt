@@ -4,11 +4,14 @@ import android.content.Context
 import android.util.Log
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.AppDatabase
-import com.farionik.yandextestapp.repository.database.chart.ChartEntity
+import com.farionik.yandextestapp.repository.database.chart.*
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.Api
 import com.farionik.yandextestapp.repository.network.SPStoredModel
 import com.farionik.yandextestapp.repository.network.TOKEN
+import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
+import com.farionik.yandextestapp.ui.fragment.detail.chart.apiRange
+import com.farionik.yandextestapp.ui.util.getFormattedCurrentDate
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers.IO
@@ -17,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import java.util.*
 
 class CompanyRepositoryImpl(
     private val context: Context,
@@ -111,31 +115,57 @@ class CompanyRepositoryImpl(
     override fun favouriteCompaniesFlow(): Flow<List<CompanyEntity>> =
         appDatabase.companyDAO().favouriteCompanyLiveData()
 
-    override suspend fun likeCompany(companyEntity: CompanyEntity) {
-        companyEntity.isFavourite = !companyEntity.isFavourite
-        appDatabase.companyDAO().update(companyEntity)
+    override suspend fun likeCompany(symbol: String) {
+        coroutineScope {
+            val companyEntity = appDatabase.companyDAO().companyEntity(symbol)
+            companyEntity?.let {
+                companyEntity.isFavourite = !companyEntity.isFavourite
+                appDatabase.companyDAO().update(companyEntity)
+            }
+        }
     }
 
-    override suspend fun loadCompanyCharts(symbol: String) {
-        val ranges = listOf("1d", "7d", "1m", "6m", "1y", "max")
+    override suspend fun loadCompanyCharts(symbol: String, chartRange: ChartRange) {
         coroutineScope {
-            appDatabase.chartDAO().cleanTable()
-
-            ranges.forEach { range ->
-                launch(IO) {
-                    val result = api.loadChart(symbol, range, TOKEN)
-
-                    if (result.isSuccessful) {
-                        val chartList: List<ChartEntity>? = result.body()?.map {
-                            return@map ChartEntity(range = range, price = it.high, label = it.label)
-                        }
-                        if (chartList != null) {
-                            appDatabase.chartDAO().insertAll(chartList)
-                            Log.i("TAG", "loadCompanyCharts: $range complete")
-                        }
-                    }
+            val chartID = createChartID(symbol, chartRange)
+            val chartEntity = appDatabase.chartDAO().chartEntity(chartID)
+            if (chartEntity == null) {
+                createChartData(chartID)
+            } else {
+                if (chartEntity.isNeedUpdate()) {
+                    updateChartData(chartEntity)
                 }
             }
+        }
+    }
+
+    private suspend fun createChartData(chartID: String) {
+        // создать уникальный id для графика
+        val chartEntity = ChartEntity(chartID)
+        appDatabase.chartDAO().insert(chartEntity)
+        updateChartData(chartEntity)
+    }
+
+    private suspend fun updateChartData(chartEntity: ChartEntity) {
+        // для 6m, y, max грузить chartSimplify
+        val result = chartEntity.run {
+            when (val range = chartRange()) {
+                ChartRange.HALF_YEAR,
+                ChartRange.YEAR,
+                ChartRange.ALL -> api.loadChart(chartSymbol(), range.apiRange(), true, TOKEN)
+                else -> api.loadChart(chartSymbol(), range.apiRange(), TOKEN)
+            }
+        }
+
+        if (result.isSuccessful) {
+            val chartValues: List<ChartValues>? = result.body()?.map {
+                return@map ChartValues(it.label, it.high)
+            }
+            chartEntity.lastUpdate = getFormattedCurrentDate()
+            chartEntity.values = chartValues
+
+            appDatabase.chartDAO().update(chartEntity)
+            Log.i("TAG", "loadCompanyCharts: ${chartEntity.chartSymbol()} complete")
         }
     }
 }

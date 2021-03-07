@@ -39,4 +39,12 @@ interface Api {
         @Path("range") range: String,
         @Query("token") token: String
     ): Response<List<ChartResponse>>
+
+    @GET("stable/stock/{symbol}/chart/{range}")
+    suspend fun loadChart(
+        @Path("symbol") symbol: String,
+        @Path("range") range: String,
+        @Query("chartSimplify") chartSimplify: Boolean,
+        @Query("token") token: String
+    ): Response<List<ChartResponse>>
 }

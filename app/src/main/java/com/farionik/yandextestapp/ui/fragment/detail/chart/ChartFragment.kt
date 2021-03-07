@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 class ChartFragment : BaseFragment() {
 
     private lateinit var binding: FragmentChartBinding
+    private lateinit var currentSymbol: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,19 +41,6 @@ class ChartFragment : BaseFragment() {
         initChart()
         initRadioButtons()
         subscribeViewModel()
-
-        companyDetailViewModel.companyDetailModelLiveData.observe(viewLifecycleOwner, {
-            with(binding) {
-                lastPrice.formatPriceValue(it)
-                tvChange.formatChangeValue(it)
-                tvPercentChange.formatPercentValue(it)
-
-                val buyButtonText = "Buy for $${it.price}"
-                btnBuy.text = buyButtonText
-            }
-        })
-
-        setButtonChecked(R.id.btnChartDay)
     }
 
     private fun initChart() {
@@ -86,38 +74,43 @@ class ChartFragment : BaseFragment() {
         }
     }
 
-    private fun setChartData(data: List<ChartEntity>) {
+    private fun setChartData(data: ChartEntity?) {
         lifecycleScope.launch(Dispatchers.Main) {
             val entries = mutableListOf<Entry>()
-            for (entity in data) {
-                val entry = Entry(entity.id.toFloat(), entity.price)
-                entry.data = entity
-                entries.add(entry)
-            }
 
-            val lineDataSet = LineDataSet(entries, "Data set").apply {
-                mode = LineDataSet.Mode.CUBIC_BEZIER
-                cubicIntensity = 0.2f
-                setDrawFilled(true)
-                setDrawCircles(false)
-                setDrawHighlightIndicators(false)
-                lineWidth = 2f
-                circleRadius = 4f
-                setCircleColor(ContextCompat.getColor(binding.chart.context, R.color.black))
-                color = ContextCompat.getColor(binding.chart.context, R.color.black)
-                fillDrawable =
-                    ContextCompat.getDrawable(
-                        binding.chart.context,
-                        R.drawable.chart_fill_background
-                    )
-                fillAlpha = 10
-            }
+            data?.values?.let {
+                for (value in it) {
+                    if (value.price > 0) {
+                        val entry = Entry(it.indexOf(value).toFloat(), value.price)
+                        entry.data = value
+                        entries.add(entry)
+                    }
+                }
 
-            binding.chart.data = LineData(lineDataSet).apply {
-                setValueTextSize(9f)
-                setDrawValues(false)
+                val lineDataSet = LineDataSet(entries, "Data set").apply {
+                    mode = LineDataSet.Mode.CUBIC_BEZIER
+                    cubicIntensity = 0.2f
+                    setDrawFilled(true)
+                    setDrawCircles(false)
+                    setDrawHighlightIndicators(false)
+                    lineWidth = 2f
+                    circleRadius = 4f
+                    setCircleColor(ContextCompat.getColor(binding.chart.context, R.color.black))
+                    color = ContextCompat.getColor(binding.chart.context, R.color.black)
+                    fillDrawable =
+                        ContextCompat.getDrawable(
+                            binding.chart.context,
+                            R.drawable.chart_fill_background
+                        )
+                    fillAlpha = 10
+                }
+
+                binding.chart.data = LineData(lineDataSet).apply {
+                    setValueTextSize(9f)
+                    setDrawValues(false)
+                }
+                binding.chart.invalidate()
             }
-            binding.chart.invalidate()
         }
     }
 
@@ -138,13 +131,19 @@ class ChartFragment : BaseFragment() {
         binding.btnChartYear.isChecked = buttonId == R.id.btnChartYear
         binding.btnChartAll.isChecked = buttonId == R.id.btnChartAll
 
+
+        binding.chart.run {
+            clear()
+            invalidate()
+        }
+
         when (buttonId) {
-            R.id.btnChartDay -> companyDetailViewModel.setChartRange(DAY)
-            R.id.btnChartWeek -> companyDetailViewModel.setChartRange(WEEK)
-            R.id.btnChartMonth -> companyDetailViewModel.setChartRange(MONTH)
-            R.id.btnChart6Month -> companyDetailViewModel.setChartRange(HALF_YEAR)
-            R.id.btnChartYear -> companyDetailViewModel.setChartRange(YEAR)
-            R.id.btnChartAll -> companyDetailViewModel.setChartRange(ALL)
+            R.id.btnChartDay -> companyDetailViewModel.setChartRange(currentSymbol, DAY)
+            R.id.btnChartWeek -> companyDetailViewModel.setChartRange(currentSymbol, WEEK)
+            R.id.btnChartMonth -> companyDetailViewModel.setChartRange(currentSymbol, MONTH)
+            R.id.btnChart6Month -> companyDetailViewModel.setChartRange(currentSymbol, HALF_YEAR)
+            R.id.btnChartYear -> companyDetailViewModel.setChartRange(currentSymbol, YEAR)
+            R.id.btnChartAll -> companyDetailViewModel.setChartRange(currentSymbol, ALL)
             else -> {
 
             }
@@ -152,6 +151,20 @@ class ChartFragment : BaseFragment() {
     }
 
     private fun subscribeViewModel() {
+        companyDetailViewModel.companyDetailModelLiveData.observe(viewLifecycleOwner, {
+            with(binding) {
+                currentSymbol = it.symbol
+                setButtonChecked(R.id.btnChartDay)
+
+                lastPrice.formatPriceValue(it)
+                tvChange.formatChangeValue(it)
+                tvPercentChange.formatPercentValue(it)
+
+                val buyButtonText = "Buy for $${it.price}"
+                btnBuy.text = buyButtonText
+            }
+        })
+
         companyDetailViewModel.chartLiveData.observe(viewLifecycleOwner, { setChartData(it) })
     }
 }
