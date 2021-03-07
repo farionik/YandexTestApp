@@ -8,5 +8,5 @@ data class ChartEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int?,
     var range: String,
-    val average: Float
+    val price: Float
 )

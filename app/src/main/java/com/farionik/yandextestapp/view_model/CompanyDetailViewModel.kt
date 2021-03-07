@@ -29,7 +29,7 @@ class CompanyDetailViewModel(
     fun setCompanyDetail(symbol: String) {
         _companyDetailSymbolLiveData.value = symbol
         viewModelScope.launch(IO) {
-            companyRepository.loadCompanyCharts(symbol)
+//            companyRepository.loadCompanyCharts(symbol)
         }
     }
 }

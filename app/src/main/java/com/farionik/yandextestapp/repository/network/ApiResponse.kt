@@ -10,4 +10,4 @@ data class PriceResponse(
     val changePercent: Double
 )
 
-data class ChartResponse(val average: Float)
+data class ChartResponse(val high: Float)

@@ -60,8 +60,8 @@ class CompanyRepositoryImpl(
                     //loadStockPrice(symbol)
                 } else {
                     loadCompanyInfo(symbol)
-                    loadCompanyLogo(symbol)
-                    loadStockPrice(symbol)
+                    launch { loadCompanyLogo(symbol) }
+                    launch { loadStockPrice(symbol) }
                 }
             }
         }
@@ -127,7 +127,7 @@ class CompanyRepositoryImpl(
 
                     if (result.isSuccessful) {
                         val chartList: List<ChartEntity>? = result.body()?.map {
-                            return@map ChartEntity(null, range = range, average = it.average)
+                            return@map ChartEntity(null, range = range, price = it.high)
                         }
                         if (chartList != null) {
                             appDatabase.chartDAO().insertAll(chartList)

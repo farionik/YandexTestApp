@@ -12,6 +12,7 @@
     <color name="color_snippet_light">#FFFFFF</color>
 
     <color name="color_black">#1A1A1A</color>
+    <color name="color_start_black">#191A1A1A</color>
     <color name="color_gray">#BABABA</color>
 
     <color name="color_yellow">#FFCA1C</color>

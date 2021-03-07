@@ -1,4 +1,4 @@
-package com.farionik.yandextestapp.ui.fragment.detail
+package com.farionik.yandextestapp.ui.fragment.detail.chart
 
 import android.graphics.Color
 import android.os.Bundle
@@ -15,7 +15,6 @@ import com.farionik.yandextestapp.ui.util.formatPriceValue
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.IFillFormatter
 
 class ChartFragment : BaseFragment() {
 
@@ -57,38 +56,49 @@ class ChartFragment : BaseFragment() {
             cubicIntensity = 0.2f
             setDrawFilled(true)
             setDrawCircles(false)
+            setDrawHighlightIndicators(false)
             lineWidth = 2f
             circleRadius = 4f
             setCircleColor(ContextCompat.getColor(binding.chart.context, R.color.black))
-            //highLightColor = Color.rgb(244, 117, 117)
             color = ContextCompat.getColor(binding.chart.context, R.color.black)
-            fillColor = Color.WHITE
-            fillAlpha = 100
-            setDrawHorizontalHighlightIndicator(false)
-            /*set1.setFillFormatter(IFillFormatter { dataSet, dataProvider ->
-                chart.getAxisLeft().getAxisMinimum()
-            })*/
+            fillDrawable =
+                ContextCompat.getDrawable(binding.chart.context, R.drawable.chart_fill_background)
+            fillAlpha = 10
         }
-        val data = LineData(lineDataSet)
-//        data.setValueTypeface(tfLight)
-        data.setValueTextSize(9f)
-        data.setDrawValues(false)
+        val data = LineData(lineDataSet).apply {
+            setValueTextSize(9f)
+            setDrawValues(false)
+        }
 
         binding.chart.run {
             setViewPortOffsets(0f, 0f, 0f, 0f)
             setBackgroundColor(Color.WHITE)
             description.isEnabled = false
-            setTouchEnabled(false)
             isDragEnabled = false
+            setTouchEnabled(true)
             setScaleEnabled(false)
             setPinchZoom(false)
-            setDrawGridBackground(false)
             legend.isEnabled = false
-            //setBackgroundColor(Color.rgb())
+
+            setDrawGridBackground(false)
+            setGridBackgroundColor(Color.WHITE)
+
+            xAxis.setDrawGridLines(false)
+            xAxis.setDrawAxisLine(false)
+
+            axisLeft.setDrawGridLines(false)
+            axisLeft.axisLineColor = Color.WHITE
+
+            axisRight.setDrawGridLines(false)
+
+            animateXY(500, 500)
+
+            val markerView = ChartMarkerView(this.context, R.layout.custom_marker_view)
+            markerView.chartView = this
+            marker = markerView
+
             setData(data)
-            invalidate()
         }
-
-
+        binding.chart.invalidate()
     }
 }
