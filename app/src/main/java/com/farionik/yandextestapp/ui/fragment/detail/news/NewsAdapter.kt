@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -55,16 +56,19 @@ class NewsAdapter(private val interaction: NewsAdapter.Interaction? = null) :
 
         fun bind(item: NewsEntity) = with(binding) {
 
-            snippet.setBackgroundResource(
-                if (adapterPosition % 2 == 0) R.drawable.snippet_background_dark
-                else R.drawable.snippet_background_light
+            snippet.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    if (adapterPosition % 2 == 0) R.color.color_snippet_dark
+                    else R.color.color_snippet_light
+                )
             )
 
             Glide
                 .with(image)
                 .load(item.image)
                 .priority(Priority.HIGH)
-                .transform(CenterCrop(), RoundedCorners(52))
+                .transform(CenterCrop())
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(image)
 
