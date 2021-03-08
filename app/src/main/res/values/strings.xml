@@ -26,6 +26,10 @@
     <string name="btn_chart_year">Y</string>
     <string name="btn_chart_all">All</string>
 
+    <string name="ceo_title">CEO: </string>
+    <string name="website_title">Website: </string>
+    <string name="contact_phone_title">Contact phone: </string>
+    <string name="company_address_title">Company address: </string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
