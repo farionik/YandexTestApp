@@ -23,14 +23,13 @@ class WebServicesProvider {
 
     fun startSocket(): Channel<SocketUpdate> =
         with(SocketListener()) {
-            startSocket(this)
+            startSocket("YNDX")
+            startSocket("AAPL")
             this@with.socketEventChannel
         }
 
-    private fun startSocket(webSocketListener: SocketListener) {
-        _webSocketListener = webSocketListener
-
-        val url = "https://cloud-sse.iexapis.com/stable/stocksusnoutp/?token=${TOKEN}&symbols=yndx"
+    private fun startSocket(symbol: String) {
+        val url = "https://cloud-sse.iexapis.com/stable/stocksusnoutp/?token=${TOKEN}&symbols=$symbol"
         val request: Request = Request.Builder().url(url)
             .addHeader("Accept", "text/event-stream")
             .build()
@@ -77,7 +76,6 @@ class WebServicesProvider {
             }
         }
         val sse = okSse.newServerSentEvent(request, listener)
-        sse.close()
         sse.request()
 
 
