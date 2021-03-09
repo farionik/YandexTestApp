@@ -1,11 +1,15 @@
 package com.farionik.yandextestapp.repository.network
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import android.util.Log
+import com.here.oksse.OkSse
+import com.here.oksse.ServerSentEvent
 import kotlinx.coroutines.channels.Channel
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import okhttp3.WebSocket
 import java.util.concurrent.TimeUnit
+
 
 class WebServicesProvider {
     private var webSocket: WebSocket? = null
@@ -23,30 +27,84 @@ class WebServicesProvider {
             this@with.socketEventChannel
         }
 
-    fun startSocket(webSocketListener: SocketListener) {
+    private fun startSocket(webSocketListener: SocketListener) {
         _webSocketListener = webSocketListener
 
-//        val url = "https://cloud-sse.iexapis.com/stable/stock/yndx&token=${TOKEN}"
-        val url = "https://cloud-sse.iexapis.com/stable/stocksUS?symbols=spy&token=${TOKEN}"
+        val url = "https://cloud-sse.iexapis.com/stable/stocksusnoutp/?token=${TOKEN}&symbols=yndx"
+        val request: Request = Request.Builder().url(url)
+            .addHeader("Accept", "text/event-stream")
+            .build()
+        val okSse = OkSse()
+        val listener = object : ServerSentEvent.Listener {
+            override fun onOpen(sse: ServerSentEvent?, response: Response?) {
+                Log.i("TAG", "onOpen: ")
+            }
 
-        webSocket = socketOkHttpClient.newWebSocket(
+            override fun onMessage(
+                sse: ServerSentEvent?,
+                id: String?,
+                event: String?,
+                message: String?
+            ) {
+                Log.i("TAG", "onMessage: $message")
+            }
+
+            override fun onComment(sse: ServerSentEvent?, comment: String?) {
+                Log.i("TAG", "onComment: ")
+            }
+
+            override fun onRetryTime(sse: ServerSentEvent?, milliseconds: Long): Boolean {
+                Log.i("TAG", "onRetryTime: ")
+                return true
+            }
+
+            override fun onRetryError(
+                sse: ServerSentEvent?,
+                throwable: Throwable?,
+                response: Response?
+            ): Boolean {
+                Log.i("TAG", "onRetryError: $response")
+                return true
+            }
+
+            override fun onClosed(sse: ServerSentEvent?) {
+                Log.i("TAG", "onClosed: ")
+            }
+
+            override fun onPreRetry(sse: ServerSentEvent?, originalRequest: Request): Request {
+                Log.i("TAG", "onPreRetry: ")
+                return originalRequest
+            }
+        }
+        val sse = okSse.newServerSentEvent(request, listener)
+        sse.close()
+        sse.request()
+
+
+
+        /*webSocket = socketOkHttpClient.newWebSocket(
             Request.Builder()
                 .url(url)
                 .addHeader("Accept", "text/event-stream")
                 .build(),
             webSocketListener
         )
-        socketOkHttpClient.dispatcher.executorService.shutdown()
+        socketOkHttpClient.dispatcher.executorService.shutdown()*/
     }
 
     fun stopSocket() {
-        try {
+
+        /*val sse = okSse.newServerSentEvent(request, listener)
+        sse.close()*/
+
+
+        /*try {
             webSocket?.close(NORMAL_CLOSURE_STATUS, null)
             webSocket = null
             _webSocketListener?.socketEventChannel?.close()
             _webSocketListener = null
         } catch (ex: Exception) {
-        }
+        }*/
     }
 
     companion object {
