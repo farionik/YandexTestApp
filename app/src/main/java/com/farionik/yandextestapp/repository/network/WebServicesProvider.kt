@@ -29,7 +29,8 @@ class WebServicesProvider {
         }
 
     private fun startSocket(symbol: String) {
-        val url = "https://cloud-sse.iexapis.com/stable/stocksusnoutp/?token=${TOKEN}&symbols=$symbol"
+        val url = "https://cloud-sse.iexapis.com/stable/stocksusnoutp?token=${TOKEN}&symbols=$symbol"
+//        val url = "https://cloud.iexapis.com/stable/stock/$symbol/quote/latestPrice?token=${TOKEN}"
         val request: Request = Request.Builder().url(url)
             .addHeader("Accept", "text/event-stream")
             .build()
@@ -62,8 +63,8 @@ class WebServicesProvider {
                 throwable: Throwable?,
                 response: Response?
             ): Boolean {
-                Log.i("TAG", "onRetryError: $response")
-                return true
+                Log.i("TAG", "onRetryError: $response ${throwable?.message}")
+                return false
             }
 
             override fun onClosed(sse: ServerSentEvent?) {
@@ -76,7 +77,7 @@ class WebServicesProvider {
             }
         }
         val sse = okSse.newServerSentEvent(request, listener)
-        sse.request()
+        //sse.request()
 
 
 
