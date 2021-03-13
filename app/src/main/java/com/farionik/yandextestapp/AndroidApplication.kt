@@ -8,6 +8,7 @@ import com.farionik.yandextestapp.di.appViewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import timber.log.Timber
 
 class AndroidApplication : Application() {
 
@@ -26,5 +27,9 @@ class AndroidApplication : Application() {
                 )
             )
         }
+
+        Timber.plant(object : Timber.DebugTree() {
+
+        })
     }
 }

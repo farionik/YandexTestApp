@@ -11,3 +11,6 @@ data class PriceResponse(
 )
 
 data class ChartResponse(val high: Float, val label: String)
+
+
+data class IEXSymbolsResponse(val symbol: String, val date: String, val isEnabled: Boolean)

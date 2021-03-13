@@ -6,6 +6,14 @@ import androidx.core.content.ContextCompat
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 
+fun TextView.formatPriceValue(companyEntity: CompanyEntity, callback: () -> Unit) {
+    if (companyEntity.price == null) {
+        callback.invoke()
+    } else {
+        formatPriceValue(companyEntity)
+    }
+}
+
 fun TextView.formatPriceValue(companyEntity: CompanyEntity) {
     val totalPriceText = "$${companyEntity.price}"
     text = totalPriceText

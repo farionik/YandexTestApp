@@ -10,48 +10,34 @@ import java.util.*
 
 interface Api {
 
-    @GET("stable/stock/{symbol}/company")
-    suspend fun loadCompany(
+    @GET("ref-data/iex/symbols")
+    suspend fun loadIEXSymbols(): Response<List<IEXSymbolsResponse>>
+
+    @GET("stock/{symbol}/company")
+    suspend fun loadCompany(@Path("symbol") symbol: String): Response<CompanyEntity>
+
+    @GET("stock/{symbol}/logo")
+    suspend fun loadCompanyLogo(@Path("symbol") symbol: String): Response<LogoResponse>
+
+    @GET("stock/{symbol}/quote")
+    suspend fun loadCompanyPrice(@Path("symbol") symbol: String): Response<PriceResponse>
+
+    @GET("search/{fragment}")
+    suspend fun searchCompanies(@Path("fragment") fragment: String): Response<Any>
+
+    @GET("stock/{symbol}/chart/{range}")
+    suspend fun loadChart(
         @Path("symbol") symbol: String,
-        @Query("token") token: String
-    ): Response<CompanyEntity>
+        @Path("range") range: String
+    ): Response<List<ChartResponse>>
 
-    @GET("stable/stock/{symbol}/logo")
-    suspend fun loadCompanyLogo(
-        @Path("symbol") symbol: String,
-        @Query("token") token: String
-    ): Response<LogoResponse>
-
-    @GET("stable/stock/{symbol}/quote")
-    suspend fun loadCompanyPrice(
-        @Path("symbol") symbol: String,
-        @Query("token") token: String
-    ): Response<PriceResponse>
-
-    @GET("stable/search/{fragment}")
-    suspend fun searchCompanies(
-        @Path("fragment") fragment: String,
-        @Query("token") token: String
-    ): Response<Any>
-
-    @GET("stable/stock/{symbol}/chart/{range}")
+    @GET("stock/{symbol}/chart/{range}")
     suspend fun loadChart(
         @Path("symbol") symbol: String,
         @Path("range") range: String,
-        @Query("token") token: String
+        @Query("chartSimplify") chartSimplify: Boolean
     ): Response<List<ChartResponse>>
 
-    @GET("stable/stock/{symbol}/chart/{range}")
-    suspend fun loadChart(
-        @Path("symbol") symbol: String,
-        @Path("range") range: String,
-        @Query("chartSimplify") chartSimplify: Boolean,
-        @Query("token") token: String
-    ): Response<List<ChartResponse>>
-
-    @GET("stable/stock/{symbol}/news")
-    suspend fun loadNews(
-        @Path("symbol") symbol: String,
-        @Query("token") token: String
-    ): Response<List<NewsEntity>>
+    @GET("stock/{symbol}/news")
+    suspend fun loadNews(@Path("symbol") symbol: String): Response<List<NewsEntity>>
 }

@@ -15,7 +15,7 @@ abstract class CompanyDAO : BaseDao<CompanyEntity> {
     @Query("SELECT * FROM CompanyTable WHERE symbol =:symbol")
     abstract fun companyEntityLiveData(symbol: String): LiveData<CompanyEntity>
 
-    @Query("SELECT * FROM CompanyTable")
+    @Query("SELECT * FROM CompanyTable ORDER BY symbol")
     abstract fun companyFlow(): Flow<List<CompanyEntity>>
 
     @Query("SELECT * FROM CompanyTable WHERE isFavourite IS 1")

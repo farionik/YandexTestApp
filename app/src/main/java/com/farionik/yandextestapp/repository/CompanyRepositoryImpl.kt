@@ -1,14 +1,13 @@
 package com.farionik.yandextestapp.repository
 
 import android.content.Context
-import android.util.Log
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.chart.*
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.Api
+import com.farionik.yandextestapp.repository.network.IEXSymbolsResponse
 import com.farionik.yandextestapp.repository.network.SPStoredModel
-import com.farionik.yandextestapp.repository.network.TOKEN
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import com.farionik.yandextestapp.ui.fragment.detail.chart.apiRange
 import com.farionik.yandextestapp.ui.util.getFormattedCurrentDate
@@ -17,9 +16,9 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 class CompanyRepositoryImpl(
@@ -30,22 +29,58 @@ class CompanyRepositoryImpl(
 
     override suspend fun fetchCompanies() {
         coroutineScope {
-            loadSP500().collect {
-                it.add(0, SPStoredModel("YNDX", "Yandex"))
-                val range = it.take(10)
+            val response = api.loadIEXSymbols()
+            if (response.isSuccessful) {
+
+                val body = response.body() as List<IEXSymbolsResponse>
+                val filtered = body.filter { it.isEnabled }
+
+                launch(IO) {
+                    loadCompany("YNDX")
+                    //loadCompany(item.symbol)
+                }
+                /*launch(IO) {
+                    loadCompany("YNDX")
+                }*/
+                val range = filtered.take(50)
                 for (item in range) {
                     launch(IO) {
-                        loadCompany(item.ticker)
+                        loadCompany(item.symbol)
                     }
                 }
+
+                Timber.d("")
+
+            } else {
+                // TODO: 3/13/21 Показать ошибку 
+                // не удалось получить тикеры компаний
+
+                // возможно надо загрузить 500 локальных
+
+                // если нет соединения, показать об этом сообщение
             }
+
+
+            /* loadSP500().collect {
+                 it.add(0, SPStoredModel("YNDX", "Yandex"))
+                 val range = it.take(5)
+                 for (item in range) {
+                     launch(IO) {
+                         loadCompany(item.ticker)
+                     }
+                 }
+             }*/
         }
+    }
+
+    override suspend fun updateCompany(symbol: String) {
+        loadStockPrice(symbol)
     }
 
     override suspend fun searchCompanies(searchRequest: String) {
         coroutineScope {
-            val searchCompanies = api.searchCompanies(searchRequest, TOKEN)
-            Log.i("TAG", "searchCompanies: ")
+            val searchCompanies = api.searchCompanies(searchRequest)
+            Timber.i("searchCompanies: ")
         }
     }
 
@@ -62,7 +97,7 @@ class CompanyRepositoryImpl(
         coroutineScope {
             val entity = appDatabase.companyDAO().companyEntity(symbol)
             if (entity != null) {
-                //loadStockPrice(symbol)
+                updateCompany(symbol)
             } else {
                 loadCompanyInfo(symbol)
             }
@@ -70,8 +105,8 @@ class CompanyRepositoryImpl(
     }
 
     private suspend fun loadCompanyInfo(symbol: String) {
-        val response = api.loadCompany(symbol, TOKEN)
-        Log.i("TAG", "loadCompany: $symbol code=${response.code()}")
+        val response = api.loadCompany(symbol)
+        Timber.i("loadCompany: $symbol code=${response.code()}")
         if (response.isSuccessful) {
             val companyEntity = response.body()
             if (companyEntity != null) {
@@ -85,8 +120,8 @@ class CompanyRepositoryImpl(
     }
 
     private suspend fun loadCompanyLogo(symbol: String) {
-        val response = api.loadCompanyLogo(symbol, TOKEN)
-        Log.i("TAG", "loadCompanyLogo: $symbol code=${response.code()}")
+        val response = api.loadCompanyLogo(symbol)
+        Timber.i("loadCompanyLogo: $symbol code=${response.code()}")
         if (response.isSuccessful) {
             val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
             entity?.run {
@@ -97,16 +132,23 @@ class CompanyRepositoryImpl(
     }
 
     private suspend fun loadStockPrice(symbol: String) {
-        val response = api.loadCompanyPrice(symbol, TOKEN)
-        Log.i("TAG", "loadStockPrice: $symbol code=${response.code()}")
+        val response = api.loadCompanyPrice(symbol)
+        Timber.i("loadStockPrice: $symbol code=${response.code()}")
         if (response.isSuccessful) {
             val body = response.body()
             val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
+            Timber.d(body.toString())
             entity?.run {
                 price = body?.latestPrice
                 change = body?.change
                 changePercent = body?.changePercent
-                appDatabase.companyDAO().update(this)
+
+
+                try {
+                    appDatabase.companyDAO().update(this)
+                } catch (e: Exception) {
+                    Timber.d(e)
+                }
             }
         }
     }
@@ -154,8 +196,8 @@ class CompanyRepositoryImpl(
             when (val range = chartRange()) {
                 ChartRange.HALF_YEAR,
                 ChartRange.YEAR,
-                ChartRange.ALL -> api.loadChart(chartSymbol(), range.apiRange(), true, TOKEN)
-                else -> api.loadChart(chartSymbol(), range.apiRange(), TOKEN)
+                ChartRange.ALL -> api.loadChart(chartSymbol(), range.apiRange(), true)
+                else -> api.loadChart(chartSymbol(), range.apiRange())
             }
         }
 
@@ -167,7 +209,7 @@ class CompanyRepositoryImpl(
             chartEntity.values = chartValues
 
             appDatabase.chartDAO().update(chartEntity)
-            Log.i("TAG", "loadCompanyCharts: ${chartEntity.chartSymbol()} complete")
+            Timber.i("loadCompanyCharts: ${chartEntity.chartSymbol()} complete")
         }
     }
 }

@@ -29,6 +29,10 @@ abstract class BaseListFragment : BaseFragment() {
 
     private fun createAdapter() {
         adapter = CompanyAdapter(interaction = object : CompanyAdapter.Interaction {
+            override fun fetchCompanyUpdate(companyEntity: CompanyEntity) {
+                companyDetailViewModel.fetchCompany(companyEntity.symbol)
+            }
+
             override fun likeCompany(companyEntity: CompanyEntity, position: Int) {
                 companyViewModel.likeCompany(companyEntity.symbol)
                 if (this@BaseListFragment is CompanyFragment) {

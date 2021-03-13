@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 
-const val TOKEN = "pk_f6ba05ee1c274cbd9547490570c072aa"
+private const val TOKEN = "pk_e2e57a46560f4b36abc4038d74b79228"
 
 class NetworkProvider {
 
@@ -15,13 +15,24 @@ class NetworkProvider {
         .readTimeout(30, TimeUnit.SECONDS)
         .connectTimeout(30, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true)
+        .addInterceptor {
+            val original = it.request()
+            val originalHttpUrl = original.url
+            val url = originalHttpUrl.newBuilder()
+                .addQueryParameter("token", TOKEN)
+                .build()
+
+            val requestBuilder = original.newBuilder().url(url)
+            val request = requestBuilder.build()
+            it.proceed(request)
+        }
         .build()
 
     fun createApi(): Api {
         val gson = GsonBuilder().serializeNulls().create()
 
         return Retrofit.Builder()
-            .baseUrl("https://cloud.iexapis.com/")
+            .baseUrl("https://cloud.iexapis.com/stable/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .addConverterFactory(ScalarsConverterFactory.create())

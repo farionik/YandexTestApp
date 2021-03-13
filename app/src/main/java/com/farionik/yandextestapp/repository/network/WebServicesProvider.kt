@@ -29,7 +29,8 @@ class WebServicesProvider {
         }
 
     private fun startSocket(symbol: String) {
-        val url = "https://cloud-sse.iexapis.com/stable/stocksusnoutp?token=${TOKEN}&symbols=$symbol"
+        val token = "pk_e2e57a46560f4b36abc4038d74b79228";
+        val url = "https://cloud-sse.iexapis.com/stable/stocksusnoutp?token=${token}&symbols=$symbol"
 //        val url = "https://cloud.iexapis.com/stable/stock/$symbol/quote/latestPrice?token=${TOKEN}"
         val request: Request = Request.Builder().url(url)
             .addHeader("Accept", "text/event-stream")

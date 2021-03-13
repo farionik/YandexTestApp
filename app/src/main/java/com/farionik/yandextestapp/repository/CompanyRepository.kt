@@ -8,6 +8,8 @@ interface CompanyRepository {
 
     suspend fun fetchCompanies()
 
+    suspend fun updateCompany(symbol: String)
+
     suspend fun searchCompanies(searchRequest: String)
 
     fun companiesFlow(): Flow<List<CompanyEntity>>

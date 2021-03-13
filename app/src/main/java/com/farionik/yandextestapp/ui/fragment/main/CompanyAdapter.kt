@@ -92,7 +92,9 @@ class CompanyAdapter(
                 else setImageResource(R.drawable.ic_star_grey)
             }
 
-            binding.price.formatPriceValue(item)
+            binding.price.formatPriceValue(item) {
+                interaction?.fetchCompanyUpdate(item)
+            }
             binding.change.formatChangeValue(item)
             binding.percentChange.formatPercentValue(item)
 
@@ -102,6 +104,8 @@ class CompanyAdapter(
     }
 
     interface Interaction {
+        fun fetchCompanyUpdate(companyEntity: CompanyEntity)
+
         fun likeCompany(companyEntity: CompanyEntity, position: Int)
 
         fun openCompanyDetail(companyEntity: CompanyEntity)
@@ -116,6 +120,8 @@ class CompanyAdapter(
         override fun areContentsTheSame(
             oldItem: CompanyEntity,
             newItem: CompanyEntity
-        ): Boolean = oldItem == newItem
+        ): Boolean {
+            return oldItem == newItem
+        }
     }
 }

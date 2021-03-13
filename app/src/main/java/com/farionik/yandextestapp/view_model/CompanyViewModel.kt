@@ -1,13 +1,10 @@
 package com.farionik.yandextestapp.view_model
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
-import com.farionik.yandextestapp.repository.network.WebServicesProvider
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 
 open class CompanyViewModel(
@@ -42,7 +39,9 @@ open class CompanyViewModel(
             // hideLoading
         }
 
-        val webServicesProvider = WebServicesProvider()
+        // запуск sse соединения
+        // много кредитов использует
+        /*val webServicesProvider = WebServicesProvider()
         viewModelScope.launch(IO) {
             try {
                 webServicesProvider.startSocket().consumeEach {
@@ -51,6 +50,12 @@ open class CompanyViewModel(
             } catch (ex: Exception) {
 
             }
+        }*/
+    }
+
+    fun fetchCompany(symbol: String) {
+        viewModelScope.launch {
+            companyRepository.updateCompany(symbol)
         }
     }
 

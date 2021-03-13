@@ -13,10 +13,12 @@ import com.farionik.yandextestapp.ui.fragment.detail.chart.apiRange
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+@ObsoleteCoroutinesApi
 class CompanyDetailViewModel(
     private val companyRepository: CompanyRepository,
     private val newsRepository: NewsRepository,
@@ -60,6 +62,7 @@ class CompanyDetailViewModel(
         _companyDetailSymbolLiveData.value = symbol
         viewModelScope.launch(IO) {
             newsRepository.fetchNews(symbol)
+            companyRepository.updateCompany(symbol)
         }
     }
 }
