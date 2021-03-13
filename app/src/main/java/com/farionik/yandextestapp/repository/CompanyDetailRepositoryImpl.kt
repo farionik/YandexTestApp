@@ -17,7 +17,8 @@ class CompanyDetailRepositoryImpl(
     private val context: Context,
     private val api: Api,
     private val appDatabase: AppDatabase
-) : CompanyRepositoryImpl(context, api, appDatabase), CompanyDetailRepository {
+) : BaseRepository(context), CompanyDetailRepository,
+    CompanyRepository by CompanyRepositoryImpl(context, api, appDatabase) {
 
     override suspend fun loadCompanyInfo(symbol: String): NetworkStatus {
         if (notConnectedToInternet()) {

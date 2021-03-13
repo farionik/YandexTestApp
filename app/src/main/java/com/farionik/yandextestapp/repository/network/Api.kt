@@ -10,9 +10,6 @@ import java.util.*
 
 interface Api {
 
-    @GET("ref-data/iex/symbols")
-    suspend fun loadIEXSymbols(): Response<List<IEXSymbolsResponse>>
-
     @GET("stock/market/list/iexvolume")
     suspend fun fetchCompanies(@Query("listLimit") listLimit: Int): Response<List<CompanyEntity>>
 
@@ -22,8 +19,11 @@ interface Api {
     @GET("stock/{symbol}/logo")
     suspend fun loadCompanyLogo(@Path("symbol") symbol: String): Response<LogoResponse>
 
-    @GET("stock/{symbol}/quote")
-    suspend fun loadCompanyPrice(@Path("symbol") symbol: String): Response<PriceResponse>
+    @GET("stock/market/batch")
+    suspend fun loadCompaniesPrices(
+        @Query("symbols") symbols: String,
+        @Query("types") types: String
+    ): Response<Map<String, Map<String, CompanyEntity>>>
 
     @GET("search/{fragment}")
     suspend fun searchCompanies(@Path("fragment") fragment: String): Response<Any>

@@ -3,7 +3,7 @@ package com.farionik.yandextestapp.repository
 import com.farionik.yandextestapp.repository.network.NetworkStatus
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 
-interface CompanyDetailRepository {
+interface CompanyDetailRepository : CompanyRepository {
     suspend fun loadCompanyInfo(symbol: String): NetworkStatus
 
     // получить гравики компании

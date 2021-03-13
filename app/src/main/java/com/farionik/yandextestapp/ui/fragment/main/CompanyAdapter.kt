@@ -83,6 +83,7 @@ class CompanyAdapter(
                 .with(image)
                 .load(item.logo)
                 .priority(Priority.HIGH)
+                .skipMemoryCache(true)
                 .transform(CenterCrop(), RoundedCorners(52))
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(image)

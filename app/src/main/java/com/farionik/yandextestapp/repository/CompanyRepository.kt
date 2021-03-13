@@ -15,6 +15,8 @@ interface CompanyRepository {
 
     suspend fun loadCompaniesLogo()
 
+    suspend fun loadStockPrice(symbol: String)
+
     suspend fun searchCompanies(searchRequest: String)
 
     // добавить в избранное

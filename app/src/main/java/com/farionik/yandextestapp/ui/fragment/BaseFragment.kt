@@ -29,6 +29,12 @@ abstract class BaseFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_company, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycle.addObserver(companyViewModel)
+        viewLifecycleOwner.lifecycle.addObserver(companyDetailViewModel)
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is MainActivityListener) {

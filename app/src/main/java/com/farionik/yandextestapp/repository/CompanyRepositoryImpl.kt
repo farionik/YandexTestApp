@@ -1,8 +1,6 @@
 package com.farionik.yandextestapp.repository
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
@@ -23,7 +21,7 @@ open class CompanyRepositoryImpl(
     private val context: Context,
     private val api: Api,
     private val appDatabase: AppDatabase
-) : CompanyRepository {
+) : BaseRepository(context), CompanyRepository {
 
     override fun companiesFlow(): Flow<List<CompanyEntity>> =
         appDatabase.companyDAO().companyFlow()
@@ -37,20 +35,54 @@ open class CompanyRepositoryImpl(
         }
 
         val list = appDatabase.companyDAO().companiesList()
-        if (list.isNullOrEmpty()) {
-            val response = api.fetchCompanies(500)
-            return if (response.isSuccessful) {
-                val data = response.body() as List<CompanyEntity>
-                appDatabase.companyDAO().insertAll(data)
-                Timber.d("finish load companies")
-                NetworkStatus.SUCCESS
-            } else {
-                val errorMessage = response.message()
-                NetworkStatus.ERROR(Throwable(errorMessage))
-            }
+        return if (list.isNullOrEmpty()) {
+            loadStartData()
+        } else {
+            updateLocalData()
         }
-        return NetworkStatus.SUCCESS
     }
+
+    private suspend fun loadStartData(): NetworkStatus {
+        val response = api.fetchCompanies(500)
+        return if (response.isSuccessful) {
+            val data = response.body() as List<CompanyEntity>
+            appDatabase.companyDAO().insertAll(data)
+            Timber.d("finish load companies")
+            NetworkStatus.SUCCESS
+        } else {
+            val errorMessage = response.message()
+            NetworkStatus.ERROR(Throwable(errorMessage))
+        }
+    }
+
+    private suspend fun updateLocalData(): NetworkStatus {
+        val companiesList = appDatabase.companyDAO().companiesList()
+        if (companiesList.isNullOrEmpty()) return loadStartData()
+
+        companiesList.by
+
+        val symbols = companiesList.joinToString { it.symbol }
+        val response = api.loadCompaniesPrices(symbols, "quote")
+        return if (response.isSuccessful) {
+            val data = response.body() as Map<String, Map<String, CompanyEntity>>
+            for ((symbol, value) in data) {
+                val companyEntity = value["quote"] as CompanyEntity
+
+                val cachedCompany = appDatabase.companyDAO().companyEntity(symbol)
+                cachedCompany?.run {
+                    latestPrice = companyEntity.latestPrice
+                    change = companyEntity.change
+                    changePercent = companyEntity.changePercent
+                    appDatabase.companyDAO().update(this)
+                }
+            }
+            NetworkStatus.SUCCESS
+        } else {
+            val errorMessage = response.message()
+            NetworkStatus.ERROR(Throwable(errorMessage))
+        }
+    }
+
 
     private fun loadSP500(): Flow<MutableList<SPStoredModel>> = flow {
         val fileInputStream = context.resources.openRawResource(R.raw.sp_500)
@@ -98,9 +130,8 @@ open class CompanyRepositoryImpl(
         }
     }
 
-
-    protected suspend fun loadStockPrice(symbol: String) {
-        val response = api.loadCompanyPrice(symbol)
+    override suspend fun loadStockPrice(symbol: String) {
+        /*val response = api.loadCompaniesPrices(symbol)
         Timber.d("loadStockPrice: $symbol code=${response.code()}")
         if (response.isSuccessful) {
             val body = response.body()
@@ -112,7 +143,7 @@ open class CompanyRepositoryImpl(
                 changePercent = body?.changePercent ?: 0.0
                 appDatabase.companyDAO().update(this)
             }
-        }
+        }*/
     }
 
     override suspend fun likeCompany(symbol: String) {
@@ -124,12 +155,4 @@ open class CompanyRepositoryImpl(
             }
         }
     }
-
-    private fun isConnectedToInternet(): Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        return activeNetwork?.isConnectedOrConnecting == true
-    }
-
-    protected fun notConnectedToInternet() = !isConnectedToInternet()
 }

@@ -1,6 +1,7 @@
 package com.farionik.yandextestapp.view_model
 
 import androidx.lifecycle.*
+import com.farionik.yandextestapp.repository.CompanyDetailRepository
 import com.farionik.yandextestapp.repository.CompanyDetailRepositoryImpl
 import com.farionik.yandextestapp.repository.NewsRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
@@ -13,12 +14,11 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 
-@ObsoleteCoroutinesApi
 class CompanyDetailViewModel(
-    private val companyDetailRepository: CompanyDetailRepositoryImpl,
+    private val companyDetailRepository: CompanyDetailRepository,
     private val newsRepository: NewsRepository,
     private val appDatabase: AppDatabase
-) : ViewModel() {
+) : ViewModel(), LifecycleObserver {
 
     // выбранная компания на просмотр
     private val _companyDetailSymbolLiveData = MutableLiveData<String>()

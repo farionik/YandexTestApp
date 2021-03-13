@@ -6,12 +6,16 @@ import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.NetworkStatus
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 open class CompanyViewModel(
     private val companyRepository: CompanyRepository,
     private val appDatabase: AppDatabase
-) : ViewModel() {
+) : ViewModel(), LifecycleObserver {
     // величина скрола toolBar
     var appBarOffsetMutableLiveData: MutableLiveData<Int> = MutableLiveData()
 
@@ -37,22 +41,31 @@ open class CompanyViewModel(
     val loadingCompaniesStateLiveData: LiveData<NetworkStatus>
         get() = _loadingCompaniesStateLiveData
 
-    init {
-        fetchCompanies()
-    }
+    private var loadingJob: Job? = null
 
     // получить список компаний по рейтенгу api
-    private fun fetchCompanies() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    fun fetchCompanies() {
+        cancelAllJob()
+        Timber.d("start refresh")
         _loadingCompaniesStateLiveData.value = NetworkStatus.LOADING("Loading companies...")
-        viewModelScope.launch(IO) {
+        loadingJob = viewModelScope.launch(IO) {
             val status = try {
                 companyRepository.fetchCompanies()
             } catch (e: Exception) {
                 NetworkStatus.ERROR(Throwable(e.message))
             }
+            Timber.d("finish refresh")
             _loadingCompaniesStateLiveData.postValue(status)
             companyRepository.loadCompaniesLogo()
         }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun cancelAllJob() {
+        Timber.d("cancel job")
+        //viewModelScope.cancel()
+        loadingJob?.cancel()
     }
 
     fun likeCompany(symbol: String) {
