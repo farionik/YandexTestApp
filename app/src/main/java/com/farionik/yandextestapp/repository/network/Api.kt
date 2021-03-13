@@ -13,6 +13,9 @@ interface Api {
     @GET("ref-data/iex/symbols")
     suspend fun loadIEXSymbols(): Response<List<IEXSymbolsResponse>>
 
+    @GET("stock/market/list/iexvolume")
+    suspend fun fetchCompanies(@Query("listLimit") listLimit: Int): Response<List<CompanyEntity>>
+
     @GET("stock/{symbol}/company")
     suspend fun loadCompany(@Path("symbol") symbol: String): Response<CompanyEntity>
 

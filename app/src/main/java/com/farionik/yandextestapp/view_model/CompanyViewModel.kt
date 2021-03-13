@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.network.NetworkStatus
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
@@ -32,30 +33,25 @@ open class CompanyViewModel(
         get() = _searchedCompaniesLiveData
 
 
+    private val _loadingCompaniesStateLiveData = MutableLiveData<NetworkStatus>()
+    val loadingCompaniesStateLiveData: LiveData<NetworkStatus>
+        get() = _loadingCompaniesStateLiveData
+
     init {
-        viewModelScope.launch {
-            // showLoading
-            companyRepository.fetchCompanies()
-            // hideLoading
-        }
-
-        // запуск sse соединения
-        // много кредитов использует
-        /*val webServicesProvider = WebServicesProvider()
-        viewModelScope.launch(IO) {
-            try {
-                webServicesProvider.startSocket().consumeEach {
-                    Log.i("TAG", ": ${it.toString()}")
-                }
-            } catch (ex: Exception) {
-
-            }
-        }*/
+        fetchCompanies()
     }
 
-    fun fetchCompany(symbol: String) {
-        viewModelScope.launch {
-            companyRepository.updateCompany(symbol)
+    // получить список компаний по рейтенгу api
+    private fun fetchCompanies() {
+        _loadingCompaniesStateLiveData.value = NetworkStatus.LOADING("Loading companies...")
+        viewModelScope.launch(IO) {
+            val status = try {
+                companyRepository.fetchCompanies()
+            } catch (e: Exception) {
+                NetworkStatus.ERROR(Throwable(e.message))
+            }
+            _loadingCompaniesStateLiveData.postValue(status)
+            companyRepository.loadCompaniesLogo()
         }
     }
 

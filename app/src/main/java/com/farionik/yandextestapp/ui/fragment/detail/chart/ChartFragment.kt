@@ -159,7 +159,7 @@ class ChartFragment : BaseFragment() {
                 tvChange.formatChangeValue(it)
                 tvPercentChange.formatPercentValue(it)
 
-                val buyButtonText = "Buy for $${it.price}"
+                val buyButtonText = "Buy for $${it.latestPrice}"
                 btnBuy.text = buyButtonText
             }
         })

@@ -1,7 +1,10 @@
 package com.farionik.yandextestapp.ui.fragment
 
 import android.os.Bundle
+import android.os.Message
 import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,11 +19,13 @@ abstract class BaseListFragment : BaseFragment() {
     abstract val dataSource: LiveData<List<CompanyEntity>>
 
     lateinit var recyclerView: RecyclerView
+    lateinit var loadingView: View
     lateinit var adapter: CompanyAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.recyclerView)
+        loadingView = view.findViewById(R.id.loadingView)
 
         createAdapter()
 
@@ -29,10 +34,6 @@ abstract class BaseListFragment : BaseFragment() {
 
     private fun createAdapter() {
         adapter = CompanyAdapter(interaction = object : CompanyAdapter.Interaction {
-            override fun fetchCompanyUpdate(companyEntity: CompanyEntity) {
-                companyDetailViewModel.fetchCompany(companyEntity.symbol)
-            }
-
             override fun likeCompany(companyEntity: CompanyEntity, position: Int) {
                 companyViewModel.likeCompany(companyEntity.symbol)
                 if (this@BaseListFragment is CompanyFragment) {
@@ -49,5 +50,22 @@ abstract class BaseListFragment : BaseFragment() {
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(CompanySpaceItemDecoration())
+    }
+
+    protected fun showProgress(message: String) {
+        recyclerView.visibility = View.GONE
+        loadingView.visibility = View.VISIBLE
+
+        loadingView.findViewById<TextView>(R.id.progressMessage).text = message
+    }
+
+    protected fun hideProgress() {
+        recyclerView.visibility = View.VISIBLE
+        loadingView.visibility = View.GONE
+    }
+
+    protected fun showError(message: String) {
+        hideProgress()
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }
