@@ -9,12 +9,12 @@ import com.farionik.yandextestapp.repository.network.NetworkStatus
 import com.farionik.yandextestapp.repository.network.SPStoredModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.time.measureTimedValue
 
 
 open class CompanyRepositoryImpl(
@@ -59,9 +59,21 @@ open class CompanyRepositoryImpl(
         val companiesList = appDatabase.companyDAO().companiesList()
         if (companiesList.isNullOrEmpty()) return loadStartData()
 
-        companiesList.by
+        val chunked = companiesList.chunked(100)
+        val deferreds = arrayListOf<Deferred<NetworkStatus>>()
+        coroutineScope {
+            for (list in chunked) {
+                val result: Deferred<NetworkStatus> = async { updateDataForCompanies(list) }
+                deferreds.add(result)
+            }
+        }
 
-        val symbols = companiesList.joinToString { it.symbol }
+        val awaitAll = deferreds.awaitAll()
+        return awaitAll.firstOrNull { it is NetworkStatus.ERROR } ?: NetworkStatus.SUCCESS
+    }
+
+    private suspend fun updateDataForCompanies(list: List<CompanyEntity>): NetworkStatus {
+        val symbols = list.joinToString { it.symbol }
         val response = api.loadCompaniesPrices(symbols, "quote")
         return if (response.isSuccessful) {
             val data = response.body() as Map<String, Map<String, CompanyEntity>>
