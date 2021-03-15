@@ -16,6 +16,9 @@ interface Api {
     @GET("stock/{symbol}/company")
     suspend fun loadCompany(@Path("symbol") symbol: String): Response<CompanyEntity>
 
+    @GET("stock/{symbol}/quote")
+    suspend fun loadCompanyStockPrice(@Path("symbol") symbol: String): Response<CompanyEntity>
+
     @GET("stock/{symbol}/logo")
     suspend fun loadCompanyLogo(@Path("symbol") symbol: String): Response<LogoResponse>
 

@@ -150,11 +150,13 @@ class ChartFragment : BaseFragment() {
     }
 
     private fun subscribeViewModel() {
+        companyDetailViewModel.companySymbolLiveData.observe(viewLifecycleOwner, {
+            currentSymbol = it
+            setButtonChecked(R.id.btnChartDay)
+        })
+
         companyDetailViewModel.companyDetailModelLiveData.observe(viewLifecycleOwner, {
             with(binding) {
-                currentSymbol = it.symbol
-                setButtonChecked(R.id.btnChartDay)
-
                 lastPrice.formatPriceValue(it)
                 tvChange.formatChangeValue(it)
                 tvPercentChange.formatPercentValue(it)

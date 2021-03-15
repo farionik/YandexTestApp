@@ -5,11 +5,8 @@ import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.NetworkStatus
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 open class CompanyViewModel(
@@ -53,7 +50,8 @@ open class CompanyViewModel(
             val status = try {
                 companyRepository.fetchCompanies()
             } catch (e: Exception) {
-                NetworkStatus.ERROR(Throwable(e.message))
+                if (e is CancellationException) NetworkStatus.SUCCESS
+                else NetworkStatus.ERROR(Throwable(e.message))
             }
             Timber.d("finish refresh")
             _loadingCompaniesStateLiveData.postValue(status)

@@ -28,8 +28,16 @@ class CompanyDetailRepositoryImpl(
         val response = api.loadCompany(symbol)
         Timber.d("loadCompany: $symbol code=${response.code()}")
         return if (response.isSuccessful) {
-            val companyEntity = response.body() as CompanyEntity
-            appDatabase.companyDAO().update(companyEntity)
+            val company = response.body() as CompanyEntity
+
+            val companyEntity = appDatabase.companyDAO().companyEntity(symbol)
+            companyEntity?.run {
+                company.logo = logo
+                company.latestPrice = latestPrice
+                company.change = change
+                company.changePercent = changePercent
+            }
+            appDatabase.companyDAO().update(company)
             coroutineScope {
                 launch { loadStockPrice(symbol) }
             }

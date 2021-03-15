@@ -27,7 +27,13 @@ fun ChartEntity.chartSymbol(): String = id.split(":")[0]
 fun ChartEntity.isNeedUpdate(): Boolean {
     val date = sdf.parse(lastUpdate) ?: Date()
     val currentDate = Date()
-    return currentDate.after(date)
+
+
+    val interval = 60 * 60 * 1000
+    val diff = (currentDate.time - date.time)
+    return diff > interval
+
+//    return currentDate.after(date)
 
     /*return if (chartRange() == ChartRange.DAY) {
         val interval = 60 * 1000

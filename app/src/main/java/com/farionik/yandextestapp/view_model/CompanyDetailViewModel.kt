@@ -22,14 +22,14 @@ class CompanyDetailViewModel(
 
     // выбранная компания на просмотр
     private val _companyDetailSymbolLiveData = MutableLiveData<String>()
+    val companySymbolLiveData: LiveData<String>
+        get() = _companyDetailSymbolLiveData
     val companyDetailModelLiveData: LiveData<CompanyEntity>
         get() = Transformations.switchMap(_companyDetailSymbolLiveData) {
-            if (it.isNullOrEmpty()) {
-                return@switchMap null
-            }
-            return@switchMap appDatabase.companyDAO().companyEntityLiveData(it)
+            appDatabase.companyDAO().companyEntityLiveData(it)
         }
 
+    // выбранный график
     private val _selectedRangeLiveData = MutableLiveData<ChartRange>()
     val chartLiveData: LiveData<ChartEntity?>
         get() = Transformations.switchMap(_companyDetailSymbolLiveData) { symbol ->
@@ -40,8 +40,8 @@ class CompanyDetailViewModel(
         }
 
     // новости компании
-    val newsLiveData: LiveData<List<NewsEntity>> =
-        Transformations.switchMap(_companyDetailSymbolLiveData) {
+    val newsLiveData: LiveData<List<NewsEntity>>
+        get() = Transformations.switchMap(_companyDetailSymbolLiveData) {
             appDatabase.newsDAO().newsLiveData(it)
         }
 

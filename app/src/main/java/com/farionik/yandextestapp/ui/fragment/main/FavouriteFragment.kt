@@ -1,5 +1,7 @@
 package com.farionik.yandextestapp.ui.fragment.main
 
+import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.LiveData
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.ui.fragment.BaseListFragment
@@ -7,4 +9,9 @@ import com.farionik.yandextestapp.ui.fragment.BaseListFragment
 class FavouriteFragment : BaseListFragment() {
     override val dataSource: LiveData<List<CompanyEntity>>
         get() = companyViewModel.favouriteCompaniesLiveData
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        hideProgress()
+    }
 }

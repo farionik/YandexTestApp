@@ -15,7 +15,7 @@ data class CompanyEntity(
     val industry: String?,
     val website: String?,
     val description: String?,
-    val CEO: String?,
+    var CEO: String?,
     val securityName: String?,
     val issueType: String?,
     val sector: String?,

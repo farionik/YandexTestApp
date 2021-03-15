@@ -14,7 +14,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
-import kotlin.time.measureTimedValue
 
 
 open class CompanyRepositoryImpl(
@@ -143,19 +142,19 @@ open class CompanyRepositoryImpl(
     }
 
     override suspend fun loadStockPrice(symbol: String) {
-        /*val response = api.loadCompaniesPrices(symbol)
+        val response = api.loadCompanyStockPrice(symbol)
         Timber.d("loadStockPrice: $symbol code=${response.code()}")
         if (response.isSuccessful) {
-            val body = response.body()
-            val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
+            val body = response.body() as CompanyEntity
+            val entity = appDatabase.companyDAO().companyEntity(symbol)
             Timber.d(body.toString())
             entity?.run {
-                latestPrice = body?.latestPrice ?: 0.0
-                change = body?.change ?: 0.0
-                changePercent = body?.changePercent ?: 0.0
+                latestPrice = body.latestPrice
+                change = body.change
+                changePercent = body.changePercent
                 appDatabase.companyDAO().update(this)
             }
-        }*/
+        }
     }
 
     override suspend fun likeCompany(symbol: String) {
