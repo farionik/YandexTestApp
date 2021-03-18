@@ -34,6 +34,7 @@ class CompanyDetailRepositoryImpl(
                         company.latestPrice = latestPrice
                         company.change = change
                         company.changePercent = changePercent
+                        company.volume = volume
                     }
                     appDatabase.companyDAO().update(company)
                     coroutineScope {

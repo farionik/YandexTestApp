@@ -34,6 +34,7 @@ data class CompanyEntity(
     var latestPrice: Double,
     var change: Double,
     var changePercent: Double,
+    var volume: Long,
 
     var isFavourite: Boolean = false
 )

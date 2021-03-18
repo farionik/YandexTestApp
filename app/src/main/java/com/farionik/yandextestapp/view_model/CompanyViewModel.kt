@@ -1,14 +1,17 @@
 package com.farionik.yandextestapp.view_model
 
 import androidx.lifecycle.*
+import com.blankj.utilcode.util.NetworkUtils
 import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.NetworkStatus
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
+import com.farionik.yandextestapp.repository.network.noNetworkStatus
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import timber.log.Timber
+import java.lang.Exception
 
 open class CompanyViewModel(
     private val companyRepository: CompanyRepository,
@@ -46,17 +49,21 @@ open class CompanyViewModel(
         cancelAllJob()
 //        webServicesProvider.stopSocket()
 
-        _loadingCompaniesStateLiveData.value = NetworkStatus.LOADING("Loading companies...")
-        loadingJob = viewModelScope.launch(IO) {
-            val status = try {
-                companyRepository.fetchCompanies()
-            } catch (e: Exception) {
-                if (e is CancellationException) NetworkStatus.SUCCESS
-                else NetworkStatus.ERROR(Throwable(e.message))
-            }
+        if (NetworkUtils.isConnected()) {
+            _loadingCompaniesStateLiveData.value = NetworkStatus.LOADING("Loading companies...")
+            loadingJob = viewModelScope.launch(IO) {
+                val status = try {
+                    companyRepository.fetchCompanies()
+                } catch (e: Exception) {
+                    if (e is CancellationException) NetworkStatus.SUCCESS
+                    else NetworkStatus.ERROR(Throwable(e.message))
+                }
 
-            _loadingCompaniesStateLiveData.postValue(status)
-            companyRepository.loadCompaniesLogo()
+                _loadingCompaniesStateLiveData.postValue(status)
+                companyRepository.loadCompaniesLogo()
+            }
+        } else {
+            _loadingCompaniesStateLiveData.value = noNetworkStatus
         }
     }
 

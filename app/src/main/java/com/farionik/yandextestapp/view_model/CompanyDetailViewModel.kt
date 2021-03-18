@@ -1,6 +1,7 @@
 package com.farionik.yandextestapp.view_model
 
 import androidx.lifecycle.*
+import com.blankj.utilcode.util.NetworkUtils
 import com.farionik.yandextestapp.repository.CompanyDetailRepository
 import com.farionik.yandextestapp.repository.CompanyDetailRepositoryImpl
 import com.farionik.yandextestapp.repository.NewsRepository
@@ -9,6 +10,7 @@ import com.farionik.yandextestapp.repository.database.chart.ChartEntity
 import com.farionik.yandextestapp.repository.database.chart.createChartID
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.database.news.NewsEntity
+import com.farionik.yandextestapp.repository.network.NetworkStatus
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -48,22 +50,29 @@ class CompanyDetailViewModel(
 
     fun setChartRange(symbol: String, range: ChartRange) {
         _selectedRangeLiveData.value = range
-        viewModelScope.launch(IO) {
-            companyDetailRepository.loadCompanyCharts(symbol, range)
+        if (NetworkUtils.isConnected()) {
+            viewModelScope.launch(IO) {
+                companyDetailRepository.loadCompanyCharts(symbol, range)
+            }
         }
     }
 
-    fun setCompanyDetail(symbol: String) {
+    fun setSelectedCompanySymbol(symbol: String) {
         _companyDetailSymbolLiveData.value = symbol
-        viewModelScope.launch(IO) {
-            newsRepository.fetchNews(symbol)
-            companyDetailRepository.loadCompanyInfo(symbol)
+
+        if (NetworkUtils.isConnected()) {
+            viewModelScope.launch(IO) {
+                newsRepository.fetchNews(symbol)
+                companyDetailRepository.loadCompanyInfo(symbol)
+            }
         }
     }
 
     fun likeCompany(symbol: String) {
-        viewModelScope.launch {
-            companyDetailRepository.likeCompany(symbol)
+        if (NetworkUtils.isConnected()) {
+            viewModelScope.launch {
+                companyDetailRepository.likeCompany(symbol)
+            }
         }
     }
 }

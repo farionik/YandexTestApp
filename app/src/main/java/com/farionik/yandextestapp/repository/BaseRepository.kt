@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import com.blankj.utilcode.util.NetworkUtils
 import com.farionik.yandextestapp.repository.network.NetworkStatus
+import com.farionik.yandextestapp.repository.network.noNetworkStatus
 
 open class BaseRepository(private val context: Context) {
 
@@ -12,8 +13,7 @@ open class BaseRepository(private val context: Context) {
 
     private fun notConnectedToInternet() = !isConnectedToInternet()
 
-    protected fun checkInternetConnection(): NetworkStatus =
-        if (notConnectedToInternet()) NetworkStatus.ERROR(Throwable("Please check internet connection!"))
+    fun checkInternetConnection(): NetworkStatus =
+        if (notConnectedToInternet()) noNetworkStatus
         else NetworkStatus.SUCCESS
-
 }

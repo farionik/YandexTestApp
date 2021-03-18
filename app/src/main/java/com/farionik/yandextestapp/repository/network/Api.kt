@@ -2,6 +2,7 @@ package com.farionik.yandextestapp.repository.network
 
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.database.news.NewsEntity
+import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

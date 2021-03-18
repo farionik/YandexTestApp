@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.YandexTestApp"
-        android:usesCleartextTraffic="true"
+        android:usesCleartextTraffic="@xml/network_security_config"
         tools:targetApi="m">
 
         <activity

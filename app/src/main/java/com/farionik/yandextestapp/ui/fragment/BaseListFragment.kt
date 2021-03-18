@@ -54,7 +54,10 @@ abstract class BaseListFragment : Fragment(R.layout.fragment_company) {
 
         createAdapter()
 
-        dataSource.observe(viewLifecycleOwner, { adapter.swapData(it) })
+        dataSource.observe(viewLifecycleOwner, {
+            adapter.swapData(it)
+            adapter.notifyDataSetChanged()
+        })
     }
 
     private fun createAdapter() {

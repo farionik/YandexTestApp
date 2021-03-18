@@ -7,6 +7,7 @@ import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.Api
 import com.farionik.yandextestapp.repository.network.NetworkStatus
 import com.farionik.yandextestapp.repository.network.SPStoredModel
+import com.farionik.yandextestapp.repository.network.noNetworkStatus
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
@@ -29,7 +30,7 @@ open class CompanyRepositoryImpl(
         appDatabase.companyDAO().favouriteCompanyLiveData()
 
     override suspend fun fetchCompanies(): NetworkStatus = when (checkInternetConnection()) {
-        is NetworkStatus.ERROR -> checkInternetConnection()
+        is NetworkStatus.ERROR -> noNetworkStatus
         else -> {
             val list = appDatabase.companyDAO().companiesList()
             if (list.isNullOrEmpty()) {
@@ -79,12 +80,8 @@ open class CompanyRepositoryImpl(
                 val companyEntity = value["quote"] as CompanyEntity
 
                 val cachedCompany = appDatabase.companyDAO().companyEntity(symbol)
-                cachedCompany?.run {
-                    latestPrice = companyEntity.latestPrice
-                    change = companyEntity.change
-                    changePercent = companyEntity.changePercent
-                    appDatabase.companyDAO().update(this)
-                }
+                companyEntity.logo = cachedCompany?.logo ?: ""
+                appDatabase.companyDAO().update(companyEntity)
             }
             NetworkStatus.SUCCESS
         } else {
@@ -116,7 +113,7 @@ open class CompanyRepositoryImpl(
                 val list = appDatabase.companyDAO().companiesList()
                 list?.run {
                     forEach {
-                        loadCompanyLogo(it.symbol)
+                        launch(IO) { loadCompanyLogo(it.symbol) }
                     }
                 }
             }
@@ -142,17 +139,11 @@ open class CompanyRepositoryImpl(
 
     override suspend fun loadStockPrice(symbol: String) {
         val response = api.loadCompanyStockPrice(symbol)
-        Timber.d("loadStockPrice: $symbol code=${response.code()}")
         if (response.isSuccessful) {
             val body = response.body() as CompanyEntity
             val entity = appDatabase.companyDAO().companyEntity(symbol)
-            Timber.d(body.toString())
-            entity?.run {
-                latestPrice = body.latestPrice
-                change = body.change
-                changePercent = body.changePercent
-                appDatabase.companyDAO().update(this)
-            }
+            body.logo = entity?.logo ?: ""
+            appDatabase.companyDAO().update(body)
         }
     }
 

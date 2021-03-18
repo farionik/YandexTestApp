@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class CompanyDAO : BaseDao<CompanyEntity> {
 
-    @Query("SELECT * FROM CompanyTable")
+    @Query("SELECT * FROM CompanyTable ORDER BY volume")
     abstract suspend fun companiesList(): List<CompanyEntity>?
 
     @Query("SELECT * FROM CompanyTable WHERE symbol =:symbol")
