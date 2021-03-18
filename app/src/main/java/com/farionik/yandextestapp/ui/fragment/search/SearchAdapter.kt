@@ -9,10 +9,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.farionik.yandextestapp.R
+import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.ui.model.SearchModel
 
 class SearchAdapter(private val interaction: Interaction? = null) :
-    ListAdapter<SearchModel, SearchAdapter.SearchHolder>(SearchModelDC()) {
+    ListAdapter<CompanyEntity, SearchAdapter.SearchHolder>(SearchModelDC()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SearchHolder(
         LayoutInflater.from(parent.context)
@@ -22,7 +23,7 @@ class SearchAdapter(private val interaction: Interaction? = null) :
     override fun onBindViewHolder(holder: SearchHolder, position: Int) =
         holder.bind(getItem(position))
 
-    fun swapData(data: List<SearchModel>) {
+    fun swapData(data: List<CompanyEntity>) {
         submitList(data.toMutableList())
     }
 
@@ -43,28 +44,28 @@ class SearchAdapter(private val interaction: Interaction? = null) :
             interaction?.onModelClicked(clicked)
         }
 
-        fun bind(item: SearchModel) = with(itemView) {
-            findViewById<TextView>(R.id.title).text = item.name
+        fun bind(item: CompanyEntity) = with(itemView) {
+            findViewById<TextView>(R.id.title).text = item.companyName
         }
     }
 
     interface Interaction {
-        fun onModelClicked(model: SearchModel)
+        fun onModelClicked(model: CompanyEntity)
     }
 
-    private class SearchModelDC : DiffUtil.ItemCallback<SearchModel>() {
+    private class SearchModelDC : DiffUtil.ItemCallback<CompanyEntity>() {
         override fun areItemsTheSame(
-            oldItem: SearchModel,
-            newItem: SearchModel
+            oldItem: CompanyEntity,
+            newItem: CompanyEntity
         ): Boolean {
-            return false
+            return oldItem.symbol == newItem.symbol
         }
 
         override fun areContentsTheSame(
-            oldItem: SearchModel,
-            newItem: SearchModel
+            oldItem: CompanyEntity,
+            newItem: CompanyEntity
         ): Boolean {
-            return false
+            return oldItem == newItem
         }
     }
 }

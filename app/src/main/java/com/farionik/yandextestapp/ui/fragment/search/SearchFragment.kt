@@ -5,36 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.farionik.yandextestapp.databinding.FragmentSearchBinding
+import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.ui.fragment.list_item_decorator.SearchSpaceItemDecoration
-import com.farionik.yandextestapp.ui.model.SearchModel
 
-
-class SearchFragment : Fragment() {
-
-    val defaultList = listOf(
-        "Apple",
-        "Amazon",
-        "Google",
-        "Tesla",
-        "Microsoft",
-        "First Solar",
-        "Alibaba",
-        "Facebook",
-        "MasterCard",
-        "Nvidia",
-        "Nokia",
-        "Yandex",
-        "GM",
-        "Baidu",
-        "Intel",
-        "AMD",
-        "Visa",
-        "Bank of America"
-    )
+class SearchFragment : BaseSearchFragment() {
 
     private lateinit var binding: FragmentSearchBinding
     private var searchedClickedListener: SearchedClickedListener? = null
@@ -50,38 +27,31 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        createPopularAdapter()
-        createUserAdapter()
+        val popularAdapter = createAdapter(binding.popularRecyclerView)
+        searchViewModel.popularCompanies.observe(
+            viewLifecycleOwner, { popularAdapter.swapData(it) }
+        )
+
+        val userAdapter = createAdapter(binding.userRequestRecyclerView)
+        searchViewModel.userCompanies.observe(
+            viewLifecycleOwner, { userAdapter.swapData(it) }
+        )
     }
 
-    private fun createPopularAdapter() {
+    private fun createAdapter(recyclerView: RecyclerView): SearchAdapter {
         val adapter = SearchAdapter(object : SearchAdapter.Interaction {
-            override fun onModelClicked(model: SearchModel) {
-                searchedClickedListener?.searchModelClicked(model)
+            override fun onModelClicked(model: CompanyEntity) {
+                //searchedClickedListener?.searchModelClicked(model)
+                // через ViewModel выполнить навигацию в результат fragment
             }
         })
-        val data: List<SearchModel> = defaultList.map { SearchModel(it) }
-        adapter.swapData(data)
-        with(binding.popularRecyclerView) {
+
+        with(recyclerView) {
             layoutManager = StaggeredGridLayoutManager(2, RecyclerView.HORIZONTAL)
             addItemDecoration(SearchSpaceItemDecoration())
             setAdapter(adapter)
         }
-    }
-
-    private fun createUserAdapter() {
-        val adapter = SearchAdapter(object : SearchAdapter.Interaction {
-            override fun onModelClicked(model: SearchModel) {
-                searchedClickedListener?.searchModelClicked(model)
-            }
-        })
-        val data: List<SearchModel> = defaultList.map { SearchModel(it) }
-        adapter.swapData(data)
-        with(binding.userRequestRecyclerView) {
-            layoutManager = StaggeredGridLayoutManager(2, RecyclerView.HORIZONTAL)
-            addItemDecoration(SearchSpaceItemDecoration())
-            setAdapter(adapter)
-        }
+        return adapter
     }
 
     override fun onAttach(context: Context) {

@@ -7,6 +7,7 @@ import com.farionik.yandextestapp.repository.network.NetworkProvider
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
 import com.farionik.yandextestapp.view_model.CompanyDetailViewModel
 import com.farionik.yandextestapp.view_model.CompanyViewModel
+import com.farionik.yandextestapp.view_model.SearchViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -36,5 +37,9 @@ val appViewModelModule = module {
 
     viewModel {
         CompanyDetailViewModel(get(), get(), get())
+    }
+
+    viewModel {
+        SearchViewModel(get())
     }
 }

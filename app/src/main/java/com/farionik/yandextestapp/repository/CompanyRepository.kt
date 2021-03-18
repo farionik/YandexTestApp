@@ -21,4 +21,8 @@ interface CompanyRepository {
 
     // добавить в избранное
     suspend fun likeCompany(symbol: String)
+
+    fun popularCompaniesFlow(): Flow<List<CompanyEntity>>
+
+    fun userCompaniesFlow(): Flow<List<CompanyEntity>>
 }

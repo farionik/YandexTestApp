@@ -14,6 +14,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.take
 import timber.log.Timber
 
 
@@ -155,5 +156,13 @@ open class CompanyRepositoryImpl(
                 appDatabase.companyDAO().update(companyEntity)
             }
         }
+    }
+
+    override fun popularCompaniesFlow(): Flow<List<CompanyEntity>> {
+        return appDatabase.companyDAO().companyFlow().take(10)
+    }
+
+    override fun userCompaniesFlow(): Flow<List<CompanyEntity>> {
+        return appDatabase.companyDAO().companyFlow().take(10)
     }
 }
