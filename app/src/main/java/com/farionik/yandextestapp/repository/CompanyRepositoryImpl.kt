@@ -143,6 +143,7 @@ open class CompanyRepositoryImpl(
         if (response.isSuccessful) {
             val body = response.body() as CompanyEntity
             val entity = appDatabase.companyDAO().companyEntity(symbol)
+            entity?
             body.logo = entity?.logo ?: ""
             appDatabase.companyDAO().update(body)
         }

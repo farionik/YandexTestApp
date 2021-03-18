@@ -3,11 +3,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainActivity">
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.farionik.yandextestapp.ui.fragment.main.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.farionik.yandextestapp.ui.fragment.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
 
     <activity
-        android:id="@+id/mainActivity"
-        android:name="com.farionik.yandextestapp.ui.activity.MainActivity"
-        android:label="activity_main"
-        tools:layout="@layout/activity_main" />
+        android:id="@+id/companyDetailActivity"
+        android:name="com.farionik.yandextestapp.ui.activity.CompanyDetailActivity"
+        android:label="activity_company_detail"
+        tools:layout="@layout/activity_company_detail" />
+
+    <action
+        android:id="@+id/openDetailActivity"
+        app:destination="@id/companyDetailActivity"/>
+
+
 </navigation>

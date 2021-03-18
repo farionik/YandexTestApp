@@ -48,8 +48,9 @@ class SummaryFragment : BaseFragment() {
                 tvCeo.text = it.CEO
 
                 createWebsiteClickableSpan(it.website)
-                tvPhone.text = PhoneNumberUtils.formatNumber(it.phone, "US")
-
+                it.phone?.let { phone ->
+                    tvPhone.text = PhoneNumberUtils.formatNumber(phone, "US")
+                }
 
                 val companyAddress = StringBuilder().apply {
                     it.country?.let { country ->

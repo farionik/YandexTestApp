@@ -6,21 +6,21 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.ui.model.SearchModel
-import com.farionik.yandextestapp.view_model.CompanyViewModel
-import com.farionik.yandextestapp.ui.fragment.search.SearchedClickedListener
-import com.farionik.yandextestapp.ui.fragment.detail.CompanyDetailFragment
 import com.farionik.yandextestapp.ui.fragment.main.MainFragment
 import com.farionik.yandextestapp.ui.fragment.search.SearchViewManager
+import com.farionik.yandextestapp.ui.fragment.search.SearchedClickedListener
+import com.farionik.yandextestapp.ui.model.SearchModel
+import com.farionik.yandextestapp.view_model.CompanyViewModel
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityListener {
 
@@ -28,8 +28,6 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
     private lateinit var searchViewManager: SearchViewManager
 
     private val companyViewModel by viewModel<CompanyViewModel>()
-
-    private val mainFragment = MainFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +42,7 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
         })
 
         searchViewManager = SearchViewManager(searchEditText, this)
-        openScreen(mainFragment, false)
+        //openScreen(mainFragment, false)
     }
 
     override fun searchModelClicked(model: SearchModel) {
@@ -65,28 +63,34 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
 
     override fun openScreen(fragment: Fragment, addToBackStack: Boolean) {
         KeyboardUtils.hideSoftInput(this)
+        Timber.d("")
+        findNavController(R.id.nav_host_fragment)
+            .navigate(R.id.action_mainFragment_to_searchFragment)
 
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
 
-            if (addToBackStack) {
-                addToBackStack(null)
-                setCustomAnimations(
-                    R.anim.slide_in,
-                    R.anim.fade_out,
-                    R.anim.fade_in,
-                    R.anim.slide_out
-                )
+        /*KeyboardUtils.hideSoftInput(this)
+
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+
+                if (addToBackStack) {
+                    addToBackStack(null)
+                    setCustomAnimations(
+                        R.anim.slide_in,
+                        R.anim.fade_out,
+                        R.anim.fade_in,
+                        R.anim.slide_out
+                    )
+                }
+                replace(R.id.fragment_container_view, fragment)
             }
-            replace(R.id.fragment_container_view, fragment)
-        }
 
-        if (fragment is CompanyDetailFragment) {
-            lifecycleScope.launch(Dispatchers.Main) {
-                delay(200)
-                searchEditText.visibility = View.GONE
-            }
-        }
+            if (fragment is CompanyDetailFragment) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    delay(200)
+                    searchEditText.visibility = View.GONE
+                }
+            }*/
     }
 
     override fun searchAction(request: String) {
@@ -94,22 +98,12 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
     }
 
     override fun backClicked() {
-        lifecycleScope.launch(Dispatchers.Main) {
+        searchEditText.visibility = View.VISIBLE
+        findNavController(R.id.nav_host_fragment).popBackStack()
+        /*lifecycleScope.launch(Dispatchers.Main) {
             delay(200)
             searchEditText.visibility = View.VISIBLE
         }
-        supportFragmentManager.popBackStack()
-    }
-
-    override fun onBackPressed() {
-        searchEditText.visibility = View.VISIBLE
-        val backStackEntryCount = supportFragmentManager.backStackEntryCount
-        if (backStackEntryCount > 0) {
-            if (!searchViewManager.systemBackClicked()) {
-                super.onBackPressed()
-            }
-        } else {
-            super.onBackPressed()
-        }
+        supportFragmentManager.popBackStack()*/
     }
 }

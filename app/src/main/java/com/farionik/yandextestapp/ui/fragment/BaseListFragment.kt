@@ -2,24 +2,22 @@ package com.farionik.yandextestapp.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Message
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.ui.activity.MainActivityListener
+import com.farionik.yandextestapp.ui.fragment.list_item_decorator.CompanySpaceItemDecoration
 import com.farionik.yandextestapp.ui.fragment.main.CompanyAdapter
 import com.farionik.yandextestapp.ui.fragment.main.CompanyFragment
-import com.farionik.yandextestapp.ui.fragment.list_item_decorator.CompanySpaceItemDecoration
 import com.farionik.yandextestapp.view_model.CompanyViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
@@ -77,7 +75,6 @@ abstract class BaseListFragment : Fragment(R.layout.fragment_company) {
         recyclerView.hasFixedSize()
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
-        val itemAnimator = recyclerView.itemAnimator
         recyclerView.addItemDecoration(CompanySpaceItemDecoration())
     }
 

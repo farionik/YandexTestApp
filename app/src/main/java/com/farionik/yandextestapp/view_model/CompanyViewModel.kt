@@ -47,6 +47,7 @@ open class CompanyViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun fetchCompanies() {
         cancelAllJob()
+        // подключения sse. Только быстро съедает кредиты api
 //        webServicesProvider.stopSocket()
 
         if (NetworkUtils.isConnected()) {

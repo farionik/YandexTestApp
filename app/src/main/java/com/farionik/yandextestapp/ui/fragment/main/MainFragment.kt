@@ -11,6 +11,7 @@ import com.farionik.yandextestapp.databinding.FragmentMainBinding
 import com.farionik.yandextestapp.ui.util.*
 import com.farionik.yandextestapp.view_model.CompanyViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import timber.log.Timber
 import kotlin.math.roundToInt
 
 class MainFragment : Fragment() {
@@ -70,7 +71,8 @@ class MainFragment : Fragment() {
         binding.tabLayout.invalidateOutline()
     }
 
-    inner class ScreenPagerAdapter (fragment: Fragment, private val fragments: List<Fragment>) : FragmentStateAdapter(fragment) {
+    inner class ScreenPagerAdapter(fragment: Fragment, private val fragments: List<Fragment>) :
+        FragmentStateAdapter(fragment) {
         override fun getItemCount(): Int = fragments.size
         override fun createFragment(position: Int): Fragment = fragments[position]
     }

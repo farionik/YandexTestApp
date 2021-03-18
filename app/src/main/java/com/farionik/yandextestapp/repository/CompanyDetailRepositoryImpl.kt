@@ -29,6 +29,7 @@ class CompanyDetailRepositoryImpl(
                     val company = response.body() as CompanyEntity
 
                     val companyEntity = appDatabase.companyDAO().companyEntity(symbol)
+
                     companyEntity?.run {
                         company.logo = logo
                         company.latestPrice = latestPrice
@@ -36,6 +37,7 @@ class CompanyDetailRepositoryImpl(
                         company.changePercent = changePercent
                         company.volume = volume
                     }
+                    Timber.d("")
                     appDatabase.companyDAO().update(company)
                     coroutineScope {
                         launch { loadStockPrice(symbol) }
