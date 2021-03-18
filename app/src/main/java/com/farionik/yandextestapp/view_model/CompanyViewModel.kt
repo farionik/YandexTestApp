@@ -5,12 +5,14 @@ import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.NetworkStatus
+import com.farionik.yandextestapp.repository.network.WebServicesProvider
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import timber.log.Timber
 
 open class CompanyViewModel(
-    private val companyRepository: CompanyRepository
+    private val companyRepository: CompanyRepository,
+    private val webServicesProvider: WebServicesProvider
 ) : ViewModel(), LifecycleObserver {
     // величина скрола toolBar
     var appBarOffsetMutableLiveData: MutableLiveData<Int> = MutableLiveData()
@@ -42,6 +44,7 @@ open class CompanyViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun fetchCompanies() {
         cancelAllJob()
+//        webServicesProvider.stopSocket()
 
         _loadingCompaniesStateLiveData.value = NetworkStatus.LOADING("Loading companies...")
         loadingJob = viewModelScope.launch(IO) {
@@ -59,6 +62,7 @@ open class CompanyViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun cancelAllJob() {
+        webServicesProvider.stopSocket()
         loadingJob?.cancel()
     }
 
