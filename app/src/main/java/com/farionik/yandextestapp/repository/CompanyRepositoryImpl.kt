@@ -28,16 +28,15 @@ open class CompanyRepositoryImpl(
     override fun favouriteCompaniesFlow(): Flow<List<CompanyEntity>> =
         appDatabase.companyDAO().favouriteCompanyLiveData()
 
-    override suspend fun fetchCompanies(): NetworkStatus {
-        if (notConnectedToInternet()) {
-            return NetworkStatus.ERROR(Throwable("Please check internet connection!"))
-        }
-
-        val list = appDatabase.companyDAO().companiesList()
-        return if (list.isNullOrEmpty()) {
-            loadStartData()
-        } else {
-            updateLocalData()
+    override suspend fun fetchCompanies(): NetworkStatus = when (checkInternetConnection()) {
+        is NetworkStatus.ERROR -> checkInternetConnection()
+        else -> {
+            val list = appDatabase.companyDAO().companiesList()
+            if (list.isNullOrEmpty()) {
+                loadStartData()
+            } else {
+                updateLocalData()
+            }
         }
     }
 

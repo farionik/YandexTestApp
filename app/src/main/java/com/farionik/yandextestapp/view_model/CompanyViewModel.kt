@@ -10,8 +10,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import timber.log.Timber
 
 open class CompanyViewModel(
-    private val companyRepository: CompanyRepository,
-    private val appDatabase: AppDatabase
+    private val companyRepository: CompanyRepository
 ) : ViewModel(), LifecycleObserver {
     // величина скрола toolBar
     var appBarOffsetMutableLiveData: MutableLiveData<Int> = MutableLiveData()
@@ -33,7 +32,6 @@ open class CompanyViewModel(
     val searchedCompaniesLiveData: LiveData<List<CompanyEntity>>
         get() = _searchedCompaniesLiveData
 
-
     private val _loadingCompaniesStateLiveData = MutableLiveData<NetworkStatus>()
     val loadingCompaniesStateLiveData: LiveData<NetworkStatus>
         get() = _loadingCompaniesStateLiveData
@@ -44,7 +42,7 @@ open class CompanyViewModel(
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun fetchCompanies() {
         cancelAllJob()
-        Timber.d("start refresh")
+
         _loadingCompaniesStateLiveData.value = NetworkStatus.LOADING("Loading companies...")
         loadingJob = viewModelScope.launch(IO) {
             val status = try {
@@ -53,7 +51,7 @@ open class CompanyViewModel(
                 if (e is CancellationException) NetworkStatus.SUCCESS
                 else NetworkStatus.ERROR(Throwable(e.message))
             }
-            Timber.d("finish refresh")
+
             _loadingCompaniesStateLiveData.postValue(status)
             companyRepository.loadCompaniesLogo()
         }
@@ -61,8 +59,6 @@ open class CompanyViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun cancelAllJob() {
-        Timber.d("cancel job")
-        //viewModelScope.cancel()
         loadingJob?.cancel()
     }
 

@@ -20,33 +20,32 @@ class CompanyDetailRepositoryImpl(
 ) : BaseRepository(context), CompanyDetailRepository,
     CompanyRepository by CompanyRepositoryImpl(context, api, appDatabase) {
 
-    override suspend fun loadCompanyInfo(symbol: String): NetworkStatus {
-        if (notConnectedToInternet()) {
-            return NetworkStatus.ERROR(Throwable("Please check internet connection!"))
-        }
+    override suspend fun loadCompanyInfo(symbol: String): NetworkStatus =
+        when (checkInternetConnection()) {
+            is NetworkStatus.ERROR -> checkInternetConnection()
+            else -> {
+                val response = api.loadCompany(symbol)
+                if (response.isSuccessful) {
+                    val company = response.body() as CompanyEntity
 
-        val response = api.loadCompany(symbol)
-        Timber.d("loadCompany: $symbol code=${response.code()}")
-        return if (response.isSuccessful) {
-            val company = response.body() as CompanyEntity
-
-            val companyEntity = appDatabase.companyDAO().companyEntity(symbol)
-            companyEntity?.run {
-                company.logo = logo
-                company.latestPrice = latestPrice
-                company.change = change
-                company.changePercent = changePercent
+                    val companyEntity = appDatabase.companyDAO().companyEntity(symbol)
+                    companyEntity?.run {
+                        company.logo = logo
+                        company.latestPrice = latestPrice
+                        company.change = change
+                        company.changePercent = changePercent
+                    }
+                    appDatabase.companyDAO().update(company)
+                    coroutineScope {
+                        launch { loadStockPrice(symbol) }
+                    }
+                    NetworkStatus.SUCCESS
+                } else {
+                    val errorMessage = response.message()
+                    NetworkStatus.ERROR(Throwable(errorMessage))
+                }
             }
-            appDatabase.companyDAO().update(company)
-            coroutineScope {
-                launch { loadStockPrice(symbol) }
-            }
-            NetworkStatus.SUCCESS
-        } else {
-            val errorMessage = response.message()
-            NetworkStatus.ERROR(Throwable(errorMessage))
         }
-    }
 
     override suspend fun loadCompanyCharts(symbol: String, chartRange: ChartRange) {
         coroutineScope {

@@ -14,7 +14,6 @@ class NetworkProvider {
     private val okHttpClient = OkHttpClient.Builder()
         .readTimeout(30, TimeUnit.SECONDS)
         .connectTimeout(30, TimeUnit.SECONDS)
-        .retryOnConnectionFailure(true)
         .addInterceptor {
             val original = it.request()
             val originalHttpUrl = original.url
