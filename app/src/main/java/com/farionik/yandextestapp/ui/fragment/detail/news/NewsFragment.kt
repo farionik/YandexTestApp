@@ -40,7 +40,7 @@ class NewsFragment : BaseFragment() {
                 startActivity(intent)
             }
         })
-        layoutManager = LinearLayoutManager(context)
+        val layoutManager = LinearLayoutManager(context)
         recyclerView.hasFixedSize()
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter

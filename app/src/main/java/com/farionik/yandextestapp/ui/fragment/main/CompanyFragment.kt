@@ -20,12 +20,6 @@ class CompanyFragment : BaseListFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val swipe = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
-        swipe.setOnRefreshListener {
-            swipe.isRefreshing = false
-            companyViewModel.fetchCompanies()
-        }
-
         companyViewModel.loadingCompaniesStateLiveData.observe(viewLifecycleOwner, {
             when (it) {
                 is NetworkStatus.SUCCESS -> hideProgress()
