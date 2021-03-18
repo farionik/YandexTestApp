@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
@@ -73,6 +74,7 @@ abstract class BaseListFragment : Fragment(R.layout.fragment_company) {
         recyclerView.hasFixedSize()
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
+        val itemAnimator = recyclerView.itemAnimator
         recyclerView.addItemDecoration(CompanySpaceItemDecoration())
     }
 

@@ -53,16 +53,13 @@ class CompanyAdapter(
         }
 
         override fun onClick(v: View?) {
-
             if (adapterPosition == RecyclerView.NO_POSITION) return
-
             val clicked = getItem(adapterPosition)
-
             if (v?.id == R.id.favourite) {
                 interaction?.likeCompany(clicked, adapterPosition)
-                return
+            } else {
+                interaction?.openCompanyDetail(clicked)
             }
-            interaction?.openCompanyDetail(clicked)
         }
 
         fun bind(item: CompanyEntity) = with(binding) {
@@ -83,9 +80,8 @@ class CompanyAdapter(
                 .with(image)
                 .load(item.logo)
                 .priority(Priority.HIGH)
-                .skipMemoryCache(true)
                 .transform(CenterCrop(), RoundedCorners(52))
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(image)
 
             favourite.run {
