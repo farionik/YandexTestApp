@@ -3,24 +3,17 @@ package com.farionik.yandextestapp.ui.fragment.main
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.lifecycleScope
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.NetworkStatus
-import com.farionik.yandextestapp.ui.fragment.BaseListFragment
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class CompanyFragment : BaseListFragment() {
-    override val dataSource: LiveData<List<CompanyEntity>>
-        get() = companyViewModel.companiesLiveData
+    override val dataSource: LiveData<List<StockModelRelation>>
+        get() = stockViewModel.stocksLiveData
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        companyViewModel.loadingCompaniesStateLiveData.observe(viewLifecycleOwner, {
+        stockViewModel.loadingStocksStateLiveData.observe(viewLifecycleOwner, {
             when (it) {
                 is NetworkStatus.SUCCESS -> hideProgress()
                 is NetworkStatus.LOADING -> showProgress(it.message)

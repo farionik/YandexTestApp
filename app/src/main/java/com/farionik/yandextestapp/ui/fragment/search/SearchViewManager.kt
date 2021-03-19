@@ -82,7 +82,7 @@ class SearchViewManager(
 
     private fun EditText.initFilter() {
         // фильтровать ввод пробела как первого символа
-        val filter = InputFilter { source, start, end, dest, _, _ ->
+        val filter = InputFilter { source, start, _, _, _, _ ->
             if ((start == 0) and source.toString().isBlank()) {
                 return@InputFilter ""
             }
@@ -92,7 +92,6 @@ class SearchViewManager(
     }
 
     private fun EditText.changeEditTextState(s: SearchState) {
-        Log.i("TAG", "changeEditTextState: ")
         state = s
         fun getDrawable(resourceId: Int) = ContextCompat.getDrawable(context, resourceId)
 

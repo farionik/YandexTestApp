@@ -5,9 +5,10 @@ import com.farionik.yandextestapp.repository.*
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.network.NetworkProvider
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
-import com.farionik.yandextestapp.view_model.CompanyDetailViewModel
 import com.farionik.yandextestapp.view_model.CompanyViewModel
+import com.farionik.yandextestapp.view_model.StockViewModel
 import com.farionik.yandextestapp.view_model.SearchViewModel
+import com.github.terrakok.cicerone.Cicerone
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -25,21 +26,27 @@ val appDatabaseModule = module {
 }
 
 val appRepositoryModule = module {
-    single<CompanyRepository> { CompanyRepositoryImpl(get(), get(), get()) }
-    single<CompanyDetailRepository> { CompanyDetailRepositoryImpl(get(), get(), get()) }
+    single<StockRepository> { StockRepositoryImpl(get(), get()) }
+    single<CompanyRepository> { CompanyRepositoryImpl(get(), get()) }
     single<NewsRepository> { NewsRepositoryImpl(get(), get()) }
+    single<LogoRepository> { LogoRepositoryImpl(get(), get()) }
 }
 
 val appViewModelModule = module {
     viewModel {
-        CompanyViewModel(get(), get())
+        StockViewModel(get(), get(), get(), get())
     }
 
     viewModel {
-        CompanyDetailViewModel(get(), get(), get())
+        CompanyViewModel(get(), get(), get())
     }
 
     viewModel {
-        SearchViewModel(get())
+        SearchViewModel(get(), get())
     }
+}
+
+val navigationModule = module {
+    single { Cicerone.create().router }
+    single { Cicerone.create().getNavigatorHolder() }
 }

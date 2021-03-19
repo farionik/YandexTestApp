@@ -6,6 +6,7 @@ data class SPStoredModel(
 )
 
 data class LogoResponse(val url: String)
+
 data class ChartResponse(
     val high: Float,
     val label: String

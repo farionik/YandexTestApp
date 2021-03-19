@@ -1,0 +1,30 @@
+package com.farionik.yandextestapp.repository.database.company
+
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Transaction
+import com.farionik.yandextestapp.repository.database.BaseDao
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+abstract class StockDAO : BaseDao<StockEntity> {
+
+    @Query("SELECT * FROM StockTable ORDER BY volume")
+    abstract suspend fun stockList(): List<StockEntity>?
+
+    @Query("SELECT * FROM StockTable WHERE symbol =:symbol")
+    abstract suspend fun stockEntity(symbol: String): StockEntity
+
+    @Transaction
+    @Query("SELECT * FROM StockTable WHERE symbol =:symbol")
+    abstract fun stockEntityLiveData(symbol: String): LiveData<StockModelRelation>
+
+    @Transaction
+    @Query("SELECT * FROM StockTable")
+    abstract fun stocksFlow(): Flow<List<StockModelRelation>>
+
+    @Transaction
+    @Query("SELECT * FROM StockTable WHERE isFavourite")
+    abstract fun favouriteStocksFlow(): Flow<List<StockModelRelation>>
+}

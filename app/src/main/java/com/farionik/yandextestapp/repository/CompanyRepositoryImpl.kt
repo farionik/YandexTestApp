@@ -1,169 +1,82 @@
 package com.farionik.yandextestapp.repository
 
-import android.content.Context
-import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.AppDatabase
+import com.farionik.yandextestapp.repository.database.chart.*
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.Api
 import com.farionik.yandextestapp.repository.network.NetworkStatus
-import com.farionik.yandextestapp.repository.network.SPStoredModel
-import com.farionik.yandextestapp.repository.network.noNetworkStatus
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.take
+import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
+import com.farionik.yandextestapp.ui.fragment.detail.chart.apiRange
+import com.farionik.yandextestapp.ui.util.getFormattedCurrentDate
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
-
-open class CompanyRepositoryImpl(
-    private val context: Context,
+class CompanyRepositoryImpl(
     private val api: Api,
     private val appDatabase: AppDatabase
-) : BaseRepository(context), CompanyRepository {
+) : BaseRepository(), CompanyRepository,
+    StockRepository by StockRepositoryImpl(api, appDatabase) {
 
-    override fun companiesFlow(): Flow<List<CompanyEntity>> =
-        appDatabase.companyDAO().companyFlow()
-
-    override fun favouriteCompaniesFlow(): Flow<List<CompanyEntity>> =
-        appDatabase.companyDAO().favouriteCompanyLiveData()
-
-    override suspend fun fetchCompanies(): NetworkStatus = when (checkInternetConnection()) {
-        is NetworkStatus.ERROR -> noNetworkStatus
-        else -> {
-            val list = appDatabase.companyDAO().companiesList()
-            if (list.isNullOrEmpty()) {
-                loadStartData()
-            } else {
-                updateLocalData()
-            }
-        }
-    }
-
-    private suspend fun loadStartData(): NetworkStatus {
-        val response = api.fetchCompanies(500)
-        return if (response.isSuccessful) {
-            val data = response.body() as List<CompanyEntity>
-            appDatabase.companyDAO().insertAll(data)
-            Timber.d("finish load companies")
-            NetworkStatus.SUCCESS
-        } else {
-            val errorMessage = response.message()
-            NetworkStatus.ERROR(Throwable(errorMessage))
-        }
-    }
-
-    private suspend fun updateLocalData(): NetworkStatus {
-        val companiesList = appDatabase.companyDAO().companiesList()
-        if (companiesList.isNullOrEmpty()) return loadStartData()
-
-        val chunked = companiesList.chunked(100)
-        val deferreds = arrayListOf<Deferred<NetworkStatus>>()
-        coroutineScope {
-            for (list in chunked) {
-                val result: Deferred<NetworkStatus> = async { updateDataForCompanies(list) }
-                deferreds.add(result)
-            }
-        }
-
-        val awaitAll = deferreds.awaitAll()
-        return awaitAll.firstOrNull { it is NetworkStatus.ERROR } ?: NetworkStatus.SUCCESS
-    }
-
-    private suspend fun updateDataForCompanies(list: List<CompanyEntity>): NetworkStatus {
-        val symbols = list.joinToString { it.symbol }
-        val response = api.loadCompaniesPrices(symbols, "quote")
-        return if (response.isSuccessful) {
-            val data = response.body() as Map<String, Map<String, CompanyEntity>>
-            for ((symbol, value) in data) {
-                val companyEntity = value["quote"] as CompanyEntity
-
-                val cachedCompany = appDatabase.companyDAO().companyEntity(symbol)
-                companyEntity.logo = cachedCompany?.logo ?: ""
-                appDatabase.companyDAO().update(companyEntity)
-            }
-            NetworkStatus.SUCCESS
-        } else {
-            val errorMessage = response.message()
-            NetworkStatus.ERROR(Throwable(errorMessage))
-        }
-    }
-
-
-    private fun loadSP500(): Flow<MutableList<SPStoredModel>> = flow {
-        val fileInputStream = context.resources.openRawResource(R.raw.sp_500)
-        val bufferedReader = fileInputStream.bufferedReader()
-        var content: String
-        bufferedReader.use { content = it.readText() }
-
-        emit(Gson().fromJson(content, object : TypeToken<MutableList<SPStoredModel?>?>() {}.type))
-    }
-
-    override suspend fun searchCompanies(searchRequest: String) {
-        coroutineScope {
-            val searchCompanies = api.searchCompanies(searchRequest)
-            Timber.d("searchCompanies: ")
-        }
-    }
-
-    override suspend fun loadCompaniesLogo() {
-        coroutineScope {
-            launch(IO) {
-                val list = appDatabase.companyDAO().companiesList()
-                list?.run {
-                    forEach {
-                        launch(IO) { loadCompanyLogo(it.symbol) }
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun loadCompanyLogo(symbol: String) {
-        val company = appDatabase.companyDAO().companyEntity(symbol)
-        company?.run {
-            if (this.logo.isNullOrEmpty()) {
-                val response = api.loadCompanyLogo(symbol)
-                Timber.d("loadCompanyLogo: $symbol code=${response.code()}")
+    override suspend fun loadCompanyInfo(symbol: String): NetworkStatus =
+        when (checkInternetConnection()) {
+            is NetworkStatus.ERROR -> checkInternetConnection()
+            else -> {
+                val response = api.loadCompanyInfo(symbol)
                 if (response.isSuccessful) {
-                    val entity: CompanyEntity? = appDatabase.companyDAO().companyEntity(symbol)
-                    entity?.run {
-                        logo = response.body()?.url
-                        appDatabase.companyDAO().update(this)
+                    val company = response.body() as CompanyEntity
+                    appDatabase.companyDAO().insert(company)
+                    coroutineScope {
+                        launch { loadStockPrice(symbol) }
                     }
+                    NetworkStatus.SUCCESS
+                } else {
+                    val errorMessage = response.message()
+                    NetworkStatus.ERROR(Throwable(errorMessage))
                 }
             }
         }
-    }
 
-    override suspend fun loadStockPrice(symbol: String) {
-        val response = api.loadCompanyStockPrice(symbol)
-        if (response.isSuccessful) {
-            val body = response.body() as CompanyEntity
-            val entity = appDatabase.companyDAO().companyEntity(symbol)
-            entity?
-            body.logo = entity?.logo ?: ""
-            appDatabase.companyDAO().update(body)
-        }
-    }
-
-    override suspend fun likeCompany(symbol: String) {
-        coroutineScope {
-            val companyEntity = appDatabase.companyDAO().companyEntity(symbol)
-            companyEntity?.let {
-                companyEntity.isFavourite = !companyEntity.isFavourite
-                appDatabase.companyDAO().update(companyEntity)
+    override suspend fun loadCompanyCharts(symbol: String, chartRange: ChartRange) {
+        val chartID = createChartID(symbol, chartRange)
+        val chartEntity = appDatabase.chartDAO().chartEntity(chartID)
+        if (chartEntity == null) {
+            createChartData(chartID)
+        } else {
+            if (chartEntity.isNeedUpdate()) {
+                updateChartData(chartEntity)
             }
         }
     }
 
-    override fun popularCompaniesFlow(): Flow<List<CompanyEntity>> {
-        return appDatabase.companyDAO().companyFlow().take(10)
+    private suspend fun createChartData(chartID: String) {
+        // создать уникальный id для графика
+        val chartEntity = ChartEntity(chartID)
+        appDatabase.chartDAO().insert(chartEntity)
+        updateChartData(chartEntity)
     }
 
-    override fun userCompaniesFlow(): Flow<List<CompanyEntity>> {
-        return appDatabase.companyDAO().companyFlow().take(10)
+    private suspend fun updateChartData(chartEntity: ChartEntity) {
+        // для 6m, y, max грузить chartSimplify
+        val result = chartEntity.run {
+            when (val range = chartRange()) {
+                ChartRange.HALF_YEAR,
+                ChartRange.YEAR,
+                ChartRange.ALL -> api.loadChart(chartSymbol(), range.apiRange(), true)
+                else -> api.loadChart(chartSymbol(), range.apiRange())
+            }
+        }
+
+        if (result.isSuccessful) {
+            val chartValues: List<ChartValues>? = result.body()?.map {
+                return@map ChartValues(it.label, it.high)
+            }
+            chartEntity.lastUpdate = getFormattedCurrentDate()
+            chartEntity.values = chartValues
+
+            appDatabase.chartDAO().update(chartEntity)
+            Timber.i("loadCompanyCharts: ${chartEntity.chartSymbol()} complete")
+        }
     }
+
 }

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.farionik.yandextestapp.databinding.FragmentSearchBinding
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.ui.fragment.list_item_decorator.SearchSpaceItemDecoration
 
 class SearchFragment : BaseSearchFragment() {
@@ -40,7 +41,7 @@ class SearchFragment : BaseSearchFragment() {
 
     private fun createAdapter(recyclerView: RecyclerView): SearchAdapter {
         val adapter = SearchAdapter(object : SearchAdapter.Interaction {
-            override fun onModelClicked(model: CompanyEntity) {
+            override fun onModelClicked(model: StockModelRelation) {
                 //searchedClickedListener?.searchModelClicked(model)
                 // через ViewModel выполнить навигацию в результат fragment
             }

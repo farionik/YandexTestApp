@@ -29,7 +29,7 @@ class NewsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.recyclerView)
         initAdapter()
-        companyDetailViewModel.newsLiveData.observe(viewLifecycleOwner, { adapter.swapData(it) })
+        companyViewModel.newsLiveData.observe(viewLifecycleOwner, { adapter.swapData(it) })
     }
 
     private fun initAdapter() {

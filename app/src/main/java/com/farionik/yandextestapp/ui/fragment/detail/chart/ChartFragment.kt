@@ -137,12 +137,12 @@ class ChartFragment : BaseFragment() {
         }
 
         when (buttonId) {
-            R.id.btnChartDay -> companyDetailViewModel.setChartRange(currentSymbol, DAY)
-            R.id.btnChartWeek -> companyDetailViewModel.setChartRange(currentSymbol, WEEK)
-            R.id.btnChartMonth -> companyDetailViewModel.setChartRange(currentSymbol, MONTH)
-            R.id.btnChart6Month -> companyDetailViewModel.setChartRange(currentSymbol, HALF_YEAR)
-            R.id.btnChartYear -> companyDetailViewModel.setChartRange(currentSymbol, YEAR)
-            R.id.btnChartAll -> companyDetailViewModel.setChartRange(currentSymbol, ALL)
+            R.id.btnChartDay -> companyViewModel.setChartRange(currentSymbol, DAY)
+            R.id.btnChartWeek -> companyViewModel.setChartRange(currentSymbol, WEEK)
+            R.id.btnChartMonth -> companyViewModel.setChartRange(currentSymbol, MONTH)
+            R.id.btnChart6Month -> companyViewModel.setChartRange(currentSymbol, HALF_YEAR)
+            R.id.btnChartYear -> companyViewModel.setChartRange(currentSymbol, YEAR)
+            R.id.btnChartAll -> companyViewModel.setChartRange(currentSymbol, ALL)
             else -> {
 
             }
@@ -150,22 +150,22 @@ class ChartFragment : BaseFragment() {
     }
 
     private fun subscribeViewModel() {
-        companyDetailViewModel.companySymbolLiveData.observe(viewLifecycleOwner, {
+        companyViewModel.companySymbolLiveData.observe(viewLifecycleOwner, {
             currentSymbol = it
             setButtonChecked(R.id.btnChartDay)
         })
 
-        companyDetailViewModel.companyDetailModelLiveData.observe(viewLifecycleOwner, {
+        companyViewModel.selectedStock.observe(viewLifecycleOwner, {
             with(binding) {
-                lastPrice.formatPriceValue(it)
-                tvChange.formatChangeValue(it)
-                tvPercentChange.formatPercentValue(it)
+                lastPrice.formatPriceValue(it.stock)
+                tvChange.formatChangeValue(it.stock)
+                tvPercentChange.formatPercentValue(it.stock)
 
-                val buyButtonText = "Buy for $${it.latestPrice}"
+                val buyButtonText = "Buy for $${it.stock.latestPrice}"
                 btnBuy.text = buyButtonText
             }
         })
 
-        companyDetailViewModel.chartLiveData.observe(viewLifecycleOwner, { setChartData(it) })
+        companyViewModel.chartLiveData.observe(viewLifecycleOwner, { setChartData(it) })
     }
 }

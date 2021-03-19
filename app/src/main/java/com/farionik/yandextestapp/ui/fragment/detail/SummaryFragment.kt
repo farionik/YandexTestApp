@@ -1,7 +1,6 @@
 package com.farionik.yandextestapp.ui.fragment.detail
 
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.telephony.PhoneNumberUtils
@@ -39,9 +38,17 @@ class SummaryFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        companyDetailViewModel.companyDetailModelLiveData.observe(viewLifecycleOwner, {
+        companyViewModel.selectedStock.observe(viewLifecycleOwner, {
             binding.run {
-                loadLogo(it.logo)
+                it.logo?.let { logo ->
+                    loadLogo(logo.url)
+                }
+            }
+        })
+
+        companyViewModel.selectedCompany.observe(viewLifecycleOwner, {
+            binding.run {
+
                 tvSymbol.text = it.symbol
                 tvCompanyName.text = it.companyName
                 tvDescription.text = it.description
@@ -53,24 +60,19 @@ class SummaryFragment : BaseFragment() {
                 }
 
                 val companyAddress = StringBuilder().apply {
-                    it.country?.let { country ->
-                        append(country)
+                    fun checkAndAppendAddress(address: String?) {
+                        address?.let {
+                            if (this.isNotBlank() and this.isNotEmpty()) append(", ")
+                            append(address)
+                        }
                     }
-                    it.state?.let { state ->
-                        if (toString().isNotBlank() and toString().isNotEmpty()) append(", ")
-                        append(state)
-                    }
-                    it.city?.let { city ->
-                        if (toString().isNotBlank() and toString().isNotEmpty()) append(", ")
-                        append(city)
-                    }
-                    it.address?.let { address ->
-                        if (toString().isNotBlank() and toString().isNotEmpty()) append(", ")
-                        append(address)
-                    }
-                    it.zip?.let { zip ->
-                        if (toString().isNotBlank() and toString().isNotEmpty()) append(", ")
-                        append(zip)
+
+                    it.run {
+                        checkAndAppendAddress(country)
+                        checkAndAppendAddress(state)
+                        checkAndAppendAddress(city)
+                        checkAndAppendAddress(address)
+                        checkAndAppendAddress(zip)
                     }
                 }
 

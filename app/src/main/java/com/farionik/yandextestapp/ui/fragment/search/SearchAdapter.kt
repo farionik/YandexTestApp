@@ -10,10 +10,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.ui.model.SearchModel
 
 class SearchAdapter(private val interaction: Interaction? = null) :
-    ListAdapter<CompanyEntity, SearchAdapter.SearchHolder>(SearchModelDC()) {
+    ListAdapter<StockModelRelation, SearchAdapter.SearchHolder>(SearchModelDC()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SearchHolder(
         LayoutInflater.from(parent.context)
@@ -23,7 +24,7 @@ class SearchAdapter(private val interaction: Interaction? = null) :
     override fun onBindViewHolder(holder: SearchHolder, position: Int) =
         holder.bind(getItem(position))
 
-    fun swapData(data: List<CompanyEntity>) {
+    fun swapData(data: List<StockModelRelation>) {
         submitList(data.toMutableList())
     }
 
@@ -44,28 +45,28 @@ class SearchAdapter(private val interaction: Interaction? = null) :
             interaction?.onModelClicked(clicked)
         }
 
-        fun bind(item: CompanyEntity) = with(itemView) {
-            findViewById<TextView>(R.id.title).text = item.companyName
+        fun bind(item: StockModelRelation) = with(itemView) {
+            findViewById<TextView>(R.id.title).text = item.stock.companyName
         }
     }
 
     interface Interaction {
-        fun onModelClicked(model: CompanyEntity)
+        fun onModelClicked(model: StockModelRelation)
     }
 
-    private class SearchModelDC : DiffUtil.ItemCallback<CompanyEntity>() {
+    private class SearchModelDC : DiffUtil.ItemCallback<StockModelRelation>() {
         override fun areItemsTheSame(
-            oldItem: CompanyEntity,
-            newItem: CompanyEntity
+            oldItem: StockModelRelation,
+            newItem: StockModelRelation
         ): Boolean {
-            return oldItem.symbol == newItem.symbol
+            return oldItem.stock.symbol == newItem.stock.symbol
         }
 
         override fun areContentsTheSame(
-            oldItem: CompanyEntity,
-            newItem: CompanyEntity
+            oldItem: StockModelRelation,
+            newItem: StockModelRelation
         ): Boolean {
-            return oldItem == newItem
+            return oldItem.stock == newItem.stock
         }
     }
 }

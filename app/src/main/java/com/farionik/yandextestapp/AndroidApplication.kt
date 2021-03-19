@@ -1,10 +1,7 @@
 package com.farionik.yandextestapp
 
 import android.app.Application
-import com.farionik.yandextestapp.di.appApiModule
-import com.farionik.yandextestapp.di.appDatabaseModule
-import com.farionik.yandextestapp.di.appRepositoryModule
-import com.farionik.yandextestapp.di.appViewModelModule
+import com.farionik.yandextestapp.di.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -23,7 +20,8 @@ class AndroidApplication : Application() {
                     appApiModule,
                     appDatabaseModule,
                     appRepositoryModule,
-                    appViewModelModule
+                    appViewModelModule,
+                    navigationModule
                 )
             )
         }

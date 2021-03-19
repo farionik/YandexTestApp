@@ -29,12 +29,4 @@ data class CompanyEntity(
     val zip: String?,
     val country: String?,
     val phone: String?,
-    var logo: String?,
-
-    var latestPrice: Double,
-    var change: Double,
-    var changePercent: Double,
-    var volume: Long,
-
-    var isFavourite: Boolean = false
 )

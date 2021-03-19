@@ -3,86 +3,81 @@ package com.farionik.yandextestapp.view_model
 import androidx.lifecycle.*
 import com.blankj.utilcode.util.NetworkUtils
 import com.farionik.yandextestapp.repository.CompanyRepository
+import com.farionik.yandextestapp.repository.NewsRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
+import com.farionik.yandextestapp.repository.database.chart.ChartEntity
+import com.farionik.yandextestapp.repository.database.chart.createChartID
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
-import com.farionik.yandextestapp.repository.network.NetworkStatus
-import com.farionik.yandextestapp.repository.network.WebServicesProvider
-import com.farionik.yandextestapp.repository.network.noNetworkStatus
-import kotlinx.coroutines.*
+import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.database.news.NewsEntity
+import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import kotlinx.coroutines.Dispatchers.IO
-import timber.log.Timber
-import java.lang.Exception
+import kotlinx.coroutines.launch
 
-open class CompanyViewModel(
-    private val companyRepository: CompanyRepository,
-    private val webServicesProvider: WebServicesProvider
+class CompanyViewModel(
+    private val companyDetailRepository: CompanyRepository,
+    private val newsRepository: NewsRepository,
+    private val appDatabase: AppDatabase
 ) : ViewModel(), LifecycleObserver {
-    // величина скрола toolBar
-    var appBarOffsetMutableLiveData: MutableLiveData<Int> = MutableLiveData()
 
-    // все компании
-    private val _companiesLiveData: LiveData<List<CompanyEntity>> =
-        companyRepository.companiesFlow().asLiveData(viewModelScope.coroutineContext)
-    val companiesLiveData: LiveData<List<CompanyEntity>>
-        get() = _companiesLiveData
+    // выбранная компания на просмотр
+    private val _companyDetailSymbolLiveData = MutableLiveData<String>()
+    val companySymbolLiveData: LiveData<String>
+        get() = _companyDetailSymbolLiveData
 
-    // избранные компании
-    private val _favouriteCompaniesLiveData: LiveData<List<CompanyEntity>> =
-        companyRepository.favouriteCompaniesFlow().asLiveData(viewModelScope.coroutineContext)
-    val favouriteCompaniesLiveData: LiveData<List<CompanyEntity>>
-        get() = _favouriteCompaniesLiveData
 
-    // поисковый результат
-    private val _searchedCompaniesLiveData = MutableLiveData<List<CompanyEntity>>()
-    val searchedCompaniesLiveData: LiveData<List<CompanyEntity>>
-        get() = _searchedCompaniesLiveData
+    val selectedStock: LiveData<StockModelRelation>
+        get() = Transformations.switchMap(companySymbolLiveData) {
+            appDatabase.stockDAO().stockEntityLiveData(it)
+        }
 
-    private val _loadingCompaniesStateLiveData = MutableLiveData<NetworkStatus>()
-    val loadingCompaniesStateLiveData: LiveData<NetworkStatus>
-        get() = _loadingCompaniesStateLiveData
+    val selectedCompany: LiveData<CompanyEntity>
+        get() = Transformations.switchMap(companySymbolLiveData) {
+            appDatabase.companyDAO().companyEntityLiveData(it)
+        }
 
-    private var loadingJob: Job? = null
-
-    // получить список компаний по рейтенгу api
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    fun fetchCompanies() {
-        cancelAllJob()
-        // подключения sse. Только быстро съедает кредиты api
-//        webServicesProvider.stopSocket()
-
-        if (NetworkUtils.isConnected()) {
-            _loadingCompaniesStateLiveData.value = NetworkStatus.LOADING("Loading companies...")
-            loadingJob = viewModelScope.launch(IO) {
-                val status = try {
-                    companyRepository.fetchCompanies()
-                } catch (e: Exception) {
-                    if (e is CancellationException) NetworkStatus.SUCCESS
-                    else NetworkStatus.ERROR(Throwable(e.message))
-                }
-
-                _loadingCompaniesStateLiveData.postValue(status)
-                companyRepository.loadCompaniesLogo()
+    // выбранный график
+    private val _selectedRangeLiveData = MutableLiveData<ChartRange>()
+    val chartLiveData: LiveData<ChartEntity?>
+        get() = Transformations.switchMap(_companyDetailSymbolLiveData) { symbol ->
+            Transformations.switchMap(_selectedRangeLiveData) { range ->
+                val chartID = createChartID(symbol, range)
+                appDatabase.chartDAO().chartLiveData(chartID)
             }
-        } else {
-            _loadingCompaniesStateLiveData.value = noNetworkStatus
+        }
+
+    // новости компании
+    val newsLiveData: LiveData<List<NewsEntity>>
+        get() = Transformations.switchMap(_companyDetailSymbolLiveData) {
+            appDatabase.newsDAO().newsLiveData(it)
+        }
+
+
+    fun setChartRange(symbol: String, range: ChartRange) {
+        _selectedRangeLiveData.value = range
+        if (NetworkUtils.isConnected()) {
+            viewModelScope.launch(IO) {
+                companyDetailRepository.loadCompanyCharts(symbol, range)
+            }
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun cancelAllJob() {
-        webServicesProvider.stopSocket()
-        loadingJob?.cancel()
+    fun setSelectedCompanySymbol(symbol: String) {
+        _companyDetailSymbolLiveData.value = symbol
+
+        if (NetworkUtils.isConnected()) {
+            viewModelScope.launch(IO) {
+                newsRepository.fetchNews(symbol)
+                companyDetailRepository.loadCompanyInfo(symbol)
+            }
+        }
     }
 
     fun likeCompany(symbol: String) {
-        viewModelScope.launch(IO) {
-            companyRepository.likeCompany(symbol)
-        }
-    }
-
-    fun searchCompanies(searchRequest: String) {
-        viewModelScope.launch(IO) {
-            companyRepository.searchCompanies(searchRequest)
+        if (NetworkUtils.isConnected()) {
+            viewModelScope.launch {
+                companyDetailRepository.likeStock(symbol)
+            }
         }
     }
 }

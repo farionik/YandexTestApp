@@ -6,19 +6,18 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.ui.fragment.main.MainFragment
+import com.farionik.yandextestapp.ui.AppScreens
 import com.farionik.yandextestapp.ui.fragment.search.SearchViewManager
 import com.farionik.yandextestapp.ui.fragment.search.SearchedClickedListener
 import com.farionik.yandextestapp.ui.model.SearchModel
-import com.farionik.yandextestapp.view_model.CompanyViewModel
+import com.farionik.yandextestapp.view_model.StockViewModel
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Replace
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.appbar.AppBarLayout
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -27,7 +26,10 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
     private lateinit var searchEditText: EditText
     private lateinit var searchViewManager: SearchViewManager
 
-    private val companyViewModel by viewModel<CompanyViewModel>()
+    private val companyViewModel by viewModel<StockViewModel>()
+    private val navigatorHolder: NavigatorHolder by inject()
+    private val navigator = AppNavigator(this, R.id.container)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +44,8 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
         })
 
         searchViewManager = SearchViewManager(searchEditText, this)
-        //openScreen(mainFragment, false)
+
+        navigator.applyCommands(arrayOf(Replace(AppScreens.mainScreen())))
     }
 
     override fun searchModelClicked(model: SearchModel) {
@@ -64,8 +67,8 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
     override fun openScreen(fragment: Fragment, addToBackStack: Boolean) {
         KeyboardUtils.hideSoftInput(this)
         Timber.d("")
-        findNavController(R.id.nav_host_fragment)
-            .navigate(R.id.action_mainFragment_to_searchFragment)
+        /*findNavController(R.id.nav_host_fragment)
+            .navigate(R.id.action_mainFragment_to_searchFragment)*/
 
 
         /*KeyboardUtils.hideSoftInput(this)
@@ -94,16 +97,26 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
     }
 
     override fun searchAction(request: String) {
-        companyViewModel.searchCompanies(request)
+        //companyViewModel.searchCompanies(request)
     }
 
     override fun backClicked() {
         searchEditText.visibility = View.VISIBLE
-        findNavController(R.id.nav_host_fragment).popBackStack()
         /*lifecycleScope.launch(Dispatchers.Main) {
             delay(200)
             searchEditText.visibility = View.VISIBLE
         }
         supportFragmentManager.popBackStack()*/
     }
+
+    override fun onResume() {
+        super.onResume()
+        navigatorHolder.setNavigator(navigator)
+    }
+
+    override fun onPause() {
+        navigatorHolder.removeNavigator()
+        super.onPause()
+    }
+
 }

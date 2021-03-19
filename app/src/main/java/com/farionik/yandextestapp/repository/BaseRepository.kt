@@ -1,13 +1,10 @@
 package com.farionik.yandextestapp.repository
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import com.blankj.utilcode.util.NetworkUtils
 import com.farionik.yandextestapp.repository.network.NetworkStatus
 import com.farionik.yandextestapp.repository.network.noNetworkStatus
 
-open class BaseRepository(private val context: Context) {
+open class BaseRepository() {
 
     private fun isConnectedToInternet(): Boolean = NetworkUtils.isConnected()
 

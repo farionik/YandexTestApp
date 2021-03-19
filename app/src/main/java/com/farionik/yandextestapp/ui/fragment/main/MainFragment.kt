@@ -9,9 +9,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.FragmentMainBinding
 import com.farionik.yandextestapp.ui.util.*
-import com.farionik.yandextestapp.view_model.CompanyViewModel
+import com.farionik.yandextestapp.view_model.StockViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
-import timber.log.Timber
 import kotlin.math.roundToInt
 
 class MainFragment : Fragment() {
@@ -19,7 +18,7 @@ class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
     private lateinit var outlineProvider: TweakableOutlineProvider
 
-    private val mainViewModel by sharedViewModel<CompanyViewModel>()
+    private val mainViewModel by sharedViewModel<StockViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

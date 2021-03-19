@@ -11,22 +11,22 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.ActivityCompanyDetailBinding
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.ui.fragment.detail.*
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartFragment
 import com.farionik.yandextestapp.ui.fragment.detail.news.NewsFragment
 import com.farionik.yandextestapp.ui.util.*
-import com.farionik.yandextestapp.view_model.CompanyDetailViewModel
+import com.farionik.yandextestapp.view_model.CompanyViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 const val DETAIL_COMPANY_SYMBOL = "DETAIL_COMPANY_SYMBOL"
 
 class CompanyDetailActivity : AppCompatActivity() {
 
-    private val viewModel by viewModel<CompanyDetailViewModel>()
+    private val companyViewModel by viewModel<CompanyViewModel>()
 
     private lateinit var companyID: String
-    private var companyEntity: CompanyEntity? = null
+    private var stockModelRelation: StockModelRelation? = null
 
     private lateinit var binding: ActivityCompanyDetailBinding
 
@@ -40,7 +40,7 @@ class CompanyDetailActivity : AppCompatActivity() {
             finish()
             return
         } else {
-            viewModel.setSelectedCompanySymbol(companyID)
+            companyViewModel.setSelectedCompanySymbol(companyID)
         }
 
         initViews()
@@ -97,13 +97,15 @@ class CompanyDetailActivity : AppCompatActivity() {
     }
 
     private fun subscribeUI() {
-        viewModel.companyDetailModelLiveData.observe(this, {
-            with(binding) {
-                companyEntity = it
-                tvSymbol.text = it.symbol
-                tvCompanyName.text = it.companyName
-                invalidateOptionsMenu()
+        companyViewModel.selectedStock.observe(this, {
+            CompanyDetailActivity@ this.stockModelRelation = it
+            it.stock.run {
+                with(binding) {
+                    tvSymbol.text = symbol
+                    tvCompanyName.text = companyName
+                }
             }
+            invalidateOptionsMenu()
         })
     }
 
@@ -118,10 +120,8 @@ class CompanyDetailActivity : AppCompatActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        companyEntity?.run {
-            val findItem = menu?.findItem(R.id.action_favorite)
-
-            findItem?.run {
+        stockModelRelation?.stock?.run {
+            menu?.findItem(R.id.action_favorite)?.run {
                 setIcon(
                     if (isFavourite) {
                         ContextCompat.getDrawable(
@@ -146,7 +146,7 @@ class CompanyDetailActivity : AppCompatActivity() {
             true
         }
         R.id.action_favorite -> {
-            viewModel.likeCompany(companyID)
+            companyViewModel.likeCompany(companyID)
             true
         }
         else -> super.onOptionsItemSelected(item)

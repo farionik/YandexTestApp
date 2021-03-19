@@ -5,22 +5,23 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.database.company.StockEntity
 
-fun TextView.formatPriceValue(companyEntity: CompanyEntity) {
-    val totalPriceText = "$${companyEntity.latestPrice}"
+fun TextView.formatPriceValue(stockEntity: StockEntity) {
+    val totalPriceText = "$${stockEntity.latestPrice}"
     text = totalPriceText
 }
 
-fun TextView.formatChangeValue(companyEntity: CompanyEntity) {
-    companyEntity.change?.let {
+fun TextView.formatChangeValue(stockEntity: StockEntity) {
+    stockEntity.change.let {
         val changeText = "$$it"
         text = changeText
         setTextColor(getColorForTextView(it, context))
     }
 }
 
-fun TextView.formatPercentValue(companyEntity: CompanyEntity) {
-    companyEntity.changePercent?.let {
+fun TextView.formatPercentValue(stockEntity: StockEntity) {
+    stockEntity.changePercent.let {
         val percentText = " ($it)"
         text = percentText
         setTextColor(getColorForTextView(it, context))

@@ -1,4 +1,4 @@
-package com.farionik.yandextestapp.ui.fragment
+package com.farionik.yandextestapp.ui.fragment.main
 
 import android.content.Context
 import android.os.Bundle
@@ -7,27 +7,26 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.ui.activity.MainActivityListener
 import com.farionik.yandextestapp.ui.fragment.list_item_decorator.CompanySpaceItemDecoration
-import com.farionik.yandextestapp.ui.fragment.main.CompanyAdapter
+import com.farionik.yandextestapp.ui.fragment.main.StockAdapter
 import com.farionik.yandextestapp.ui.fragment.main.CompanyFragment
-import com.farionik.yandextestapp.view_model.CompanyViewModel
+import com.farionik.yandextestapp.view_model.StockViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 abstract class BaseListFragment : Fragment(R.layout.fragment_company) {
 
-    abstract val dataSource: LiveData<List<CompanyEntity>>
+    abstract val dataSource: LiveData<List<StockModelRelation>>
 
-    val companyViewModel by sharedViewModel<CompanyViewModel>()
+    val stockViewModel by sharedViewModel<StockViewModel>()
 
-    lateinit var adapter: CompanyAdapter
+    lateinit var adapter: StockAdapter
 
     lateinit var recyclerView: RecyclerView
     lateinit var loadingView: View
@@ -37,16 +36,18 @@ abstract class BaseListFragment : Fragment(R.layout.fragment_company) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewLifecycleOwner.lifecycle.addObserver(companyViewModel)
+
+        viewLifecycleOwner.lifecycle.addObserver(stockViewModel)
 
         recyclerView = view.findViewById(R.id.recyclerView)
         loadingView = view.findViewById(R.id.loadingView)
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh)
+
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = false
             if (this is CompanyFragment) {
-                companyViewModel.fetchCompanies()
+                stockViewModel.fetchCompanies()
             }
         }
 
@@ -59,16 +60,20 @@ abstract class BaseListFragment : Fragment(R.layout.fragment_company) {
     }
 
     private fun createAdapter() {
-        adapter = CompanyAdapter(interaction = object : CompanyAdapter.Interaction {
-            override fun likeCompany(companyEntity: CompanyEntity, position: Int) {
-                companyViewModel.likeCompany(companyEntity.symbol)
+        adapter = StockAdapter(interaction = object : StockAdapter.Interaction {
+            override fun likeCompany(stockModelRelation: StockModelRelation, position: Int) {
+                stockViewModel.likeStock(stockModelRelation.stock.symbol)
                 if (this@BaseListFragment is CompanyFragment) {
-                    adapter.notifyItemChanged(position, companyEntity)
+                    adapter.notifyItemChanged(position, stockModelRelation)
                 }
             }
 
-            override fun openCompanyDetail(companyEntity: CompanyEntity) {
-                mainActivityListener?.openDetailScreen(companyEntity.symbol)
+            override fun openCompanyDetail(stockModelRelation: StockModelRelation) {
+
+
+                //mainActivityListener?.openDetailScreen(companyEntity.symbol)
+
+
             }
         })
         val layoutManager = LinearLayoutManager(context)
