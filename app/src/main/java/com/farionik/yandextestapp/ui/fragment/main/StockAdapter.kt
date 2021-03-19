@@ -64,13 +64,13 @@ class StockAdapter(
         }
 
         fun bind(item: StockModelRelation) = with(binding) {
+
+            Glide.with(image).clear(image)
             item.logo?.run {
                 Glide
                     .with(image)
-                    .load(url)
-                    .priority(Priority.HIGH)
+                    .load(localPath)
                     .transform(CenterCrop(), RoundedCorners(52))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(image)
             }
 

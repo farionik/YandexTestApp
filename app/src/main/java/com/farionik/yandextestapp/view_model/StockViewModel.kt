@@ -53,9 +53,13 @@ open class StockViewModel(
                     if (e is CancellationException) NetworkStatus.SUCCESS
                     else NetworkStatus.ERROR(Throwable(e.message))
                 }
-
-                _loadingStocksStateLiveData.postValue(status)
-                logoRepository.loadCompaniesLogo()
+                if (status == NetworkStatus.SUCCESS) {
+                    _loadingStocksStateLiveData.postValue(NetworkStatus.LOADING("Please wait..."))
+                    logoRepository.loadCompaniesLogo()
+                    _loadingStocksStateLiveData.postValue(status)
+                } else {
+                    _loadingStocksStateLiveData.postValue(status)
+                }
             }
         } else {
             _loadingStocksStateLiveData.value = noNetworkStatus

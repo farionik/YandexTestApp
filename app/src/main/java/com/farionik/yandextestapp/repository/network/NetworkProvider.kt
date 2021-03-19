@@ -28,7 +28,10 @@ class NetworkProvider {
         .build()
 
     fun createApi(): Api {
-        val gson = GsonBuilder().serializeNulls().create()
+        val gson = GsonBuilder()
+            .setLenient()
+            .serializeNulls()
+            .create()
 
         return Retrofit.Builder()
             .baseUrl("https://cloud.iexapis.com/stable/")

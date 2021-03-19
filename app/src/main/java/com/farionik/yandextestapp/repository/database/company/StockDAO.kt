@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class StockDAO : BaseDao<StockEntity> {
 
-    @Query("SELECT * FROM StockTable ORDER BY volume")
+    @Query("SELECT * FROM StockTable")
     abstract suspend fun stockList(): List<StockEntity>?
 
     @Query("SELECT * FROM StockTable WHERE symbol =:symbol")
