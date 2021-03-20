@@ -18,9 +18,9 @@ import com.farionik.yandextestapp.ui.util.formatPriceValue
 
 class StockAdapter(
     private val isSearch: Boolean = false,
-    private val interaction: StockAdapter.Interaction? = null
+    private val interaction: Interaction? = null
 ) :
-    ListAdapter<StockModelRelation, StockAdapter.StockHolder>(StockAdapter.StockDC()) {
+    ListAdapter<StockModelRelation, StockAdapter.StockHolder>(StockDC()) {
 
     private lateinit var context: Context
 
@@ -46,8 +46,6 @@ class StockAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: StockModelRelation) = with(binding) {
-
-
             Glide.with(image).clear(image)
             item.logo?.run {
                 Glide

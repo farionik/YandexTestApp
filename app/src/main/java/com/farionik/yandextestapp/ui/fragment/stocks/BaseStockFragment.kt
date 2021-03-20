@@ -34,7 +34,7 @@ abstract class BaseStockFragment : Fragment(R.layout.fragment_stocks) {
             swipeRefreshLayout.isVisible = false
         }*/
 
-        swipeRefreshLayout.isVisible = false
+        //swipeRefreshLayout.isVisible = false
         initAdapter()
     }
 

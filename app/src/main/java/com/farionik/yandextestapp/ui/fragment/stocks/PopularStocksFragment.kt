@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.NetworkState
-import com.farionik.yandextestapp.ui.adapter.Interaction
 import com.farionik.yandextestapp.ui.adapter.PaginationListener
 import com.farionik.yandextestapp.ui.adapter.StockAdapter
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
@@ -28,7 +27,7 @@ class PopularStocksFragment : BaseStockFragment() {
         stockViewModel.loadingStocksStateLiveData.observe(viewLifecycleOwner, {
             networkState = it
         })
-        stockViewModel.fetchCompanies(0)
+        //stockViewModel.fetchCompanies(0)
     }
 
     override fun initAdapter() {
@@ -49,12 +48,15 @@ class PopularStocksFragment : BaseStockFragment() {
 
             }
         })
+
+        //initRecyclerView(stockAdapter)
+
         recyclerView.apply {
             val layoutManager = LinearLayoutManager(context)
             this.layoutManager = layoutManager
             setHasFixedSize(true)
             addItemDecoration(CompanySpaceItemDecoration())
-            this.adapter = adapter
+            this.adapter = stockAdapter
             addOnScrollListener(object : PaginationListener(layoutManager) {
                 override fun loadMoreItems(page: Int) {
                     stockViewModel.fetchCompanies(page)
@@ -64,10 +66,6 @@ class PopularStocksFragment : BaseStockFragment() {
                 override fun isLoading() = networkState is NetworkState.LOADING
             })
         }
-
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-        })
 
 
         /*stockPagingAdapter =
