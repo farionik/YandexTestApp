@@ -3,9 +3,10 @@ package com.farionik.yandextestapp.repository
 import android.content.Context
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyLogoEntity
+import com.farionik.yandextestapp.repository.database.company.StockEntity
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.Api
-import com.farionik.yandextestapp.repository.network.NetworkStatus
+import com.farionik.yandextestapp.repository.network.NetworkState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import okhttp3.ResponseBody
@@ -28,7 +29,11 @@ class LogoRepositoryImpl(
         }
     }
 
-    private suspend fun loadCompanyLogo(symbol: String): NetworkStatus {
+    override suspend fun loadCompanyLogo(stockEntity: StockEntity) {
+        loadCompanyLogo(stockEntity.symbol)
+    }
+
+    private suspend fun loadCompanyLogo(symbol: String): NetworkState {
         val logo = appDatabase.companyLogoDAO().companyLogo(symbol)
         if (logo == null) {
             val response = api.loadCompanyLogoURL(symbol)
@@ -50,7 +55,7 @@ class LogoRepositoryImpl(
                 }
             }
         }
-        return NetworkStatus.SUCCESS
+        return NetworkState.SUCCESS
     }
 
     private fun copyStreamToFile(inputStream: InputStream, outputFile: File) {

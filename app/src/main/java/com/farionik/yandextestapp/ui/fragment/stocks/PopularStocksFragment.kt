@@ -1,21 +1,76 @@
 package com.farionik.yandextestapp.ui.fragment.stocks
 
+import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.ui.adapter.Interaction
-import com.farionik.yandextestapp.ui.adapter.StockPagingAdapter
-import kotlinx.coroutines.flow.collectLatest
+import com.farionik.yandextestapp.ui.adapter.PaginationListener
+import com.farionik.yandextestapp.ui.adapter.StockAdapter
+import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
 import kotlinx.coroutines.launch
 
 class PopularStocksFragment : BaseStockFragment() {
 
-    private lateinit var stockPagingAdapter: StockPagingAdapter
+    //private lateinit var stockPagingAdapter: StockPagingAdapter
+    private lateinit var stockAdapter: StockAdapter
+    private var networkState: NetworkState? = null
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        stockViewModel.stocksLiveData.observe(viewLifecycleOwner, { stockAdapter.swapData(it) })
+        stockViewModel.loadingStocksStateLiveData.observe(viewLifecycleOwner, {
+            networkState = it
+        })
+        stockViewModel.fetchCompanies(0)
+    }
 
     override fun initAdapter() {
-        stockPagingAdapter =
+        stockAdapter = StockAdapter(interaction = object : StockAdapter.Interaction {
+            override fun likeCompany(stockModelRelation: StockModelRelation, position: Int) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val symbol = stockModelRelation.stock.symbol
+                    try {
+                        stockViewModel.likeStock(symbol)
+                        stockAdapter.notifyItemChanged(position)
+                    } catch (e: Exception) {
+
+                    }
+                }
+            }
+
+            override fun openCompanyDetail(stockModelRelation: StockModelRelation) {
+
+            }
+        })
+        recyclerView.apply {
+            val layoutManager = LinearLayoutManager(context)
+            this.layoutManager = layoutManager
+            setHasFixedSize(true)
+            addItemDecoration(CompanySpaceItemDecoration())
+            this.adapter = adapter
+            addOnScrollListener(object : PaginationListener(layoutManager) {
+                override fun loadMoreItems(page: Int) {
+                    stockViewModel.fetchCompanies(page)
+                }
+
+                override fun isLastPage() = false
+                override fun isLoading() = networkState is NetworkState.LOADING
+            })
+        }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+        })
+
+
+        /*stockPagingAdapter =
             StockPagingAdapter(interaction = object : Interaction {
                 override fun likeCompany(stockModelRelation: StockModelRelation, position: Int) {
                     viewLifecycleOwner.lifecycleScope.launch {
@@ -33,7 +88,7 @@ class PopularStocksFragment : BaseStockFragment() {
                 }
             })
 
-        initRecyclerView(stockPagingAdapter)
+        initRecyclerView(stockPagingAdapter)*/
 
         /*viewLifecycleOwner.lifecycleScope.launch {
             stockViewModel.stockFlow.collectLatest { stockPagingAdapter.submitData(it) }

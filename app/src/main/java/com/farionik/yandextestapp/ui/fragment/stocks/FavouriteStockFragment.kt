@@ -21,7 +21,7 @@ class FavouriteStockFragment : BaseStockFragment() {
     }
 
     override fun initAdapter() {
-        stockAdapter = StockAdapter(interaction = object : Interaction {
+        stockAdapter = StockAdapter(interaction = object : StockAdapter.Interaction {
             override fun likeCompany(stockModelRelation: StockModelRelation, position: Int) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     val symbol = stockModelRelation.stock.symbol

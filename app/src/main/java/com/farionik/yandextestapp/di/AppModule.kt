@@ -28,8 +28,8 @@ val appDatabaseModule = module {
 }
 
 val appRepositoryModule = module {
-    single<StockRepository> { StockRepositoryImpl(get(), get(), get()) }
-    single<CompanyRepository> { CompanyRepositoryImpl(get(), get(), get()) }
+    single<StockRepository> { StockRepositoryImpl(get(), get(), get(), get()) }
+    single<CompanyRepository> { CompanyRepositoryImpl(get(), get(), get(), get()) }
 
     single<NewsRepository> { NewsRepositoryImpl(get(), get()) }
     single<LogoRepository> { LogoRepositoryImpl(get(), get(), get()) }

@@ -28,12 +28,13 @@ abstract class BaseStockFragment : Fragment(R.layout.fragment_stocks) {
         recyclerView = view.findViewById(R.id.recyclerView)
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh)
 
-        if (this is PopularStocksFragment) {
+        /*if (this is PopularStocksFragment) {
             swipeRefreshLayout.setOnRefreshListener { stockViewModel.fetchCompanies() }
         } else {
             swipeRefreshLayout.isVisible = false
-        }
+        }*/
 
+        swipeRefreshLayout.isVisible = false
         initAdapter()
     }
 

@@ -29,7 +29,7 @@ class SplashFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             delay(100)
-            router.navigateTo(AppScreens.mainScreen())
+            router.replaceScreen(AppScreens.mainScreen())
         }
     }
 }

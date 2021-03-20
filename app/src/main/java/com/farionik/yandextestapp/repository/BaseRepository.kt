@@ -1,7 +1,7 @@
 package com.farionik.yandextestapp.repository
 
 import com.blankj.utilcode.util.NetworkUtils
-import com.farionik.yandextestapp.repository.network.NetworkStatus
+import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.repository.network.noNetworkStatus
 
 open class BaseRepository() {
@@ -10,7 +10,7 @@ open class BaseRepository() {
 
     private fun notConnectedToInternet() = !isConnectedToInternet()
 
-    fun checkInternetConnection(): NetworkStatus =
+    fun checkInternetConnection(): NetworkState =
         if (notConnectedToInternet()) noNetworkStatus
-        else NetworkStatus.SUCCESS
+        else NetworkState.SUCCESS
 }

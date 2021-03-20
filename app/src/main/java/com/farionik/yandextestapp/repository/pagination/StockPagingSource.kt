@@ -22,8 +22,8 @@ class StockPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, StockModelRelation> {
         return try {
             val nextPage = params.key ?: 0
-            val result = stockRepository.loadStockPage(nextPage)
-            LoadResult.Page(result, null, (nextPage + 1))
+            ///val result = stockRepository.loadStockPage(nextPage)
+            LoadResult.Page(emptyList(), null, (nextPage + 1))
         } catch (e: Exception) {
             LoadResult.Error(e)
         }

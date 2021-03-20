@@ -21,6 +21,10 @@ abstract class StockDAO : BaseDao<StockEntity> {
     abstract fun stockModelRelationLiveData(symbol: String): LiveData<StockModelRelation>
 
     @Transaction
+    @Query("SELECT * FROM StockTable WHERE symbol =:symbol")
+    abstract fun stockModelRelation(symbol: String): StockModelRelation?
+
+    @Transaction
     @Query("SELECT * FROM StockTable")
     abstract suspend fun stockModelRelationList(): List<StockModelRelation>
 

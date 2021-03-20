@@ -1,5 +1,6 @@
 package com.farionik.yandextestapp.ui
 
+import com.farionik.yandextestapp.ui.fragment.MainFragment
 import com.farionik.yandextestapp.ui.fragment.SplashFragment
 import com.farionik.yandextestapp.ui.fragment.stocks.StockFragment
 import com.github.terrakok.cicerone.androidx.FragmentScreen
@@ -7,5 +8,7 @@ import com.github.terrakok.cicerone.androidx.FragmentScreen
 object AppScreens {
     fun startScreen() = FragmentScreen() { SplashFragment() }
 
-    fun mainScreen() = FragmentScreen() { StockFragment() }
+    fun mainScreen() = FragmentScreen() { MainFragment() }
+
+    fun stockScreen() = FragmentScreen() { StockFragment() }
 }

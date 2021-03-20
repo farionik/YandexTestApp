@@ -1,10 +1,11 @@
 package com.farionik.yandextestapp.repository
 
+import android.content.Context
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.chart.*
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.Api
-import com.farionik.yandextestapp.repository.network.NetworkStatus
+import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import com.farionik.yandextestapp.ui.fragment.detail.chart.apiRange
 import com.farionik.yandextestapp.ui.util.getFormattedCurrentDate
@@ -13,15 +14,16 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class CompanyRepositoryImpl(
+    private val context: Context,
     private val api: Api,
     private val appDatabase: AppDatabase,
     private val logoRepository: LogoRepository
 ) : BaseRepository(), CompanyRepository,
-    StockRepository by StockRepositoryImpl(api, appDatabase, logoRepository) {
+    StockRepository by StockRepositoryImpl(context, api, appDatabase, logoRepository) {
 
-    override suspend fun loadCompanyInfo(symbol: String): NetworkStatus =
+    override suspend fun loadCompanyInfo(symbol: String): NetworkState =
         when (checkInternetConnection()) {
-            is NetworkStatus.ERROR -> checkInternetConnection()
+            is NetworkState.ERROR -> checkInternetConnection()
             else -> {
                 val response = api.loadCompanyInfo(symbol)
                 if (response.isSuccessful) {
@@ -30,10 +32,10 @@ class CompanyRepositoryImpl(
                     coroutineScope {
                         launch { loadStockPrice(symbol) }
                     }
-                    NetworkStatus.SUCCESS
+                    NetworkState.SUCCESS
                 } else {
                     val errorMessage = response.message()
-                    NetworkStatus.ERROR(Throwable(errorMessage))
+                    NetworkState.ERROR(Throwable(errorMessage))
                 }
             }
         }

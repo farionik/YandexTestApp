@@ -4,19 +4,16 @@ import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.blankj.utilcode.util.NetworkUtils
 import com.farionik.yandextestapp.repository.StockRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
-import com.farionik.yandextestapp.repository.network.NetworkStatus
+import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
-import com.farionik.yandextestapp.repository.network.noNetworkStatus
 import com.farionik.yandextestapp.repository.pagination.StockPagingSource
 import com.farionik.yandextestapp.repository.pagination.StockPagingSource.Companion.PAGE_SIZE
-import com.github.terrakok.cicerone.Router
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
-import java.lang.Exception
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 open class StockViewModel(
     private val appDatabase: AppDatabase,
@@ -32,9 +29,6 @@ open class StockViewModel(
     }.flow.cachedIn(viewModelScope)
 
 
-
-
-
     val stocksLiveData: LiveData<List<StockModelRelation>>
         get() = appDatabase.stockDAO().stocksFlow()
             .asLiveData(viewModelScope.coroutineContext)
@@ -44,18 +38,28 @@ open class StockViewModel(
             .asLiveData(viewModelScope.coroutineContext)
 
 
-
-
-
-
-    private val _loadingStocksStateLiveData = MutableLiveData<NetworkStatus>()
-    val loadingStocksStateLiveData: LiveData<NetworkStatus>
+    private val _loadingStocksStateLiveData = MutableLiveData<NetworkState>()
+    val loadingStocksStateLiveData: LiveData<NetworkState>
         get() = _loadingStocksStateLiveData
+
+
+    fun fetchCompanies(page: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loadingStocksStateLiveData.postValue(NetworkState.LOADING("Loading companies..."))
+            try {
+                val state = stockRepository.loadStockPage(page)
+                _loadingStocksStateLiveData.postValue(state)
+            } catch (e: Exception) {
+                _loadingStocksStateLiveData.postValue(NetworkState.ERROR(e))
+            }
+        }
+    }
+
 
     private var loadingJob: Job? = null
 
     // получить список компаний по рейтенгу api
-    fun fetchCompanies() {
+    /*fun fetchCompanies() {
         cancelAllJob()
         // подключения sse. Только быстро съедает кредиты api
 //        webServicesProvider.stopSocket()
@@ -74,7 +78,7 @@ open class StockViewModel(
         } else {
             _loadingStocksStateLiveData.value = noNetworkStatus
         }
-    }
+    }*/
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun cancelAllJob() {

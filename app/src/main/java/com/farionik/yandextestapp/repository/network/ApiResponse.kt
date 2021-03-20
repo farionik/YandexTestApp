@@ -13,4 +13,4 @@ data class ChartResponse(
 )
 
 
-val noNetworkStatus = NetworkStatus.ERROR(Throwable("Please, check internet connection"))
+val noNetworkStatus = NetworkState.ERROR(Throwable("Please, check internet connection"))
