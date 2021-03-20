@@ -3,12 +3,11 @@ package com.farionik.yandextestapp.ui.fragment.main
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +21,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
+import java.lang.Error
 
 abstract class BaseStockFragment : Fragment(R.layout.fragment_stocks) {
 
@@ -78,22 +78,31 @@ abstract class BaseStockFragment : Fragment(R.layout.fragment_stocks) {
         }
         viewLifecycleOwner.lifecycleScope.launch {
             stockAdapter.loadStateFlow.collectLatest { loadStates ->
-
-                val state = loadStates.refresh
-
-                if (state is LoadState.Error) {
-                    showError(state.error.localizedMessage)
-                }
-
-                Timber.d("$loadStates")
-                //progressBar.isVisible = loadStates.refresh is LoadState.Loading
-                //retry.isVisible = loadState.refresh !is LoadState.Loading
-                //errorMsg.isVisible = loadState.refresh is LoadState.Error
+                handleLoading(loadStates)
+                handleError(loadStates)
             }
         }
     }
 
-    protected fun showError(message: String) {
+    private fun handleLoading(loadStates: CombinedLoadStates) {
+        val refresh = loadStates.refresh
+        val append = loadStates.append
+        val showProgress = (refresh is LoadState.Loading) or (append is LoadState.Loading)
+        swipeRefreshLayout.isRefreshing = showProgress
+    }
+
+    private fun handleError(loadStates: CombinedLoadStates) {
+        val refresh = loadStates.refresh
+        val append = loadStates.append
+        if (refresh is LoadState.Error) {
+            refresh.error.message?.let { showError(it) }
+        }
+        if (append is LoadState.Error) {
+            append.error.message?.let { showError(it) }
+        }
+    }
+
+    private fun showError(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
