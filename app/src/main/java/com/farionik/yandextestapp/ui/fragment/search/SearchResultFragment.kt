@@ -5,10 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.LiveData
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
-import com.farionik.yandextestapp.ui.fragment.main.BaseStockFragment
+import com.farionik.yandextestapp.ui.fragment.stocks.BaseStockFragment
 import com.farionik.yandextestapp.view_model.SearchViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 

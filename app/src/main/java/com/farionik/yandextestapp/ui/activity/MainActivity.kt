@@ -1,32 +1,20 @@
 package com.farionik.yandextestapp.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.ui.AppScreens
-import com.farionik.yandextestapp.ui.fragment.search.SearchViewManager
-import com.farionik.yandextestapp.ui.fragment.search.SearchedClickedListener
-import com.farionik.yandextestapp.ui.model.SearchModel
-import com.farionik.yandextestapp.view_model.StockViewModel
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Replace
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import com.google.android.material.appbar.AppBarLayout
 import org.koin.android.ext.android.inject
-import org.koin.android.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
-class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityListener {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var searchEditText: EditText
+    /*private lateinit var searchEditText: EditText
     private lateinit var searchViewManager: SearchViewManager
 
-    private val companyViewModel by viewModel<StockViewModel>()
+    private val companyViewModel by viewModel<StockViewModel>()*/
     private val navigatorHolder: NavigatorHolder by inject()
     private val navigator = AppNavigator(this, R.id.container)
 
@@ -34,7 +22,9 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        searchEditText = findViewById(R.id.editText)
+        navigator.applyCommands(arrayOf(Replace(AppScreens.startScreen())))
+
+        /*searchEditText = findViewById(R.id.editText)
 
         val appBar: AppBarLayout = findViewById(R.id.appBarLayout)
         appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -43,12 +33,12 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
             companyViewModel.appBarOffsetMutableLiveData.postValue(percent.toInt())
         })
 
-        searchViewManager = SearchViewManager(searchEditText, this)
+        searchViewManager = SearchViewManager(searchEditText, this)*/
 
-        navigator.applyCommands(arrayOf(Replace(AppScreens.mainScreen())))
+
     }
 
-    override fun searchModelClicked(model: SearchModel) {
+/*    override fun searchModelClicked(model: SearchModel) {
         with(searchEditText) {
             model.name.let {
                 setText(it)
@@ -67,11 +57,11 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
     override fun openScreen(fragment: Fragment, addToBackStack: Boolean) {
         KeyboardUtils.hideSoftInput(this)
         Timber.d("")
-        /*findNavController(R.id.nav_host_fragment)
-            .navigate(R.id.action_mainFragment_to_searchFragment)*/
+        *//*findNavController(R.id.nav_host_fragment)
+            .navigate(R.id.action_mainFragment_to_searchFragment)*//*
 
 
-        /*KeyboardUtils.hideSoftInput(this)
+        *//*KeyboardUtils.hideSoftInput(this)
 
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
@@ -93,7 +83,7 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
                     delay(200)
                     searchEditText.visibility = View.GONE
                 }
-            }*/
+            }*//*
     }
 
     override fun searchAction(request: String) {
@@ -102,12 +92,12 @@ class MainActivity : AppCompatActivity(), SearchedClickedListener, MainActivityL
 
     override fun backClicked() {
         searchEditText.visibility = View.VISIBLE
-        /*lifecycleScope.launch(Dispatchers.Main) {
+        *//*lifecycleScope.launch(Dispatchers.Main) {
             delay(200)
             searchEditText.visibility = View.VISIBLE
         }
-        supportFragmentManager.popBackStack()*/
-    }
+        supportFragmentManager.popBackStack()*//*
+    }*/
 
     override fun onResume() {
         super.onResume()

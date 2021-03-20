@@ -3,6 +3,7 @@
 
     <string name="tab_stock">Stock</string>
     <string name="tab_favourite">Favourite</string>
+    <string name="tab_all">All stocks</string>
 
     <string name="tab_chart">Chart</string>
     <string name="tab_summary">Summary</string>

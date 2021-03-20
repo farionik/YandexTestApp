@@ -8,9 +8,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.farionik.yandextestapp.databinding.FragmentSearchBinding
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
-import com.farionik.yandextestapp.ui.fragment.list_item_decorator.SearchSpaceItemDecoration
+import com.farionik.yandextestapp.ui.adapter.list_item_decorator.SearchSpaceItemDecoration
 
 class SearchFragment : BaseSearchFragment() {
 

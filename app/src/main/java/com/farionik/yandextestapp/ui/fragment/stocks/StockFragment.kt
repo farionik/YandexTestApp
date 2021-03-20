@@ -1,4 +1,4 @@
-package com.farionik.yandextestapp.ui.fragment.main
+package com.farionik.yandextestapp.ui.fragment.stocks
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,15 +7,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.databinding.FragmentMainBinding
+import com.farionik.yandextestapp.databinding.FragmentStockBinding
 import com.farionik.yandextestapp.ui.util.*
 import com.farionik.yandextestapp.view_model.StockViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import kotlin.math.roundToInt
 
-class MainFragment : Fragment() {
+class StockFragment : Fragment() {
 
-    private lateinit var binding: FragmentMainBinding
+    private lateinit var binding: FragmentStockBinding
     private lateinit var outlineProvider: TweakableOutlineProvider
 
     private val mainViewModel by sharedViewModel<StockViewModel>()
@@ -24,7 +24,7 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(inflater, container, false)
+        binding = FragmentStockBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -47,10 +47,18 @@ class MainFragment : Fragment() {
             )
             it.outlineProvider = outlineProvider
 
-            val tabTitles = listOf(getString(R.string.tab_stock), getString(R.string.tab_favourite))
-            val fragments = listOf(PopularStocksFragment(), FavouriteStockFragment())
+            val tabTitles = listOf(
+                getString(R.string.tab_stock),
+                getString(R.string.tab_favourite),
+                getString(R.string.tab_all)
+            )
+            val fragments = listOf(
+                PopularStocksFragment(),
+                FavouriteStockFragment(),
+                AllStocksFragment()
+            )
 
-            binding.viewPager.adapter = ScreenPagerAdapter(this@MainFragment, fragments)
+            binding.viewPager.adapter = ScreenPagerAdapter(this@StockFragment, fragments)
 
             initTabLayoutMediator(
                 it,

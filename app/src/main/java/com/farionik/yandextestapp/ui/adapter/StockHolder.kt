@@ -1,4 +1,4 @@
-package com.farionik.yandextestapp.ui.fragment.main
+package com.farionik.yandextestapp.ui.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView

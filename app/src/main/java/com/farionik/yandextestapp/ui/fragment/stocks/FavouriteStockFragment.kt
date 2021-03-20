@@ -1,9 +1,11 @@
-package com.farionik.yandextestapp.ui.fragment.main
+package com.farionik.yandextestapp.ui.fragment.stocks
 
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.ui.adapter.Interaction
+import com.farionik.yandextestapp.ui.adapter.StockAdapter
 import kotlinx.coroutines.launch
 
 class FavouriteStockFragment : BaseStockFragment() {

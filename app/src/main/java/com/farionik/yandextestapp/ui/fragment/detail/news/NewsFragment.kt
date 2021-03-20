@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import com.farionik.yandextestapp.ui.fragment.BaseFragment
-import com.farionik.yandextestapp.ui.fragment.list_item_decorator.CompanySpaceItemDecoration
+import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
 
 class NewsFragment : BaseFragment() {
 

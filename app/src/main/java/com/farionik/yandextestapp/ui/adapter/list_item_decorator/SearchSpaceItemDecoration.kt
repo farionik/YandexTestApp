@@ -1,11 +1,11 @@
-package com.farionik.yandextestapp.ui.fragment.list_item_decorator
+package com.farionik.yandextestapp.ui.adapter.list_item_decorator
 
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.R
 
-class CompanySpaceItemDecoration : BaseSpaceItemDecorator() {
+class SearchSpaceItemDecoration : BaseSpaceItemDecorator() {
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -17,14 +17,14 @@ class CompanySpaceItemDecoration : BaseSpaceItemDecorator() {
 
         parent.run {
             adapter?.run {
-                outRect.top = if (isFirstPosition(view)) {
-                    pxSpace(R.dimen._20sdp)
+                outRect.left = if (isFirstOrSecondPosition(view)) {
+                    pxSpace(R.dimen._16sdp)
                 } else {
-                    pxSpace(R.dimen._8sdp)
+                    pxSpace(R.dimen._4sdp)
                 }
 
-                if (parent.isLastPosition(view, itemCount)) {
-                    outRect.bottom = pxSpace(R.dimen._20sdp)
+                if (parent.isLastOrPreLastPosition(view, itemCount)) {
+                    outRect.right = pxSpace(R.dimen._16sdp)
                 }
             }
         }

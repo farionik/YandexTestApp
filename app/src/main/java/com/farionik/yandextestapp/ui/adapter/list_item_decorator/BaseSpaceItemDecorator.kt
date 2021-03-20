@@ -1,10 +1,9 @@
-package com.farionik.yandextestapp.ui.fragment.list_item_decorator
+package com.farionik.yandextestapp.ui.adapter.list_item_decorator
 
 import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.farionik.yandextestapp.R
 
 open class BaseSpaceItemDecorator : RecyclerView.ItemDecoration() {
 

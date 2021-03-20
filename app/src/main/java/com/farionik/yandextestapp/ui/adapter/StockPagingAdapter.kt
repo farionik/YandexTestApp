@@ -1,17 +1,15 @@
-package com.farionik.yandextestapp.ui.fragment.main
+package com.farionik.yandextestapp.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
+import androidx.paging.PagingDataAdapter
 import com.farionik.yandextestapp.databinding.RvItemCompanyBinding
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 
-class StockAdapter(
-    private val isSearch: Boolean = false,
+class StockPagingAdapter(
     private val interaction: Interaction? = null
-) :
-    ListAdapter<StockModelRelation, StockHolder>(StockDC()) {
+) : PagingDataAdapter<StockModelRelation, StockHolder>(StockDC()) {
 
     private lateinit var context: Context
 
@@ -26,8 +24,11 @@ class StockAdapter(
         holder.bind(getItem(position))
     }
 
-
-    fun swapData(data: List<StockModelRelation>) {
-        submitList(data.toMutableList())
+    fun updateItem(position: Int) {
+        val updatedStock = getItem(position)?.stock
+        updatedStock?.run {
+            isFavourite = !isFavourite
+            notifyItemChanged(position)
+        }
     }
 }

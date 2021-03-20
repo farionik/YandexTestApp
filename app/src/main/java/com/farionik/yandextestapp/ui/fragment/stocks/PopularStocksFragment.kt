@@ -1,12 +1,12 @@
-package com.farionik.yandextestapp.ui.fragment.main
+package com.farionik.yandextestapp.ui.fragment.stocks
 
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
-import com.farionik.yandextestapp.ui.fragment.list_item_decorator.CompanySpaceItemDecoration
+import com.farionik.yandextestapp.ui.adapter.Interaction
+import com.farionik.yandextestapp.ui.adapter.StockPagingAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -35,7 +35,7 @@ class PopularStocksFragment : BaseStockFragment() {
 
         initRecyclerView(stockPagingAdapter)
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        /*viewLifecycleOwner.lifecycleScope.launch {
             stockViewModel.stockFlow.collectLatest { stockPagingAdapter.submitData(it) }
         }
         viewLifecycleOwner.lifecycleScope.launch {
@@ -43,7 +43,7 @@ class PopularStocksFragment : BaseStockFragment() {
                 handleLoading(loadStates)
                 handleError(loadStates)
             }
-        }
+        }*/
     }
 
     private fun handleLoading(loadStates: CombinedLoadStates) {

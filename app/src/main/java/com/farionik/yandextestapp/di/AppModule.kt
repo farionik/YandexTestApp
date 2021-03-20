@@ -9,6 +9,8 @@ import com.farionik.yandextestapp.view_model.CompanyViewModel
 import com.farionik.yandextestapp.view_model.StockViewModel
 import com.farionik.yandextestapp.view_model.SearchViewModel
 import com.github.terrakok.cicerone.Cicerone
+import com.github.terrakok.cicerone.Cicerone.Companion.create
+import com.github.terrakok.cicerone.Router
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -47,7 +49,8 @@ val appViewModelModule = module {
     }
 }
 
+private val cicerone: Cicerone<Router> = create()
 val navigationModule = module {
-    single { Cicerone.create().router }
-    single { Cicerone.create().getNavigatorHolder() }
+    single { cicerone.router }
+    single { cicerone.getNavigatorHolder() }
 }
