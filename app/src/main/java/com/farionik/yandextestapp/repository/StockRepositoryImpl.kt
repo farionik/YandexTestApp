@@ -3,23 +3,17 @@ package com.farionik.yandextestapp.repository
 import android.content.Context
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.AppDatabase
+import com.farionik.yandextestapp.repository.database.company.StartStockEntity
 import com.farionik.yandextestapp.repository.database.company.StockEntity
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.Api
 import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.repository.network.SPStoredModel
 import com.farionik.yandextestapp.repository.network.noNetworkStatus
-import com.farionik.yandextestapp.repository.pagination.StockPagingSource
-import com.farionik.yandextestapp.ui.adapter.PaginationListener
+import com.farionik.yandextestapp.ui.adapter.PaginationListener.Companion.PAGE_SIZE
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import timber.log.Timber
 
 open class StockRepositoryImpl(
@@ -107,69 +101,54 @@ open class StockRepositoryImpl(
         appDatabase.stockDAO().update(companyEntity)
     }
 
-    override suspend fun loadStockPage(page: Int): NetworkState {
-        val list = loadSP500().chunked(PaginationListener.PAGE_SIZE)[page]
+    override suspend fun loadMoreStocks(totalCount: Int): NetworkState {
+        Timber.d("total count $totalCount")
+        val count = totalCount + PAGE_SIZE
+        val result = loadSP500()
+        if (result is NetworkState.ERROR) {
+            return result
+        }
 
-        val symbols = list.joinToString { it.ticker }
+        val list = appDatabase.startStockDAO().stockList()!!.subList(totalCount, count)
+
+        val symbols = list.joinToString { it.symbol }
         val response = api.updateStockPrices(symbols, "quote")
 
         return if (response.isSuccessful) {
             val data = response.body() as Map<String, Map<String, StockEntity>>
             val stocks = data.map { it.value["quote"] as StockEntity }
+            logoRepository.loadCompaniesLogo(stocks)
             appDatabase.stockDAO().insertAll(stocks)
-            Timber.d("")
-            /*val stockModelRelation = appDatabase.stockDAO().stockModelRelation(symbol)
-            if (stockModelRelation == null) {
-                appDatabase.stockDAO().insert(stockResponse)
-                logoRepository.loadCompanyLogo(stockResponse)
-            } else {
-                updateStockData(stockResponse)
-            }*/
-
             NetworkState.SUCCESS
         } else {
             val errorMessage = response.message()
             NetworkState.ERROR(Throwable(errorMessage))
         }
+    }
 
+    private suspend fun loadSP500(): NetworkState {
+        if (appDatabase.startStockDAO().stockList().isNullOrEmpty()) {
 
-        /*val storageList = appDatabase.stockDAO().stockList()
-
-
-
-
-
-        return if (storageList.isNullOrEmpty()) {
             val response = api.loadStocks(500)
-            if (response.isSuccessful) {
-                val data = response.body() as List<StockEntity>
-                appDatabase.stockDAO().insertAll(data)
+            return if (response.isSuccessful) {
+                val data = response.body() as List<StartStockEntity>
+                if (data.isNullOrEmpty()) {
+                    NetworkState.ERROR(Throwable("Loaded data is empty"))
+                } else {
+                    appDatabase.startStockDAO().insertAll(data)
+                    NetworkState.SUCCESS
+                }
+            } else {
+                val errorMessage = response.message()
+                NetworkState.ERROR(Throwable(errorMessage))
             }
-            takeStoragePage(page)
-        } else {
-            takeStoragePage(page)
-        }*/
-    }
-
-    private suspend fun takeStoragePage(page: Int): List<StockModelRelation> {
-        val storageList = appDatabase.stockDAO().stockModelRelationList()
-        return if (storageList.isNullOrEmpty()) {
-            // показать ошибку
-            emptyList()
-        } else {
-            val list = storageList.chunked(StockPagingSource.PAGE_SIZE)[page]
-            logoRepository.loadCompaniesLogo(list)
-            appDatabase.stockDAO().stockModelRelationList()
-                .chunked(StockPagingSource.PAGE_SIZE)[page]
         }
-    }
+        return NetworkState.SUCCESS
 
-    private fun loadSP500(): List<SPStoredModel> {
-        val fileInputStream = context.resources.openRawResource(R.raw.sp_500)
+        /*val fileInputStream = context.resources.openRawResource(R.raw.sp_500)
         val bufferedReader = fileInputStream.bufferedReader()
         var content: String
         bufferedReader.use { content = it.readText() }
-
-        return Gson().fromJson(content, object : TypeToken<List<SPStoredModel>>() {}.type)
+        return Gson().fromJson(content, object : TypeToken<List<SPStoredModel>>() {}.type)*/
     }
 }

@@ -66,7 +66,7 @@ class StockAdapter(
                             else R.drawable.snippet_background_dark
                         }
                         false -> {
-                            if (absoluteAdapterPosition % 2 == 0) R.drawable.snippet_background_dark
+                            if (adapterPosition % 2 == 0) R.drawable.snippet_background_dark
                             else R.drawable.snippet_background_light
                         }
                     }
@@ -76,10 +76,7 @@ class StockAdapter(
                     else R.drawable.ic_star_grey
                 ).also {
                     favourite.setOnClickListener {
-                        interaction?.likeCompany(
-                            item,
-                            absoluteAdapterPosition
-                        )
+                        interaction?.likeCompany(item, adapterPosition)
                     }
                 }
 

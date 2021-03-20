@@ -4,7 +4,6 @@ import android.content.Context
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyLogoEntity
 import com.farionik.yandextestapp.repository.database.company.StockEntity
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.Api
 import com.farionik.yandextestapp.repository.network.NetworkState
 import kotlinx.coroutines.*
@@ -19,11 +18,11 @@ class LogoRepositoryImpl(
     private val appDatabase: AppDatabase
 ) : LogoRepository {
 
-    override suspend fun loadCompaniesLogo(stock: List<StockModelRelation>) {
+    override suspend fun loadCompaniesLogo(stock: List<StockEntity>) {
         coroutineScope {
             stock.forEach {
                 launch(IO) {
-                    loadCompanyLogo(it.stock.symbol)
+                    loadCompanyLogo(it.symbol)
                 }
             }
         }

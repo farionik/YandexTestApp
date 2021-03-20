@@ -1,6 +1,5 @@
 package com.farionik.yandextestapp.repository
 
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.NetworkState
 
 interface StockRepository {
@@ -11,5 +10,5 @@ interface StockRepository {
 
     suspend fun likeStock(symbol: String)
 
-    suspend fun loadStockPage(page: Int): NetworkState
+    suspend fun loadMoreStocks(totalCount: Int): NetworkState
 }

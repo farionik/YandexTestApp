@@ -1,6 +1,7 @@
 package com.farionik.yandextestapp.repository.network
 
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.database.company.StartStockEntity
 import com.farionik.yandextestapp.repository.database.company.StockEntity
 import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import kotlinx.coroutines.Deferred
@@ -16,7 +17,7 @@ import java.util.*
 interface Api {
 
     @GET("stock/market/list/iexvolume")
-    suspend fun loadStocks(@Query("listLimit") listLimit: Int): Response<List<StockEntity>>
+    suspend fun loadStocks(@Query("listLimit") listLimit: Int): Response<List<StartStockEntity>>
 
     @GET("stock/{symbol}/quote")
     suspend fun loadCompanyStockPrice(@Path("symbol") symbol: String): Response<StockEntity>
