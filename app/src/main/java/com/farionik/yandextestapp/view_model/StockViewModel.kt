@@ -5,10 +5,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.blankj.utilcode.util.NetworkUtils
-import com.farionik.yandextestapp.repository.LogoRepository
 import com.farionik.yandextestapp.repository.StockRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.NetworkStatus
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
@@ -33,6 +31,9 @@ open class StockViewModel(
     }.flow.cachedIn(viewModelScope)
 
 
+
+
+
     val stocksLiveData: LiveData<List<StockModelRelation>>
         get() = appDatabase.stockDAO().stocksFlow()
             .asLiveData(viewModelScope.coroutineContext)
@@ -40,6 +41,11 @@ open class StockViewModel(
     val favouriteStocksLiveData: LiveData<List<StockModelRelation>>
         get() = appDatabase.stockDAO().favouriteStocksFlow()
             .asLiveData(viewModelScope.coroutineContext)
+
+
+
+
+
 
     private val _loadingStocksStateLiveData = MutableLiveData<NetworkStatus>()
     val loadingStocksStateLiveData: LiveData<NetworkStatus>
@@ -75,9 +81,5 @@ open class StockViewModel(
         loadingJob?.cancel()
     }
 
-    fun likeStock(symbol: String) {
-        viewModelScope.launch(IO) {
-            stockRepository.likeStock(symbol)
-        }
-    }
+    suspend fun likeStock(symbol: String) = stockRepository.likeStock(symbol)
 }

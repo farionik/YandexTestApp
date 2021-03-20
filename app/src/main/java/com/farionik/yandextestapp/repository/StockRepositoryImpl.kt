@@ -118,7 +118,8 @@ open class StockRepositoryImpl(
         } else {
             val list = storageList.chunked(StockPagingSource.PAGE_SIZE)[page]
             logoRepository.loadCompaniesLogo(list)
-            appDatabase.stockDAO().stockModelRelationList().chunked(StockPagingSource.PAGE_SIZE)[page]
+            appDatabase.stockDAO().stockModelRelationList()
+                .chunked(StockPagingSource.PAGE_SIZE)[page]
         }
     }
 

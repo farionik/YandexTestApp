@@ -26,8 +26,9 @@ class SearchResultFragment : BaseStockFragment() {
         return inflater.inflate(R.layout.fragment_search_result, container, false)
     }
 
-    override val dataSource: LiveData<List<StockModelRelation>>
-        get() = searchViewModel.searchedStocksLiveData
+    override fun initAdapter() {
+        TODO("Not yet implemented")
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

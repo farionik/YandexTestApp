@@ -48,7 +48,7 @@ class MainFragment : Fragment() {
             it.outlineProvider = outlineProvider
 
             val tabTitles = listOf(getString(R.string.tab_stock), getString(R.string.tab_favourite))
-            val fragments = listOf(CompanyFragment(), FavouriteFragment())
+            val fragments = listOf(PopularStocksFragment(), FavouriteStockFragment())
 
             binding.viewPager.adapter = ScreenPagerAdapter(this@MainFragment, fragments)
 
