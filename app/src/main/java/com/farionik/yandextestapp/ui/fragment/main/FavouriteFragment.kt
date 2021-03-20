@@ -5,12 +5,11 @@ import android.view.View
 import androidx.lifecycle.LiveData
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 
-class FavouriteFragment : BaseListFragment() {
+class FavouriteFragment : BaseStockFragment() {
     override val dataSource: LiveData<List<StockModelRelation>>
         get() = stockViewModel.favouriteStocksLiveData
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        hideProgress()
     }
 }

@@ -7,15 +7,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
-import com.farionik.yandextestapp.ui.fragment.main.BaseListFragment
+import com.farionik.yandextestapp.ui.fragment.main.BaseStockFragment
 import com.farionik.yandextestapp.view_model.SearchViewModel
-import com.farionik.yandextestapp.view_model.StockViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 
-class SearchResultFragment : BaseListFragment() {
+class SearchResultFragment : BaseStockFragment() {
 
     private lateinit var showMore: TextView
     val searchViewModel by sharedViewModel<SearchViewModel>()

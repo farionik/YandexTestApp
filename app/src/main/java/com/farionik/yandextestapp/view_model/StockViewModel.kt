@@ -1,6 +1,9 @@
 package com.farionik.yandextestapp.view_model
 
 import androidx.lifecycle.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.blankj.utilcode.util.NetworkUtils
 import com.farionik.yandextestapp.repository.LogoRepository
 import com.farionik.yandextestapp.repository.StockRepository
@@ -10,6 +13,8 @@ import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.NetworkStatus
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
 import com.farionik.yandextestapp.repository.network.noNetworkStatus
+import com.farionik.yandextestapp.repository.pagination.StockPagingSource
+import com.farionik.yandextestapp.repository.pagination.StockPagingSource.Companion.PAGE_SIZE
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import java.lang.Exception
@@ -17,11 +22,16 @@ import java.lang.Exception
 open class StockViewModel(
     private val appDatabase: AppDatabase,
     private val stockRepository: StockRepository,
-    private val logoRepository: LogoRepository,
     private val webServicesProvider: WebServicesProvider
 ) : ViewModel(), LifecycleObserver {
     // величина скрола toolBar
     var appBarOffsetMutableLiveData: MutableLiveData<Int> = MutableLiveData()
+
+
+    val stockFlow = Pager(PagingConfig(PAGE_SIZE, PAGE_SIZE)) {
+        StockPagingSource(stockRepository)
+    }.flow.cachedIn(viewModelScope)
+
 
     val stocksLiveData: LiveData<List<StockModelRelation>>
         get() = appDatabase.stockDAO().stocksFlow()
@@ -38,7 +48,6 @@ open class StockViewModel(
     private var loadingJob: Job? = null
 
     // получить список компаний по рейтенгу api
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun fetchCompanies() {
         cancelAllJob()
         // подключения sse. Только быстро съедает кредиты api
@@ -53,13 +62,7 @@ open class StockViewModel(
                     if (e is CancellationException) NetworkStatus.SUCCESS
                     else NetworkStatus.ERROR(Throwable(e.message))
                 }
-                if (status == NetworkStatus.SUCCESS) {
-                    _loadingStocksStateLiveData.postValue(NetworkStatus.LOADING("Please wait..."))
-                    logoRepository.loadCompaniesLogo()
-                    _loadingStocksStateLiveData.postValue(status)
-                } else {
-                    _loadingStocksStateLiveData.postValue(status)
-                }
+                _loadingStocksStateLiveData.postValue(status)
             }
         } else {
             _loadingStocksStateLiveData.value = noNetworkStatus

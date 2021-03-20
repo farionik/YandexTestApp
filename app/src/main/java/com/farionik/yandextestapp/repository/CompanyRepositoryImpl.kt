@@ -14,9 +14,10 @@ import timber.log.Timber
 
 class CompanyRepositoryImpl(
     private val api: Api,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    private val logoRepository: LogoRepository
 ) : BaseRepository(), CompanyRepository,
-    StockRepository by StockRepositoryImpl(api, appDatabase) {
+    StockRepository by StockRepositoryImpl(api, appDatabase, logoRepository) {
 
     override suspend fun loadCompanyInfo(symbol: String): NetworkStatus =
         when (checkInternetConnection()) {

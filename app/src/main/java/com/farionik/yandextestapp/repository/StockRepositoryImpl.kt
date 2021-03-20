@@ -2,9 +2,11 @@ package com.farionik.yandextestapp.repository
 
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.StockEntity
+import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.Api
 import com.farionik.yandextestapp.repository.network.NetworkStatus
 import com.farionik.yandextestapp.repository.network.noNetworkStatus
+import com.farionik.yandextestapp.repository.pagination.StockPagingSource
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -12,7 +14,8 @@ import kotlinx.coroutines.coroutineScope
 
 open class StockRepositoryImpl(
     private val api: Api,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    private val logoRepository: LogoRepository,
 ) : BaseRepository(), StockRepository {
 
     override suspend fun fetchStocks(): NetworkStatus = when (checkInternetConnection()) {
@@ -91,6 +94,32 @@ open class StockRepositoryImpl(
         val companyEntity = appDatabase.stockDAO().stockEntity(symbol)
         companyEntity.isFavourite = !companyEntity.isFavourite
         appDatabase.stockDAO().update(companyEntity)
+    }
+
+    override suspend fun loadStockPage(page: Int): List<StockModelRelation> {
+        val storageList = appDatabase.stockDAO().stockList()
+        return if (storageList.isNullOrEmpty()) {
+            val response = api.loadStocks(500)
+            if (response.isSuccessful) {
+                val data = response.body() as List<StockEntity>
+                appDatabase.stockDAO().insertAll(data)
+            }
+            takeStoragePage(page)
+        } else {
+            takeStoragePage(page)
+        }
+    }
+
+    private suspend fun takeStoragePage(page: Int): List<StockModelRelation> {
+        val storageList = appDatabase.stockDAO().stockModelRelationList()
+        return if (storageList.isNullOrEmpty()) {
+            // показать ошибку
+            emptyList()
+        } else {
+            val list = storageList.chunked(StockPagingSource.PAGE_SIZE)[page]
+            logoRepository.loadCompaniesLogo(list)
+            appDatabase.stockDAO().stockModelRelationList().chunked(StockPagingSource.PAGE_SIZE)[page]
+        }
     }
 
     /*private fun loadSP500(): Flow<MutableList<SPStoredModel>> = flow {

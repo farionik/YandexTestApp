@@ -28,7 +28,7 @@ class CompanyViewModel(
 
     val selectedStock: LiveData<StockModelRelation>
         get() = Transformations.switchMap(companySymbolLiveData) {
-            appDatabase.stockDAO().stockEntityLiveData(it)
+            appDatabase.stockDAO().stockModelRelationLiveData(it)
         }
 
     val selectedCompany: LiveData<CompanyEntity>

@@ -5,17 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.core.view.isVisible
+import androidx.paging.LoadState
+import androidx.paging.LoadStateAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.farionik.yandextestapp.R
+import com.farionik.yandextestapp.databinding.LoadStateItemBinding
 import com.farionik.yandextestapp.databinding.RvItemCompanyBinding
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.ui.util.formatChangeValue
 import com.farionik.yandextestapp.ui.util.formatPercentValue
@@ -25,7 +29,7 @@ class StockAdapter(
     private val isSearch: Boolean = false,
     private val interaction: Interaction? = null
 ) :
-    ListAdapter<StockModelRelation, StockAdapter.StockHolder>(StockDC()) {
+    PagingDataAdapter<StockModelRelation, StockAdapter.StockHolder>(StockDC()) {
 
     private lateinit var context: Context
 
@@ -36,12 +40,10 @@ class StockAdapter(
         return StockHolder(binding, interaction)
     }
 
-    override fun onBindViewHolder(holder: StockHolder, position: Int) =
+    override fun onBindViewHolder(holder: StockHolder, position: Int) {
         holder.bind(getItem(position))
-
-    fun swapData(data: List<StockModelRelation>) {
-        submitList(data.toMutableList())
     }
+
 
     inner class StockHolder(
         private val binding: RvItemCompanyBinding,
@@ -54,50 +56,56 @@ class StockAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (adapterPosition == RecyclerView.NO_POSITION) return
-            val clicked = getItem(adapterPosition)
-            if (v?.id == R.id.favourite) {
-                interaction?.likeCompany(clicked, adapterPosition)
-            } else {
-                interaction?.openCompanyDetail(clicked)
+            if (absoluteAdapterPosition == RecyclerView.NO_POSITION) return
+            val clicked = getItem(absoluteAdapterPosition)
+            clicked?.let {
+                if (v?.id == R.id.favourite) {
+                    interaction?.likeCompany(clicked, absoluteAdapterPosition)
+                } else {
+                    interaction?.openCompanyDetail(clicked)
+                }
             }
+
         }
 
-        fun bind(item: StockModelRelation) = with(binding) {
+        fun bind(item: StockModelRelation?) = with(binding) {
+            item?.run {
 
-            Glide.with(image).clear(image)
-            item.logo?.run {
-                Glide
-                    .with(image)
-                    .load(localPath)
-                    .transform(CenterCrop(), RoundedCorners(52))
-                    .into(image)
+                Glide.with(image).clear(image)
+                logo?.run {
+                    Glide
+                        .with(image)
+                        .load(localPath)
+                        .transform(CenterCrop(), RoundedCorners(52))
+                        .into(image)
+                }
+
+                stock.run {
+                    ticker.text = symbol
+                    name.text = companyName
+
+                    snippet.setBackgroundResource(
+                        when (isSearch) {
+                            true -> {
+                                if (isFavourite) R.drawable.snippet_background_light
+                                else R.drawable.snippet_background_dark
+                            }
+                            false -> {
+                                if (absoluteAdapterPosition % 2 == 0) R.drawable.snippet_background_dark
+                                else R.drawable.snippet_background_light
+                            }
+                        }
+                    )
+                    favourite.setImageResource(
+                        if (isFavourite) R.drawable.ic_star_gold
+                        else R.drawable.ic_star_grey
+                    )
+                    binding.price.formatPriceValue(this)
+                    binding.change.formatChangeValue(this)
+                    binding.percentChange.formatPercentValue(this)
+                }
             }
 
-            item.stock.run {
-                ticker.text = symbol
-                name.text = companyName
-
-                snippet.setBackgroundResource(
-                    when (isSearch) {
-                        true -> {
-                            if (isFavourite) R.drawable.snippet_background_light
-                            else R.drawable.snippet_background_dark
-                        }
-                        false -> {
-                            if (adapterPosition % 2 == 0) R.drawable.snippet_background_dark
-                            else R.drawable.snippet_background_light
-                        }
-                    }
-                )
-                favourite.setImageResource(
-                    if (isFavourite) R.drawable.ic_star_gold
-                    else R.drawable.ic_star_grey
-                )
-                binding.price.formatPriceValue(this)
-                binding.change.formatChangeValue(this)
-                binding.percentChange.formatPercentValue(this)
-            }
         }
     }
 
