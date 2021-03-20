@@ -13,11 +13,13 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
+import com.farionik.yandextestapp.ui.AppScreens
 import com.farionik.yandextestapp.ui.activity.MainActivityListener
+import com.github.terrakok.cicerone.Router
 
 class SearchViewManager(
     private val editText: EditText,
-    private val activityListener: MainActivityListener
+    private val router: Router
 ) {
 
     init {
@@ -58,8 +60,8 @@ class SearchViewManager(
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     changeEditTextState(SearchState.SEARCH)
-                    activityListener.searchAction(text.toString())
-                    activityListener.openScreen(SearchResultFragment())
+                    //activityListener.searchAction(text.toString())
+                    router.navigateTo(AppScreens.searchResultScreen())
                     return true
                 }
                 return false
@@ -70,7 +72,7 @@ class SearchViewManager(
             run {
                 hint = if (hasFocus) {
                     changeEditTextState(SearchState.ACTIVE)
-                    activityListener.openScreen(SearchFragment())
+                    router.navigateTo(AppScreens.searchScreen())
                     ""
                 } else {
                     changeEditTextState(SearchState.NOT_ACTIVE)
@@ -140,7 +142,7 @@ class SearchViewManager(
                     width?.let {
                         if (x >= (right - it - padding)) {
                             setText("")
-                            activityListener.backClicked()
+                            router.exit()
                             return true
                         }
                     }
@@ -164,11 +166,11 @@ class SearchViewManager(
         when (state) {
             SearchState.SEARCH -> {
                 editText.changeEditTextState(SearchState.ACTIVE)
-                activityListener.backClicked()
+                router.exit()
             }
             SearchState.ACTIVE -> {
                 editText.setText("")
-                activityListener.backClicked()
+                router.exit()
                 editText.clearFocus()
                 editText.let { KeyboardUtils.hideSoftInput(it) }
             }

@@ -13,23 +13,15 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class SearchResultFragment : BaseStockFragment() {
 
-    private lateinit var showMore: TextView
+    //private lateinit var showMore: TextView
     val searchViewModel by sharedViewModel<SearchViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_search_result, container, false)
-    }
-
     override fun initAdapter() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showMore = view.findViewById(R.id.showMoreTitle)
+        //showMore = view.findViewById(R.id.showMoreTitle)
     }
 }

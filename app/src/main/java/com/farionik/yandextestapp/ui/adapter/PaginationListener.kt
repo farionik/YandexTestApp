@@ -2,7 +2,6 @@ package com.farionik.yandextestapp.ui.adapter
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import timber.log.Timber
 
 
 abstract class PaginationListener(

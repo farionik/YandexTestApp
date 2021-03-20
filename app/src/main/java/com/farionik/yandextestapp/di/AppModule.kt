@@ -33,6 +33,8 @@ val appRepositoryModule = module {
 
     single<NewsRepository> { NewsRepositoryImpl(get(), get()) }
     single<LogoRepository> { LogoRepositoryImpl(get(), get(), get()) }
+
+    single<SearchRepository> { SearchRepositoryImpl(get()) }
 }
 
 val appViewModelModule = module {
