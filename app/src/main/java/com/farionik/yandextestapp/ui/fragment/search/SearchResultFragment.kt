@@ -10,15 +10,7 @@ import com.farionik.yandextestapp.ui.fragment.stocks.BaseStockFragment
 import com.farionik.yandextestapp.view_model.SearchViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
-
-class SearchResultFragment : BaseStockFragment() {
-
-    //private lateinit var showMore: TextView
-    val searchViewModel by sharedViewModel<SearchViewModel>()
-
-    override fun initAdapter() {
-
-    }
+class SearchResultFragment : BaseSearchFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

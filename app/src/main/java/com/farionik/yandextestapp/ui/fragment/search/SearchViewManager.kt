@@ -59,9 +59,12 @@ class SearchViewManager(
         setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    changeEditTextState(SearchState.SEARCH)
+                    if (state != SearchState.SEARCH) {
+                        router.navigateTo(AppScreens.searchResultScreen())
+                        changeEditTextState(SearchState.SEARCH)
+                    }
+                    KeyboardUtils.hideSoftInput(editText)
                     //activityListener.searchAction(text.toString())
-                    router.navigateTo(AppScreens.searchResultScreen())
                     return true
                 }
                 return false

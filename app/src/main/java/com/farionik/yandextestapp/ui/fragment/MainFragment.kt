@@ -6,25 +6,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
+import com.farionik.yandextestapp.di.Containers.MAIN_FRAGMENT_CONTAINER
+import com.farionik.yandextestapp.di.LocalCiceroneHolder
 import com.farionik.yandextestapp.ui.AppScreens
 import com.farionik.yandextestapp.ui.fragment.search.SearchViewManager
-import com.github.terrakok.cicerone.Cicerone
-import com.github.terrakok.cicerone.Navigator
+import com.github.terrakok.cicerone.Command
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.appbar.AppBarLayout
+import org.koin.android.ext.android.inject
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), BackButtonListener {
 
     private lateinit var searchEditText: EditText
     private lateinit var searchViewManager: SearchViewManager
 
-    private val cicerone = Cicerone.create(Router())
-    private val navigator: Navigator by lazy {
-        AppNavigator(requireActivity(), R.id.container, childFragmentManager)
-    }
-    val router: Router
+    private val localCiceroneHolder by inject<LocalCiceroneHolder>()
+
+    private val cicerone = localCiceroneHolder.getCicerone(MAIN_FRAGMENT_CONTAINER.name)
+
+    private lateinit var navigator: AppNavigator
+
+
+    private val router: Router
         get() = cicerone.router
 
     override fun onCreateView(
@@ -36,6 +43,27 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navigator = object : AppNavigator(requireActivity(), R.id.container, childFragmentManager) {
+            override fun setupFragmentTransaction(
+                fragmentTransaction: FragmentTransaction,
+                currentFragment: Fragment?,
+                nextFragment: Fragment?
+            ) {
+                fragmentTransaction.setCustomAnimations(
+                    R.anim.enter,
+                    R.anim.exit,
+                    R.anim.pop_enter,
+                    R.anim.pop_exit
+                )
+                fragmentTransaction.setReorderingAllowed(true)
+                super.setupFragmentTransaction(fragmentTransaction, currentFragment, nextFragment)
+            }
+
+            override fun applyCommands(commands: Array<out Command>) {
+                KeyboardUtils.hideSoftInput(activity)
+                super.applyCommands(commands)
+            }
+        }
         router.replaceScreen(AppScreens.stockScreen())
 
         searchEditText = view.findViewById(R.id.editText)
@@ -59,5 +87,15 @@ class MainFragment : Fragment() {
     override fun onPause() {
         cicerone.getNavigatorHolder().removeNavigator()
         super.onPause()
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (searchViewManager.systemBackClicked()) {
+            return true
+        }
+
+        val fragment = childFragmentManager.findFragmentById(R.id.container)
+        return (fragment != null && fragment is BackButtonListener
+                && (fragment as BackButtonListener).onBackPressed())
     }
 }

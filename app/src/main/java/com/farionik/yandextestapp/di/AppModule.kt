@@ -6,8 +6,8 @@ import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.network.NetworkProvider
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
 import com.farionik.yandextestapp.view_model.CompanyViewModel
-import com.farionik.yandextestapp.view_model.StockViewModel
 import com.farionik.yandextestapp.view_model.SearchViewModel
+import com.farionik.yandextestapp.view_model.StockViewModel
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Cicerone.Companion.create
 import com.github.terrakok.cicerone.Router
@@ -55,4 +55,5 @@ private val cicerone: Cicerone<Router> = create()
 val navigationModule = module {
     single { cicerone.router }
     single { cicerone.getNavigatorHolder() }
+    single { LocalCiceroneHolder() }
 }
