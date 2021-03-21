@@ -40,7 +40,7 @@ class CompanyDetailActivity : AppCompatActivity() {
             finish()
             return
         } else {
-            companyViewModel.setSelectedCompanySymbol(companyID)
+            //companyViewModel.openDetail(companyID)
         }
 
         initViews()

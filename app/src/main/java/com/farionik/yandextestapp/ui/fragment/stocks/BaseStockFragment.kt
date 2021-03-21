@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
+import com.farionik.yandextestapp.view_model.CompanyViewModel
 import com.farionik.yandextestapp.view_model.StockViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
@@ -17,6 +18,7 @@ abstract class BaseStockFragment : Fragment(R.layout.fragment_stocks) {
     abstract fun initAdapter()
 
     val stockViewModel by sharedViewModel<StockViewModel>()
+    val companyViewModel by sharedViewModel<CompanyViewModel>()
 
     protected lateinit var recyclerView: RecyclerView
     protected lateinit var swipeRefreshLayout: SwipeRefreshLayout

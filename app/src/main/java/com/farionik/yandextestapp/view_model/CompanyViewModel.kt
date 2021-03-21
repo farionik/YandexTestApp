@@ -2,6 +2,8 @@ package com.farionik.yandextestapp.view_model
 
 import androidx.lifecycle.*
 import com.blankj.utilcode.util.NetworkUtils
+import com.farionik.yandextestapp.di.Containers
+import com.farionik.yandextestapp.di.LocalCiceroneHolder
 import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.NewsRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
@@ -10,15 +12,21 @@ import com.farionik.yandextestapp.repository.database.chart.createChartID
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.database.news.NewsEntity
+import com.farionik.yandextestapp.ui.AppScreens
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 class CompanyViewModel(
     private val companyDetailRepository: CompanyRepository,
     private val newsRepository: NewsRepository,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    private val router: Router
 ) : ViewModel(), LifecycleObserver {
+
+    /*private val router: Router
+        get() = localCiceroneHolder.getCicerone(Containers.MAIN_FRAGMENT_CONTAINER.name).router*/
 
     // выбранная компания на просмотр
     private val _companyDetailSymbolLiveData = MutableLiveData<String>()
@@ -62,13 +70,17 @@ class CompanyViewModel(
         }
     }
 
-    fun setSelectedCompanySymbol(symbol: String) {
-        _companyDetailSymbolLiveData.value = symbol
+    fun openDetail(stockModelRelation: StockModelRelation) {
+        router.navigateTo(AppScreens.companyDetailScreen())
+
+        val stockSymbol = stockModelRelation.stock.symbol
+
+        _companyDetailSymbolLiveData.value = stockSymbol
 
         if (NetworkUtils.isConnected()) {
             viewModelScope.launch(IO) {
-                newsRepository.fetchNews(symbol)
-                companyDetailRepository.loadCompanyInfo(symbol)
+                newsRepository.fetchNews(stockSymbol)
+                companyDetailRepository.loadCompanyInfo(stockSymbol)
             }
         }
     }
@@ -79,5 +91,9 @@ class CompanyViewModel(
                 companyDetailRepository.likeStock(symbol)
             }
         }
+    }
+
+    fun backClick() {
+        router.exit()
     }
 }

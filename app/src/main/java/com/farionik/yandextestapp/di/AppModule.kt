@@ -43,7 +43,7 @@ val appViewModelModule = module {
     }
 
     viewModel {
-        CompanyViewModel(get(), get(), get())
+        CompanyViewModel(get(), get(), get(), get())
     }
 
     viewModel {

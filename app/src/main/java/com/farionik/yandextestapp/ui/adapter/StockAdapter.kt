@@ -46,6 +46,8 @@ class StockAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: StockModelRelation) = with(binding) {
+            root.setOnClickListener { interaction?.openCompanyDetail(item) }
+
             Glide.with(image).clear(image)
             item.logo?.run {
                 Glide

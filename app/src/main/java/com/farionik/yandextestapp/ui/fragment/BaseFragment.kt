@@ -8,12 +8,11 @@ import com.farionik.yandextestapp.view_model.StockViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 abstract class BaseFragment : Fragment() {
+
     val companyViewModel by sharedViewModel<CompanyViewModel>()
-    val stockViewModel by sharedViewModel<StockViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewLifecycleOwner.lifecycle.addObserver(companyViewModel)
     }
 }

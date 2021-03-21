@@ -2,7 +2,6 @@ package com.farionik.yandextestapp.ui.fragment.stocks
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
@@ -41,7 +40,7 @@ class PopularStocksFragment : BaseStockFragment() {
             }
 
             override fun openCompanyDetail(stockModelRelation: StockModelRelation) {
-
+                companyViewModel.openDetail(stockModelRelation)
             }
         })
 

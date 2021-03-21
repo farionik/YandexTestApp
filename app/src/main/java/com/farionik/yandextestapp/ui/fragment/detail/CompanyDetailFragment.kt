@@ -7,9 +7,13 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.farionik.yandextestapp.R
+import com.farionik.yandextestapp.ui.fragment.BackButtonListener
 import com.farionik.yandextestapp.ui.fragment.BaseFragment
+import com.farionik.yandextestapp.view_model.CompanyViewModel
+import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
-class CompanyDetailFragment : BaseFragment() {
+class CompanyDetailFragment : BaseFragment(), BackButtonListener {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,6 +27,11 @@ class CompanyDetailFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
+    }
+
+    override fun onBackPressed(): Boolean {
+        companyViewModel.backClick()
+        return true
     }
 
 

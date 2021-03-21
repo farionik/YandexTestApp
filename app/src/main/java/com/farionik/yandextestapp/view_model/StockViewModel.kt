@@ -1,11 +1,15 @@
 package com.farionik.yandextestapp.view_model
 
 import androidx.lifecycle.*
+import com.farionik.yandextestapp.di.Containers
+import com.farionik.yandextestapp.di.Containers.*
+import com.farionik.yandextestapp.di.LocalCiceroneHolder
 import com.farionik.yandextestapp.repository.StockRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
