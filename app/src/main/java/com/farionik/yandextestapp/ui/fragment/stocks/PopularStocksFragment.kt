@@ -23,6 +23,8 @@ class PopularStocksFragment : BaseStockFragment() {
             networkState = it
             swipeRefreshLayout.isRefreshing = it is NetworkState.LOADING
         })
+
+        swipeRefreshLayout.setOnRefreshListener { stockViewModel.updateData() }
     }
 
     override fun initAdapter() {

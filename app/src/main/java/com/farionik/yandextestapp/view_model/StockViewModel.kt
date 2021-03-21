@@ -39,7 +39,7 @@ open class StockViewModel(
 
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun loadStartData() {
+    fun updateData() {
         fetchCompanies(0)
     }
 

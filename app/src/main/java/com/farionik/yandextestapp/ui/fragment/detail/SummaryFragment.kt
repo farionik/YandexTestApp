@@ -40,15 +40,12 @@ class SummaryFragment : BaseFragment() {
 
         companyViewModel.selectedStock.observe(viewLifecycleOwner, {
             binding.run {
-                it.logo?.let { logo ->
-                    loadLogo(logo.url)
-                }
+                it.logo?.let { logo -> loadLogo(logo.localPath) }
             }
         })
 
         companyViewModel.selectedCompany.observe(viewLifecycleOwner, {
             binding.run {
-
                 tvSymbol.text = it.symbol
                 tvCompanyName.text = it.companyName
                 tvDescription.text = it.description
