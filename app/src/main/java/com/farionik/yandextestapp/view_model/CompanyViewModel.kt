@@ -25,9 +25,6 @@ class CompanyViewModel(
     private val router: Router
 ) : ViewModel(), LifecycleObserver {
 
-    /*private val router: Router
-        get() = localCiceroneHolder.getCicerone(Containers.MAIN_FRAGMENT_CONTAINER.name).router*/
-
     // выбранная компания на просмотр
     private val _companyDetailSymbolLiveData = MutableLiveData<String>()
     val companySymbolLiveData: LiveData<String>
