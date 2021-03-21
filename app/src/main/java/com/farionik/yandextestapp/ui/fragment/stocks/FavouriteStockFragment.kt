@@ -2,40 +2,16 @@ package com.farionik.yandextestapp.ui.fragment.stocks
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.lifecycleScope
+import androidx.core.view.isVisible
+import androidx.lifecycle.LiveData
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
-import com.farionik.yandextestapp.ui.adapter.StockAdapter
-import kotlinx.coroutines.launch
 
 class FavouriteStockFragment : BaseStockFragment() {
-
-    private lateinit var stockAdapter: StockAdapter
+    override val stockSource: LiveData<List<StockModelRelation>>
+        get() = stockViewModel.favouriteStocksLiveData
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        stockViewModel.favouriteStocksLiveData.observe(
-            viewLifecycleOwner,
-            { stockAdapter.swapData(it) }
-        )
-    }
-
-    override fun initAdapter() {
-        stockAdapter = StockAdapter(interaction = object : StockAdapter.Interaction {
-            override fun likeCompany(stockModelRelation: StockModelRelation, position: Int) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val symbol = stockModelRelation.stock.symbol
-                    try {
-                        stockViewModel.likeStock(symbol)
-                        stockAdapter.notifyItemChanged(position)
-                    } catch (e: Exception) {
-                    }
-                }
-            }
-
-            override fun openCompanyDetail(stockModelRelation: StockModelRelation) {
-
-            }
-        })
-        initRecyclerView(stockAdapter)
+        //swipeRefreshLayout.isVisible = false
     }
 }
