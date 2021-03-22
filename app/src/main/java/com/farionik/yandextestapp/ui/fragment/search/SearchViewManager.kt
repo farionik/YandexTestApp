@@ -50,7 +50,7 @@ class SearchViewManager(
 
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
-                    changeEditTextState(SearchState.ACTIVE)
+                    changeEditTextState(SearchState.NOT_ACTIVE)
                 }
             }
         })
