@@ -30,7 +30,10 @@ abstract class StockDAO : BaseDao<StockEntity> {
 
     @Transaction
     @Query("SELECT * FROM StockTable")
-    abstract fun stocksFlow(): Flow<List<StockModelRelation>>
+    abstract fun stocksRelationFlow(): Flow<List<StockModelRelation>>
+
+    @Query("SELECT * FROM StockTable")
+    abstract fun stocksFlow(): Flow<List<StockEntity>>
 
     @Transaction
     @Query("SELECT * FROM StockTable WHERE isFavourite")

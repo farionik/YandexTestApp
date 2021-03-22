@@ -1,15 +1,11 @@
 package com.farionik.yandextestapp.view_model
 
 import androidx.lifecycle.*
-import com.farionik.yandextestapp.di.Containers
-import com.farionik.yandextestapp.di.Containers.*
-import com.farionik.yandextestapp.di.LocalCiceroneHolder
 import com.farionik.yandextestapp.repository.StockRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
-import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,7 +21,7 @@ open class StockViewModel(
     var appBarOffsetMutableLiveData: MutableLiveData<Int> = MutableLiveData()
 
     val stocksLiveData: LiveData<List<StockModelRelation>>
-        get() = appDatabase.stockDAO().stocksFlow()
+        get() = appDatabase.stockDAO().stocksRelationFlow()
             .asLiveData(viewModelScope.coroutineContext)
 
     val favouriteStocksLiveData: LiveData<List<StockModelRelation>>

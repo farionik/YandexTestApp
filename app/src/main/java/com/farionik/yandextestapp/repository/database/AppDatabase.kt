@@ -7,6 +7,8 @@ import com.farionik.yandextestapp.repository.database.chart.ChartEntity
 import com.farionik.yandextestapp.repository.database.company.*
 import com.farionik.yandextestapp.repository.database.news.NewsDAO
 import com.farionik.yandextestapp.repository.database.news.NewsEntity
+import com.farionik.yandextestapp.repository.database.search.UserSearchDAO
+import com.farionik.yandextestapp.repository.database.search.UserSearchEntity
 
 @Database(
     entities = [
@@ -15,7 +17,8 @@ import com.farionik.yandextestapp.repository.database.news.NewsEntity
         CompanyLogoEntity::class,
         ChartEntity::class,
         NewsEntity::class,
-        StartStockEntity::class
+        StartStockEntity::class,
+        UserSearchEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -33,4 +36,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun newsDAO(): NewsDAO
 
     abstract fun startStockDAO(): StartStockDAO
+
+    abstract fun userSearchDAO(): UserSearchDAO
 }

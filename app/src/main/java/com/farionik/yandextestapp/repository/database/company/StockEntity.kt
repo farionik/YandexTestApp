@@ -1,7 +1,9 @@
 package com.farionik.yandextestapp.repository.database.company
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.farionik.yandextestapp.ui.fragment.search.ISearchModel
 
 @Entity(tableName = "StockTable")
 data class StockEntity(
@@ -14,4 +16,11 @@ data class StockEntity(
     val volume: Long,
 
     var isFavourite: Boolean = false
-)
+) : ISearchModel {
+    @Ignore
+    override fun id() = symbol
+    @Ignore
+    override fun title() = companyName
+    @Ignore
+    override fun content() = toString()
+}

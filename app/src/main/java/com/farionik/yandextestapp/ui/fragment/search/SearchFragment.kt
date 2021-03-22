@@ -1,20 +1,20 @@
 package com.farionik.yandextestapp.ui.fragment.search
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.farionik.yandextestapp.databinding.FragmentSearchBinding
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.SearchSpaceItemDecoration
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class SearchFragment : BaseSearchFragment() {
 
     private lateinit var binding: FragmentSearchBinding
-    private var searchedClickedListener: SearchedClickedListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,19 +28,23 @@ class SearchFragment : BaseSearchFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val popularAdapter = createAdapter(binding.popularRecyclerView)
-        searchViewModel.popularCompanies.observe(
-            viewLifecycleOwner, { popularAdapter.swapData(it) }
-        )
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            searchViewModel.popularSearch.collect {
+                popularAdapter.swapData(it)
+            }
+        }
         val userAdapter = createAdapter(binding.userRequestRecyclerView)
-        searchViewModel.userCompanies.observe(
-            viewLifecycleOwner, { userAdapter.swapData(it) }
-        )
+        viewLifecycleOwner.lifecycleScope.launch {
+            searchViewModel.userSearch.collect {
+                userAdapter.swapData(it)
+            }
+        }
     }
 
     private fun createAdapter(recyclerView: RecyclerView): SearchAdapter {
         val adapter = SearchAdapter(object : SearchAdapter.Interaction {
-            override fun onModelClicked(model: StockModelRelation) {
+            override fun onModelClicked(model: ISearchModel) {
                 //searchedClickedListener?.searchModelClicked(model)
                 // через ViewModel выполнить навигацию в результат fragment
             }
@@ -53,12 +57,4 @@ class SearchFragment : BaseSearchFragment() {
         }
         return adapter
     }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is SearchedClickedListener) {
-            searchedClickedListener = context
-        }
-    }
-
 }

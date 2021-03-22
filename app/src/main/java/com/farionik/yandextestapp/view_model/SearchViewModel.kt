@@ -1,26 +1,24 @@
 package com.farionik.yandextestapp.view_model
 
 import androidx.lifecycle.*
+import androidx.room.withTransaction
 import com.farionik.yandextestapp.repository.SearchRepository
-import com.farionik.yandextestapp.repository.StockRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.database.search.UserSearchEntity
+import com.farionik.yandextestapp.ui.fragment.search.ISearchModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
 
 class SearchViewModel(
-    appDatabase: AppDatabase,
+    private val appDatabase: AppDatabase,
     private val searchRepository: SearchRepository
 ) : ViewModel() {
 
-    val popularCompanies: LiveData<List<StockModelRelation>> =
-        appDatabase.stockDAO().stocksFlow().take(10).asLiveData(viewModelScope.coroutineContext)
-
-    val userCompanies: LiveData<List<StockModelRelation>> =
-        appDatabase.stockDAO().stocksFlow().take(10).asLiveData(viewModelScope.coroutineContext)
+    val popularSearch: Flow<List<ISearchModel>> = appDatabase.stockDAO().stocksFlow()
+    val userSearch: Flow<List<ISearchModel>> = appDatabase.userSearchDAO().userSearchFlow()
 
     // поисковый результат
     private val _searchedStocksLiveData = MutableLiveData<List<StockModelRelation>>()
@@ -29,6 +27,9 @@ class SearchViewModel(
 
     fun searchCompanies(searchRequest: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            appDatabase.withTransaction {
+                appDatabase.userSearchDAO().insert(UserSearchEntity(title = searchRequest))
+            }
             searchRepository.searchCompanies(searchRequest)
         }
     }

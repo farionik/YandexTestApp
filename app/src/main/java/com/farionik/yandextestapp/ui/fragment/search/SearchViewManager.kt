@@ -15,11 +15,13 @@ import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.ui.AppScreens
 import com.farionik.yandextestapp.ui.activity.MainActivityListener
+import com.farionik.yandextestapp.view_model.SearchViewModel
 import com.github.terrakok.cicerone.Router
 
 class SearchViewManager(
     private val editText: EditText,
-    private val router: Router
+    private val router: Router,
+    private val searchViewModel: SearchViewModel
 ) {
 
     init {
@@ -58,13 +60,13 @@ class SearchViewManager(
 
         setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     if (state != SearchState.SEARCH) {
                         router.navigateTo(AppScreens.searchResultScreen())
                         changeEditTextState(SearchState.SEARCH)
                     }
                     KeyboardUtils.hideSoftInput(editText)
-                    //activityListener.searchAction(text.toString())
+                    searchViewModel.searchCompanies(text.toString())
                     return true
                 }
                 return false

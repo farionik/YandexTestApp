@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|snap|enterAlways"
+            app:layout_scrollFlags="scroll|snap|enterAlwaysCollapsed"
             app:toolbarId="@+id/toolbar">
 
             <LinearLayout
@@ -41,7 +41,7 @@
                     android:drawablePadding="16dp"
                     android:gravity="center_vertical"
                     android:hint="@string/find_company_or_ticker"
-                    android:imeOptions="actionDone"
+                    android:imeOptions="actionSearch"
                     android:inputType="text"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"

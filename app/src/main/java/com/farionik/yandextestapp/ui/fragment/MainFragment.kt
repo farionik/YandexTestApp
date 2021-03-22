@@ -13,11 +13,14 @@ import com.farionik.yandextestapp.di.Containers.MAIN_FRAGMENT_CONTAINER
 import com.farionik.yandextestapp.di.LocalCiceroneHolder
 import com.farionik.yandextestapp.ui.AppScreens
 import com.farionik.yandextestapp.ui.fragment.search.SearchViewManager
+import com.farionik.yandextestapp.view_model.SearchViewModel
+import com.farionik.yandextestapp.view_model.StockViewModel
 import com.github.terrakok.cicerone.Command
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.appbar.AppBarLayout
 import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class MainFragment : Fragment(), BackButtonListener {
 
@@ -25,6 +28,8 @@ class MainFragment : Fragment(), BackButtonListener {
     private lateinit var searchViewManager: SearchViewManager
 
     private val localCiceroneHolder by inject<LocalCiceroneHolder>()
+    private val searchViewModel by sharedViewModel<SearchViewModel>()
+    private val stockViewModel by sharedViewModel<StockViewModel>()
 
     private val cicerone = localCiceroneHolder.getCicerone(MAIN_FRAGMENT_CONTAINER.name)
 
@@ -72,10 +77,10 @@ class MainFragment : Fragment(), BackButtonListener {
         appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val totalScrollRange = appBarLayout?.totalScrollRange ?: 1
             val percent = (verticalOffset * -1F) / totalScrollRange * 100
-            //companyViewModel.appBarOffsetMutableLiveData.postValue(percent.toInt())
+            stockViewModel.appBarOffsetMutableLiveData.postValue(percent.toInt())
         })
 
-        searchViewManager = SearchViewManager(searchEditText, router)
+        searchViewManager = SearchViewManager(searchEditText, router, searchViewModel)
     }
 
 

@@ -14,7 +14,7 @@ import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.ui.model.SearchModel
 
 class SearchAdapter(private val interaction: Interaction? = null) :
-    ListAdapter<StockModelRelation, SearchAdapter.SearchHolder>(SearchModelDC()) {
+    ListAdapter<ISearchModel, SearchAdapter.SearchHolder>(SearchModelDC()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SearchHolder(
         LayoutInflater.from(parent.context)
@@ -24,7 +24,7 @@ class SearchAdapter(private val interaction: Interaction? = null) :
     override fun onBindViewHolder(holder: SearchHolder, position: Int) =
         holder.bind(getItem(position))
 
-    fun swapData(data: List<StockModelRelation>) {
+    fun swapData(data: List<ISearchModel>) {
         submitList(data.toMutableList())
     }
 
@@ -45,28 +45,28 @@ class SearchAdapter(private val interaction: Interaction? = null) :
             interaction?.onModelClicked(clicked)
         }
 
-        fun bind(item: StockModelRelation) = with(itemView) {
-            findViewById<TextView>(R.id.title).text = item.stock.companyName
+        fun bind(item: ISearchModel) = with(itemView) {
+            findViewById<TextView>(R.id.title).text = item.title()
         }
     }
 
     interface Interaction {
-        fun onModelClicked(model: StockModelRelation)
+        fun onModelClicked(model: ISearchModel)
     }
 
-    private class SearchModelDC : DiffUtil.ItemCallback<StockModelRelation>() {
+    private class SearchModelDC : DiffUtil.ItemCallback<ISearchModel>() {
         override fun areItemsTheSame(
-            oldItem: StockModelRelation,
-            newItem: StockModelRelation
+            oldItem: ISearchModel,
+            newItem: ISearchModel
         ): Boolean {
-            return oldItem.stock.symbol == newItem.stock.symbol
+            return oldItem.id() == newItem.id()
         }
 
         override fun areContentsTheSame(
-            oldItem: StockModelRelation,
-            newItem: StockModelRelation
+            oldItem: ISearchModel,
+            newItem: ISearchModel
         ): Boolean {
-            return oldItem.stock == newItem.stock
+            return oldItem.content() == newItem.content()
         }
     }
 }
