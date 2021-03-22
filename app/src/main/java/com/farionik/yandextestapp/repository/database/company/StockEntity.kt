@@ -15,7 +15,9 @@ data class StockEntity(
     val changePercent: Double,
     val volume: Long,
 
-    var isFavourite: Boolean = false
+    var isFavourite: Boolean = false,
+    var isUserSearch: Boolean = false
+
 ) : ISearchModel {
     @Ignore
     override fun id() = symbol

@@ -21,7 +21,7 @@ open class StockViewModel(
     var appBarOffsetMutableLiveData: MutableLiveData<Int> = MutableLiveData()
 
     val stocksLiveData: LiveData<List<StockModelRelation>>
-        get() = appDatabase.stockDAO().stocksRelationFlow()
+        get() = appDatabase.stockDAO().stocksRelationFlow(false)
             .asLiveData(viewModelScope.coroutineContext)
 
     val favouriteStocksLiveData: LiveData<List<StockModelRelation>>
@@ -64,5 +64,9 @@ open class StockViewModel(
         loadingJob?.cancel()
     }
 
-    suspend fun likeStock(symbol: String) = stockRepository.likeStock(symbol)
+    fun likeStock(symbol: String) {
+        viewModelScope.launch {
+            stockRepository.likeStock(symbol)
+        }
+    }
 }

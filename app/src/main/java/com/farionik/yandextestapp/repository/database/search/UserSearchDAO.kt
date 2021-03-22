@@ -9,4 +9,7 @@ import kotlinx.coroutines.flow.Flow
 abstract class UserSearchDAO : BaseDao<UserSearchEntity> {
     @Query("SELECT * FROM UserSearchTable")
     abstract fun userSearchFlow(): Flow<List<UserSearchEntity>>
+
+    @Query("SELECT * FROM UserSearchTable WHERE title =:searchRequest")
+    abstract fun checkUserSearch(searchRequest:String): UserSearchEntity?
 }

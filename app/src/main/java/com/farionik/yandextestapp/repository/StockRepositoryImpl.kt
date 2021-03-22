@@ -1,6 +1,5 @@
 package com.farionik.yandextestapp.repository
 
-import android.content.Context
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.StartStockEntity
 import com.farionik.yandextestapp.repository.database.company.StockEntity
@@ -14,35 +13,10 @@ import kotlinx.coroutines.coroutineScope
 import timber.log.Timber
 
 open class StockRepositoryImpl(
-    private val context: Context,
     private val api: Api,
     private val appDatabase: AppDatabase,
-    private val logoRepository: LogoRepository,
+    private val logoRepository: LogoRepository
 ) : BaseRepository(), StockRepository {
-
-    /*override suspend fun fetchStocks(): NetworkState = when (checkInternetConnection()) {
-        is NetworkState.ERROR -> noNetworkStatus
-        else -> {
-            val list = appDatabase.stockDAO().stockList()
-            if (list.isNullOrEmpty()) {
-                //loadStartData()
-            } else {
-                updateLocalData()
-            }
-        }
-    }*/
-
-    /*private suspend fun loadStartData(): NetworkState {
-        val response = api.loadStocks(500)
-        return if (response.isSuccessful) {
-            val data = response.body() as List<StockEntity>
-            appDatabase.stockDAO().insertAll(data)
-            NetworkState.SUCCESS
-        } else {
-            val errorMessage = response.message()
-            NetworkState.ERROR(Throwable(errorMessage))
-        }
-    }*/
 
     override suspend fun loadStockPrice(symbol: String) {
         val response = api.loadCompanyStockPrice(symbol)
@@ -80,13 +54,17 @@ open class StockRepositoryImpl(
         }
 
         val list = appDatabase.startStockDAO().stockList()!!.subList(totalCount, count)
+        return loadStocks(list)
+    }
 
-        val symbols = list.joinToString { it.symbol }
+    override suspend fun loadStocks(startList: List<StartStockEntity>, isUserSearch: Boolean): NetworkState {
+        val symbols = startList.joinToString { it.symbol }
         val response = api.updateStockPrices(symbols, "quote")
 
         return if (response.isSuccessful) {
             val data = response.body() as Map<String, Map<String, StockEntity>>
             val stocks = data.map { it.value["quote"] as StockEntity }
+            stocks.map { it.isUserSearch = isUserSearch }
             logoRepository.loadCompaniesLogo(stocks)
             appDatabase.stockDAO().insertAll(stocks)
             NetworkState.SUCCESS

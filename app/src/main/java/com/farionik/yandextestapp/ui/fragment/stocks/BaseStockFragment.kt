@@ -46,15 +46,8 @@ abstract class BaseStockFragment : Fragment(R.layout.fragment_stocks) {
     private fun initAdapter() {
         stockAdapter = StockAdapter(interaction = object : StockAdapter.Interaction {
             override fun likeCompany(stockModelRelation: StockModelRelation, position: Int) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val symbol = stockModelRelation.stock.symbol
-                    try {
-                        stockViewModel.likeStock(symbol)
-                        stockAdapter.notifyItemChanged(position)
-                    } catch (e: Exception) {
-
-                    }
-                }
+                val symbol = stockModelRelation.stock.symbol
+                stockViewModel.likeStock(symbol)
             }
 
             override fun openCompanyDetail(stockModelRelation: StockModelRelation) {

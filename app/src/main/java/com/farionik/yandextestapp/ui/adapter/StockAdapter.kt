@@ -28,7 +28,7 @@ class StockAdapter(
         context = parent.context
         val layoutInflater = LayoutInflater.from(context)
         val binding = RvItemCompanyBinding.inflate(layoutInflater, parent, false)
-        return StockHolder(binding, interaction)
+        return StockHolder(binding, interaction, isSearch)
     }
 
     override fun onBindViewHolder(holder: StockHolder, position: Int) {

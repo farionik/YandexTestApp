@@ -2,7 +2,6 @@ package com.farionik.yandextestapp.view_model
 
 import androidx.lifecycle.*
 import com.blankj.utilcode.util.NetworkUtils
-import com.farionik.yandextestapp.di.Containers
 import com.farionik.yandextestapp.di.LocalCiceroneHolder
 import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.NewsRepository
@@ -83,10 +82,8 @@ class CompanyViewModel(
     }
 
     fun likeCompany(symbol: String) {
-        if (NetworkUtils.isConnected()) {
-            viewModelScope.launch {
-                companyDetailRepository.likeStock(symbol)
-            }
+        viewModelScope.launch {
+            companyDetailRepository.likeStock(symbol)
         }
     }
 

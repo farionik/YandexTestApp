@@ -1,7 +1,9 @@
 package com.farionik.yandextestapp.repository
 
-interface SearchRepository {
+import com.farionik.yandextestapp.repository.network.NetworkState
 
-    suspend fun searchCompanies(searchRequest: String)
+interface SearchRepository : StockRepository{
+
+    suspend fun searchCompanies(searchRequest: String): NetworkState
 
 }

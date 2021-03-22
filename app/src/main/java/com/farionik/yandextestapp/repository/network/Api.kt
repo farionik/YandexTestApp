@@ -40,7 +40,7 @@ interface Api {
 
 
     @GET("search/{fragment}")
-    suspend fun searchCompanies(@Path("fragment") fragment: String): Response<Any>
+    suspend fun searchStocks(@Path("fragment") fragment: String): Response<List<StartStockEntity>>
 
 
     @GET("stock/{symbol}/chart/{range}")

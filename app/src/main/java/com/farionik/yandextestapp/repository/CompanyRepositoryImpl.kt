@@ -14,12 +14,11 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class CompanyRepositoryImpl(
-    private val context: Context,
     private val api: Api,
     private val appDatabase: AppDatabase,
     private val logoRepository: LogoRepository
 ) : BaseRepository(), CompanyRepository,
-    StockRepository by StockRepositoryImpl(context, api, appDatabase, logoRepository) {
+    StockRepository by StockRepositoryImpl(api, appDatabase, logoRepository) {
 
     override suspend fun loadCompanyInfo(symbol: String): NetworkState =
         when (checkInternetConnection()) {
