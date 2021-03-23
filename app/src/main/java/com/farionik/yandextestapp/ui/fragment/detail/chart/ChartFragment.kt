@@ -1,11 +1,13 @@
 package com.farionik.yandextestapp.ui.fragment.detail.chart
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.FragmentChartBinding
@@ -39,7 +41,7 @@ class ChartFragment : BaseFragment() {
 
         initChart()
         initRadioButtons()
-        subscribeViewModel()
+        subscribe()
     }
 
     private fun initChart() {
@@ -149,7 +151,7 @@ class ChartFragment : BaseFragment() {
         }
     }
 
-    private fun subscribeViewModel() {
+    private fun subscribe() {
         companyViewModel.companySymbolLiveData.observe(viewLifecycleOwner, {
             currentSymbol = it
             setButtonChecked(R.id.btnChartDay)

@@ -3,15 +3,10 @@ package com.farionik.yandextestapp.ui.fragment.detail
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat.invalidateOptionsMenu
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.FragmentCompanyDetailBinding
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.ui.fragment.BackButtonListener
 import com.farionik.yandextestapp.ui.fragment.BaseFragment
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartFragment
@@ -19,9 +14,6 @@ import com.farionik.yandextestapp.ui.fragment.detail.news.NewsFragment
 import com.farionik.yandextestapp.ui.util.TabLayoutScreenType
 import com.farionik.yandextestapp.ui.util.addTabChangeListener
 import com.farionik.yandextestapp.ui.util.initTabLayoutMediator
-import com.farionik.yandextestapp.view_model.CompanyViewModel
-import org.koin.android.viewmodel.ext.android.sharedViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
 
 class CompanyDetailFragment : BaseFragment(), BackButtonListener {
 
@@ -40,7 +32,7 @@ class CompanyDetailFragment : BaseFragment(), BackButtonListener {
 
         initToolBar()
         initPagerAdapter()
-        subscribeUI()
+        subscribe()
     }
 
     private fun initToolBar() {
@@ -96,7 +88,7 @@ class CompanyDetailFragment : BaseFragment(), BackButtonListener {
         }
     }
 
-    private fun subscribeUI() {
+    private fun subscribe() {
         companyViewModel.selectedStock.observe(viewLifecycleOwner, {
             it.stock.run {
                 with(binding) {

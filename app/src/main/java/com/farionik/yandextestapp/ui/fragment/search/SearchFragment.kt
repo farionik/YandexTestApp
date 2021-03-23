@@ -1,5 +1,6 @@
 package com.farionik.yandextestapp.ui.fragment.search
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -45,8 +46,7 @@ class SearchFragment : BaseSearchFragment() {
     private fun createAdapter(recyclerView: RecyclerView): SearchAdapter {
         val adapter = SearchAdapter(object : SearchAdapter.Interaction {
             override fun onModelClicked(model: ISearchModel) {
-                //searchedClickedListener?.searchModelClicked(model)
-                // через ViewModel выполнить навигацию в результат fragment
+                searchViewModel.searchAction.postValue(model)
             }
         })
 

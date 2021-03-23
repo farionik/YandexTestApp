@@ -29,8 +29,9 @@ class SearchViewModel(
     val loadingStocksStateLiveData: LiveData<NetworkState>
         get() = _loadingStocksStateLiveData
 
-    private var loadingJob: Job? = null
+    val searchAction  = MutableLiveData<ISearchModel>()
 
+    private var loadingJob: Job? = null
 
     fun searchCompanies(searchRequest: String) {
         _loadingStocksStateLiveData.postValue(NetworkState.LOADING("Loading companies..."))

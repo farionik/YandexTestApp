@@ -12,6 +12,7 @@ import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.di.Containers.MAIN_FRAGMENT_CONTAINER
 import com.farionik.yandextestapp.di.LocalCiceroneHolder
 import com.farionik.yandextestapp.ui.AppScreens
+import com.farionik.yandextestapp.ui.fragment.search.ISearchModel
 import com.farionik.yandextestapp.ui.fragment.search.SearchViewManager
 import com.farionik.yandextestapp.view_model.SearchViewModel
 import com.farionik.yandextestapp.view_model.StockViewModel
@@ -34,7 +35,6 @@ class MainFragment : Fragment(), BackButtonListener {
     private val cicerone = localCiceroneHolder.getCicerone(MAIN_FRAGMENT_CONTAINER.name)
 
     private lateinit var navigator: AppNavigator
-
 
     private val router: Router
         get() = cicerone.router
@@ -81,6 +81,13 @@ class MainFragment : Fragment(), BackButtonListener {
         })
 
         searchViewManager = SearchViewManager(searchEditText, router, searchViewModel)
+        searchViewModel.searchAction.observe(
+            viewLifecycleOwner, {
+                val symbol = it.title()
+                searchEditText.setText(symbol)
+                searchEditText.setSelection(symbol.length)
+            }
+        )
     }
 
 
