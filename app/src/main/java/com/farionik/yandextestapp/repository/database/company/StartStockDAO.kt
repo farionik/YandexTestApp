@@ -7,5 +7,5 @@ import com.farionik.yandextestapp.repository.database.BaseDao
 @Dao
 abstract class StartStockDAO : BaseDao<StartStockEntity> {
     @Query("SELECT * FROM StartStockTable")
-    abstract suspend fun stockList(): List<StartStockEntity>?
+    abstract suspend fun stockList(): List<StartStockEntity>
 }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.collect
 abstract class StockDAO : BaseDao<StockEntity> {
 
     @Query("SELECT * FROM StockTable")
-    abstract suspend fun stockList(): List<StockEntity>?
+    abstract suspend fun stockList(): List<StockEntity>
 
     @Query("SELECT * FROM StockTable WHERE symbol =:symbol")
     abstract suspend fun stockEntity(symbol: String): StockEntity
@@ -26,10 +26,6 @@ abstract class StockDAO : BaseDao<StockEntity> {
     abstract fun stockModelRelation(symbol: String): StockModelRelation?
 
     @Transaction
-    @Query("SELECT * FROM StockTable")
-    abstract suspend fun stockModelRelationList(): List<StockModelRelation>
-
-    @Transaction
     @Query("SELECT * FROM StockTable WHERE isUserSearch =:isUserSearch")
     abstract fun stocksRelationFlow(isUserSearch: Boolean): Flow<List<StockModelRelation>>
 
@@ -41,24 +37,22 @@ abstract class StockDAO : BaseDao<StockEntity> {
     abstract fun favouriteStocksFlow(): Flow<List<StockModelRelation>>
 
     @Query("DELETE FROM StockTable WHERE isUserSearch is 1 AND isFavourite = 0")
-    abstract fun deleteUserSearch()
+    abstract suspend fun deleteUserSearch()
 
     @Query("SELECT * FROM StockTable WHERE isUserSearch is 1 AND isFavourite = 1")
-    abstract fun searchFavouriteStock(): List<StockEntity>?
+    abstract fun searchFavouriteStock(): List<StockEntity>
 
     suspend fun updateUserSearch() {
-        val searchFavouriteStock = searchFavouriteStock()
-        searchFavouriteStock?.let { list ->
+        deleteUserSearch()
+        searchFavouriteStock().let { list ->
             list.map { it.isUserSearch = false }
             insertAll(list)
         }
-
-        stocksRelationFlow(true).collect {
+        /*stocksRelationFlow(true).collect {
             it.map { relation ->
                 relation.stock.isUserSearch = false
                 update(relation.stock)
             }
-        }
-        deleteUserSearch()
+        }*/
     }
 }

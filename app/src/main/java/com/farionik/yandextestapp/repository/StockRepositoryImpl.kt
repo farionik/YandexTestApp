@@ -41,29 +41,50 @@ open class StockRepositoryImpl(
 
     override suspend fun loadMoreStocks(totalCount: Int): NetworkState {
         Timber.d("total count $totalCount")
+        // почистить поиск
+        appDatabase.stockDAO().updateUserSearch()
 
-        val count = totalCount + PAGE_SIZE
+        // получить список 500 акций с сервера. Будет списком популярных акций
         val result = loadSP500()
         if (result is NetworkState.ERROR) {
             return result
         }
 
         val savedStocks = appDatabase.stockDAO().stockList()
-        if ((totalCount == 0) and !savedStocks.isNullOrEmpty()) {
-            return updateLocalData()
+        return if ((totalCount == 0) and savedStocks.isNotEmpty()) {
+            // case - пользователь делает swipe
+            updateLocalData()
+        } else {
+            pagination()
         }
+    }
 
-        val list = appDatabase.startStockDAO().stockList()!!.subList(totalCount, count)
+    private suspend fun pagination(): NetworkState {
+        val savedStocks = appDatabase.stockDAO().stockList()
+        val convertedSavedStocks = savedStocks.asSequence()
+            .map { StartStockEntity(it.symbol, it.companyName) }
+            .toMutableList()
+        val startList = appDatabase.startStockDAO().stockList().toMutableList()
+        // вычитаем список, чтоб понять какие акции из популярного загрузить
+        startList.minusAssign(convertedSavedStocks)
+
+        Timber.d("list size to load ${startList.size}")
+
+        val list = startList.subList(0, PAGE_SIZE)
         return loadStocks(list)
     }
 
-    override suspend fun loadStocks(startList: List<StartStockEntity>, isUserSearch: Boolean): NetworkState {
+    override suspend fun loadStocks(
+        startList: List<StartStockEntity>,
+        isUserSearch: Boolean
+    ): NetworkState {
         val symbols = startList.joinToString { it.symbol }
         val response = api.updateStockPrices(symbols, "quote")
 
         return if (response.isSuccessful) {
             val data = response.body() as Map<String, Map<String, StockEntity>>
             val stocks = data.map { it.value["quote"] as StockEntity }
+            // для понимания на каком это экране загрузка
             stocks.map { it.isUserSearch = isUserSearch }
             logoRepository.loadCompaniesLogo(stocks)
             appDatabase.stockDAO().insertAll(stocks)
@@ -103,17 +124,18 @@ open class StockRepositoryImpl(
     private suspend fun updateLocalData(): NetworkState {
         val companiesList = appDatabase.stockDAO().stockList()
 
-        val chunked = companiesList!!.chunked(100)
-        val deferreds = arrayListOf<Deferred<NetworkState>>()
+        // сервер поддерживает загрузку для 100 акций
+        val stockLists = companiesList.chunked(100)
+        val results = arrayListOf<Deferred<NetworkState>>()
         coroutineScope {
-            for (list in chunked) {
+            for (list in stockLists) {
                 val result: Deferred<NetworkState> = async {
                     updateStockData(list)
                 }
-                deferreds.add(result)
+                results.add(result)
             }
         }
-        val awaitAll = deferreds.awaitAll()
+        val awaitAll = results.awaitAll()
         return awaitAll.firstOrNull { it is NetworkState.ERROR } ?: NetworkState.SUCCESS
     }
 
