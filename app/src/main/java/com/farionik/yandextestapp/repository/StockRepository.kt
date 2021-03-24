@@ -1,5 +1,6 @@
 package com.farionik.yandextestapp.repository
 
+import androidx.work.ListenableWorker
 import com.farionik.yandextestapp.repository.database.company.StartStockEntity
 import com.farionik.yandextestapp.repository.network.NetworkState
 
@@ -12,4 +13,6 @@ interface StockRepository {
     suspend fun loadMoreStocks(totalCount: Int): NetworkState
 
     suspend fun loadStocks(startList: List<StartStockEntity>, isUserSearch: Boolean = false): NetworkState
+
+    suspend fun updateLocalData(): ListenableWorker.Result
 }

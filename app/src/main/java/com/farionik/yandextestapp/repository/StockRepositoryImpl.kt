@@ -1,5 +1,6 @@
 package com.farionik.yandextestapp.repository
 
+import androidx.work.ListenableWorker
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.StartStockEntity
 import com.farionik.yandextestapp.repository.database.company.StockEntity
@@ -53,7 +54,8 @@ open class StockRepositoryImpl(
         val savedStocks = appDatabase.stockDAO().stockList()
         return if ((totalCount == 0) and savedStocks.isNotEmpty()) {
             // case - пользователь делает swipe
-            updateLocalData()
+            //updateLocalData()
+            return NetworkState.SUCCESS
         } else {
             pagination()
         }
@@ -121,25 +123,25 @@ open class StockRepositoryImpl(
         return Gson().fromJson(content, object : TypeToken<List<SPStoredModel>>() {}.type)*/
     }
 
-    private suspend fun updateLocalData(): NetworkState {
+    override suspend fun updateLocalData(): ListenableWorker.Result {
         val companiesList = appDatabase.stockDAO().stockList()
 
         // сервер поддерживает загрузку для 100 акций
         val stockLists = companiesList.chunked(100)
-        val results = arrayListOf<Deferred<NetworkState>>()
+        val results = arrayListOf<Deferred<ListenableWorker.Result>>()
         coroutineScope {
             for (list in stockLists) {
-                val result: Deferred<NetworkState> = async {
+                val result: Deferred<ListenableWorker.Result> = async {
                     updateStockData(list)
                 }
                 results.add(result)
             }
         }
         val awaitAll = results.awaitAll()
-        return awaitAll.firstOrNull { it is NetworkState.ERROR } ?: NetworkState.SUCCESS
+        return awaitAll.firstOrNull { it is ListenableWorker.Result.Failure } ?: ListenableWorker.Result.success()
     }
 
-    private suspend fun updateStockData(list: List<StockEntity>): NetworkState {
+    private suspend fun updateStockData(list: List<StockEntity>): ListenableWorker.Result {
         val symbols = list.joinToString { it.symbol }
         val response = api.updateStockPrices(symbols, "quote")
         return if (response.isSuccessful) {
@@ -148,10 +150,11 @@ open class StockRepositoryImpl(
                 val stockResponse = value["quote"] as StockEntity
                 updateStockData(stockResponse)
             }
-            NetworkState.SUCCESS
+            ListenableWorker.Result.success()
         } else {
             val errorMessage = response.message()
-            NetworkState.ERROR(Throwable(errorMessage))
+            //NetworkState.ERROR(Throwable(errorMessage))
+            ListenableWorker.Result.failure()
         }
     }
 }

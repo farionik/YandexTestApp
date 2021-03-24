@@ -1,6 +1,9 @@
 package com.farionik.yandextestapp.view_model
 
+import android.content.Context
 import androidx.lifecycle.*
+import androidx.work.*
+import com.farionik.yandextestapp.repository.DownloadStockWorkManager
 import com.farionik.yandextestapp.repository.StockRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
@@ -12,10 +15,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 open class StockViewModel(
+    private val context: Context,
     private val appDatabase: AppDatabase,
     private val stockRepository: StockRepository,
     private val webServicesProvider: WebServicesProvider
 ) : ViewModel(), LifecycleObserver {
+
+    private val workManager = WorkManager.getInstance(context)
 
     // величина скрола toolBar
     var appBarOffsetMutableLiveData: MutableLiveData<Int> = MutableLiveData()
@@ -28,15 +34,30 @@ open class StockViewModel(
         get() = appDatabase.stockDAO().favouriteStocksFlow()
             .asLiveData(viewModelScope.coroutineContext)
 
-
     private val _loadingStocksStateLiveData = MutableLiveData<NetworkState>()
     val loadingStocksStateLiveData: LiveData<NetworkState>
         get() = _loadingStocksStateLiveData
 
 
+
+    private val _downloadStockState = MutableLiveData<WorkInfo>()
+    val downloadStockState: LiveData<WorkInfo>
+        get() = _downloadStockState
+
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun updateData() {
-        fetchCompanies(0)
+        //fetchCompanies(0)
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val downloadWorkRequest = OneTimeWorkRequestBuilder<DownloadStockWorkManager>()
+            .setConstraints(constraints)
+            .build()
+        workManager.enqueue(downloadWorkRequest)
+        workManager.getWorkInfoByIdLiveData(downloadWorkRequest.id)
+            .observeForever { _downloadStockState.postValue(it) }
+        //workManager.enqueue(OneTimeWorkRequest.from(DownloadStockWorkManager::class.java))
     }
 
     private var loadingJob: Job? = null

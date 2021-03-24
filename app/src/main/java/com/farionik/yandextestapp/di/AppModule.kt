@@ -39,7 +39,7 @@ val appRepositoryModule = module {
 
 val appViewModelModule = module {
     viewModel {
-        StockViewModel(get(), get(), get())
+        StockViewModel(get(), get(), get(), get())
     }
 
     viewModel {
