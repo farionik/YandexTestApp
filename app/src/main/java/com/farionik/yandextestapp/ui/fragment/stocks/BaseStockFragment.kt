@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.FragmentStocksBinding
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.ui.adapter.StockAdapter
@@ -15,7 +16,7 @@ import com.farionik.yandextestapp.view_model.CompanyViewModel
 import com.farionik.yandextestapp.view_model.StockViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
-abstract class BaseStockFragment : Fragment() {
+abstract class BaseStockFragment : Fragment(R.layout.fragment_stocks) {
 
     abstract val stockSource: LiveData<List<StockModelRelation>>
 
@@ -25,17 +26,9 @@ abstract class BaseStockFragment : Fragment() {
     protected lateinit var binding: FragmentStocksBinding
     private lateinit var stockAdapter: StockAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentStocksBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentStocksBinding.bind(view)
 
         viewLifecycleOwner.lifecycle.addObserver(stockViewModel)
 

@@ -13,23 +13,21 @@ import com.farionik.yandextestapp.view_model.StockViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import kotlin.math.roundToInt
 
-class StockFragment : Fragment() {
+class StockFragment : Fragment(R.layout.fragment_stock) {
 
     private lateinit var binding: FragmentStockBinding
     private lateinit var outlineProvider: TweakableOutlineProvider
+    private val fragments = listOf(
+        PopularStocksFragment(),
+        FavouriteStockFragment(),
+        AllStocksFragment()
+    )
 
     private val mainViewModel by sharedViewModel<StockViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentStockBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentStockBinding.bind(view)
         initPagerAdapter()
 
         mainViewModel.appBarOffsetMutableLiveData.observe(viewLifecycleOwner, { changeShadow(it) })
@@ -51,11 +49,6 @@ class StockFragment : Fragment() {
                 getString(R.string.tab_stock),
                 getString(R.string.tab_favourite),
                 getString(R.string.tab_all)
-            )
-            val fragments = listOf(
-                PopularStocksFragment(),
-                FavouriteStockFragment(),
-                AllStocksFragment()
             )
 
             binding.viewPager.adapter = ScreenPagerAdapter(this@StockFragment, fragments)

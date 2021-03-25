@@ -22,7 +22,7 @@ import com.google.android.material.appbar.AppBarLayout
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
-class MainFragment : Fragment(), BackButtonListener {
+class MainFragment : Fragment(R.layout.fragment_main), BackButtonListener {
 
     private lateinit var searchEditText: EditText
     private lateinit var searchViewManager: SearchViewManager
@@ -38,13 +38,6 @@ class MainFragment : Fragment(), BackButtonListener {
     private val router: Router
         get() = cicerone.router
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navigator = object : AppNavigator(requireActivity(), R.id.container, childFragmentManager) {
@@ -59,8 +52,8 @@ class MainFragment : Fragment(), BackButtonListener {
                     R.anim.pop_enter,
                     R.anim.pop_exit
                 )
-                fragmentTransaction.setReorderingAllowed(true)
                 super.setupFragmentTransaction(fragmentTransaction, currentFragment, nextFragment)
+                fragmentTransaction.setReorderingAllowed(true)
             }
 
             override fun applyCommands(commands: Array<out Command>) {
