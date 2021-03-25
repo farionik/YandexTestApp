@@ -1,14 +1,14 @@
 package com.farionik.yandextestapp.ui.fragment.detail.chart
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.work.WorkInfo
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.FragmentChartBinding
 import com.farionik.yandextestapp.repository.database.chart.ChartEntity
@@ -42,6 +42,12 @@ class ChartFragment : BaseFragment() {
         initChart()
         initRadioButtons()
         subscribe()
+
+        companyViewModel.chartLoadingState.observe(viewLifecycleOwner, {
+            it?.let {
+                binding.progressBar.isVisible = it.state == WorkInfo.State.RUNNING
+            }
+        })
     }
 
     private fun initChart() {

@@ -13,6 +13,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.work.WorkInfo
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -21,7 +23,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.FragmentSummaryBinding
 import com.farionik.yandextestapp.ui.fragment.BaseFragment
-
 
 class SummaryFragment : BaseFragment() {
 
@@ -38,6 +39,12 @@ class SummaryFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        companyViewModel.companyLoadingState.observe(viewLifecycleOwner, {
+            it?.let {
+                binding.progressBar.isVisible = it.state == WorkInfo.State.RUNNING
+            }
+        })
+
         companyViewModel.selectedStock.observe(viewLifecycleOwner, {
             binding.run {
                 it.logo?.let { logo -> loadLogo(logo.localPath) }
@@ -45,35 +52,37 @@ class SummaryFragment : BaseFragment() {
         })
 
         companyViewModel.selectedCompany.observe(viewLifecycleOwner, {
-            binding.run {
-                tvSymbol.text = it.symbol
-                tvCompanyName.text = it.companyName
-                tvDescription.text = it.description
-                tvCeo.text = it.CEO
+            it?.let {
+                binding.run {
+                    tvSymbol.text = it.symbol
+                    tvCompanyName.text = it.companyName
+                    tvDescription.text = it.description
+                    tvCeo.text = it.CEO
 
-                createWebsiteClickableSpan(it.website)
-                it.phone?.let { phone ->
-                    tvPhone.text = PhoneNumberUtils.formatNumber(phone, "US")
-                }
+                    createWebsiteClickableSpan(it.website)
+                    it.phone?.let { phone ->
+                        tvPhone.text = PhoneNumberUtils.formatNumber(phone, "US")
+                    }
 
-                val companyAddress = StringBuilder().apply {
-                    fun checkAndAppendAddress(address: String?) {
-                        address?.let {
-                            if (this.isNotBlank() and this.isNotEmpty()) append(", ")
-                            append(address)
+                    val companyAddress = StringBuilder().apply {
+                        fun checkAndAppendAddress(address: String?) {
+                            address?.let {
+                                if (this.isNotBlank() and this.isNotEmpty()) append(", ")
+                                append(address)
+                            }
+                        }
+
+                        it.run {
+                            checkAndAppendAddress(country)
+                            checkAndAppendAddress(state)
+                            checkAndAppendAddress(city)
+                            checkAndAppendAddress(address)
+                            checkAndAppendAddress(zip)
                         }
                     }
 
-                    it.run {
-                        checkAndAppendAddress(country)
-                        checkAndAppendAddress(state)
-                        checkAndAppendAddress(city)
-                        checkAndAppendAddress(address)
-                        checkAndAppendAddress(zip)
-                    }
+                    tvAddress.text = companyAddress.toString()
                 }
-
-                tvAddress.text = companyAddress.toString()
             }
         })
     }

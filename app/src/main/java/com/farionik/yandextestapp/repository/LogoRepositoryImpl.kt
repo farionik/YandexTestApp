@@ -5,12 +5,14 @@ import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.CompanyLogoEntity
 import com.farionik.yandextestapp.repository.database.company.StockEntity
 import com.farionik.yandextestapp.repository.network.Api
-import com.farionik.yandextestapp.repository.network.NetworkState
-import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import timber.log.Timber
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 class LogoRepositoryImpl(
     private val context: Context,
@@ -32,7 +34,7 @@ class LogoRepositoryImpl(
         loadCompanyLogo(stockEntity.symbol)
     }
 
-    private suspend fun loadCompanyLogo(symbol: String): NetworkState {
+    private suspend fun loadCompanyLogo(symbol: String) {
         val logo = appDatabase.companyLogoDAO().companyLogo(symbol)
         if (logo == null) {
             val response = api.loadCompanyLogoURL(symbol)
@@ -54,7 +56,6 @@ class LogoRepositoryImpl(
                 }
             }
         }
-        return NetworkState.SUCCESS
     }
 
     private fun copyStreamToFile(inputStream: InputStream, outputFile: File) {

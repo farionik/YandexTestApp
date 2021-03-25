@@ -1,5 +1,6 @@
 package com.farionik.yandextestapp.repository
 
+import androidx.room.withTransaction
 import androidx.work.ListenableWorker
 import androidx.work.workDataOf
 import com.farionik.yandextestapp.repository.database.AppDatabase
@@ -7,10 +8,8 @@ import com.farionik.yandextestapp.repository.database.company.StartStockEntity
 import com.farionik.yandextestapp.repository.database.company.StockEntity
 import com.farionik.yandextestapp.repository.network.Api
 import com.farionik.yandextestapp.ui.adapter.PaginationListener.Companion.PAGE_SIZE
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import timber.log.Timber
 
 open class StockRepositoryImpl(
@@ -19,10 +18,14 @@ open class StockRepositoryImpl(
     private val logoRepository: LogoRepository
 ) : BaseRepository(), StockRepository {
 
-    override suspend fun likeStock(symbol: String) {
-        val companyEntity = appDatabase.stockDAO().stockEntity(symbol)
-        companyEntity.isFavourite = !companyEntity.isFavourite
-        appDatabase.stockDAO().update(companyEntity)
+    override fun likeStock(symbol: String) {
+        GlobalScope.launch(IO) {
+            appDatabase.withTransaction {
+                val companyEntity = appDatabase.stockDAO().stockEntity(symbol)
+                companyEntity.isFavourite = !companyEntity.isFavourite
+                appDatabase.stockDAO().update(companyEntity)
+            }
+        }
     }
 
     override suspend fun loadMoreStocks(totalCount: Int): ListenableWorker.Result {

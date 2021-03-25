@@ -28,7 +28,7 @@ class SearchViewModel(
     val loadingStocksStateLiveData: LiveData<NetworkState>
         get() = _loadingStocksStateLiveData
 
-    val searchAction  = MutableLiveData<ISearchModel>()
+    val searchAction = MutableLiveData<ISearchModel>()
 
     private var loadingJob: Job? = null
 
@@ -54,9 +54,7 @@ class SearchViewModel(
     }
 
     fun likeStock(symbol: String) {
-        viewModelScope.launch {
-            searchRepository.likeStock(symbol)
-        }
+        searchRepository.likeStock(symbol)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

@@ -15,7 +15,7 @@ class RefreshStockWorkManager(
 
     private val stockRepository : StockRepository by inject()
 
-    override suspend fun doWork(): Result = withContext(Dispatchers.IO){
+    override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         return@withContext try {
             stockRepository.updateLocalData()
         } catch (error: Throwable) {

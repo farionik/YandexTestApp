@@ -5,7 +5,7 @@ import com.farionik.yandextestapp.repository.database.company.StartStockEntity
 
 interface StockRepository {
 
-    suspend fun likeStock(symbol: String)
+    fun likeStock(symbol: String)
 
     suspend fun loadMoreStocks(totalCount: Int): ListenableWorker.Result
 

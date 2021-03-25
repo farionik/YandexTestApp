@@ -7,43 +7,55 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.farionik.yandextestapp.R
+import androidx.work.WorkInfo
+import com.farionik.yandextestapp.databinding.FragmentNewsBinding
+import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import com.farionik.yandextestapp.ui.fragment.BaseFragment
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
 
 class NewsFragment : BaseFragment() {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: NewsAdapter
+    private lateinit var binding: FragmentNewsBinding
+    private lateinit var newsAdapter: NewsAdapter
+    private var stockModelRelation: StockModelRelation? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_news, container, false)
+        binding = FragmentNewsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = view.findViewById(R.id.recyclerView)
         initAdapter()
-        companyViewModel.newsLiveData.observe(viewLifecycleOwner, { adapter.swapData(it) })
+        companyViewModel.newsLiveData.observe(viewLifecycleOwner, { newsAdapter.swapData(it) })
+        companyViewModel.newsLoadingState.observe(viewLifecycleOwner, {
+            it?.let {
+                binding.swipeRefresh.isRefreshing = it.state == WorkInfo.State.RUNNING
+            }
+        })
+        companyViewModel.selectedStock.observe(viewLifecycleOwner, {
+            stockModelRelation = it
+        })
+        binding.swipeRefresh.setOnRefreshListener { companyViewModel.fetchNews(stockModelRelation) }
     }
 
     private fun initAdapter() {
-        adapter = NewsAdapter(object : NewsAdapter.Interaction {
+        newsAdapter = NewsAdapter(object : NewsAdapter.Interaction {
             override fun onNewsClicked(newsEntity: NewsEntity) {
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(newsEntity.url)
                 startActivity(intent)
             }
         })
-        val layoutManager = LinearLayoutManager(context)
-        recyclerView.hasFixedSize()
-        recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = adapter
-        recyclerView.addItemDecoration(CompanySpaceItemDecoration())
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            hasFixedSize()
+            adapter = newsAdapter
+            addItemDecoration(CompanySpaceItemDecoration())
+        }
     }
 }

@@ -76,8 +76,6 @@ open class StockViewModel(
     }
 
     fun likeStock(symbol: String) {
-        viewModelScope.launch {
-            stockRepository.likeStock(symbol)
-        }
+        stockRepository.likeStock(symbol)
     }
 }
