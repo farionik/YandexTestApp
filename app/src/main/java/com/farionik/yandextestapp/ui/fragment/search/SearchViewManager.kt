@@ -3,7 +3,6 @@ package com.farionik.yandextestapp.ui.fragment.search
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -14,7 +13,6 @@ import androidx.core.content.ContextCompat
 import com.blankj.utilcode.util.KeyboardUtils
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.ui.AppScreens
-import com.farionik.yandextestapp.ui.activity.MainActivityListener
 import com.farionik.yandextestapp.view_model.SearchViewModel
 import com.github.terrakok.cicerone.Router
 

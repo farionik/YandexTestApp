@@ -4,7 +4,6 @@ import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.chart.*
 import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.network.Api
-import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import com.farionik.yandextestapp.ui.fragment.detail.chart.apiRange
 import com.farionik.yandextestapp.ui.util.getFormattedCurrentDate
@@ -16,27 +15,18 @@ class CompanyRepositoryImpl(
     private val api: Api,
     private val appDatabase: AppDatabase,
     private val logoRepository: LogoRepository
-) : BaseRepository(), CompanyRepository,
-    StockRepository by StockRepositoryImpl(api, appDatabase, logoRepository) {
+) : CompanyRepository, StockRepository by StockRepositoryImpl(api, appDatabase, logoRepository) {
 
-    override suspend fun loadCompanyInfo(symbol: String): NetworkState =
-        when (checkInternetConnection()) {
-            is NetworkState.ERROR -> checkInternetConnection()
-            else -> {
-                val response = api.loadCompanyInfo(symbol)
-                if (response.isSuccessful) {
-                    val company = response.body() as CompanyEntity
-                    appDatabase.companyDAO().insert(company)
-                    coroutineScope {
-                        launch { loadStockPrice(symbol) }
-                    }
-                    NetworkState.SUCCESS
-                } else {
-                    val errorMessage = response.message()
-                    NetworkState.ERROR(Throwable(errorMessage))
-                }
+    override suspend fun loadCompanyInfo(symbol: String) {
+        val response = api.loadCompanyInfo(symbol)
+        if (response.isSuccessful) {
+            val company = response.body() as CompanyEntity
+            appDatabase.companyDAO().insert(company)
+            coroutineScope {
+                launch { loadStockPrice(symbol) }
             }
         }
+    }
 
     override suspend fun loadCompanyCharts(symbol: String, chartRange: ChartRange) {
         val chartID = createChartID(symbol, chartRange)

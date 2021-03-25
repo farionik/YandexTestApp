@@ -21,7 +21,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 class CompanyViewModel(
-    private val context: Context,
+    context: Context,
     private val companyDetailRepository: CompanyRepository,
     private val appDatabase: AppDatabase,
     private val router: Router

@@ -6,7 +6,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.farionik.yandextestapp.repository.database.BaseDao
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 
 @Dao
 abstract class StockDAO : BaseDao<StockEntity> {

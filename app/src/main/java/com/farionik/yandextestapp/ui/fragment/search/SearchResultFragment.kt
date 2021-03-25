@@ -5,21 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkInfo
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
-import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.ui.adapter.StockAdapter
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
-import com.farionik.yandextestapp.ui.fragment.stocks.BaseStockFragment
-import com.farionik.yandextestapp.view_model.SearchViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class SearchResultFragment : BaseSearchFragment() {
 
@@ -59,9 +55,11 @@ class SearchResultFragment : BaseSearchFragment() {
             }
         }
 
-        searchViewModel.loadingStocksStateLiveData.observe(viewLifecycleOwner, {
-            recyclerView.isVisible = it !is NetworkState.LOADING
-            progressBar.isVisible = it is NetworkState.LOADING
+        searchViewModel.searchLoadingState.observe(viewLifecycleOwner, {
+            it?.let {
+                recyclerView.isVisible = it.state != WorkInfo.State.RUNNING
+                progressBar.isVisible = it.state == WorkInfo.State.RUNNING
+            }
         })
     }
 }

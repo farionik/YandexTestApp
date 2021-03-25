@@ -1,17 +1,14 @@
 package com.farionik.yandextestapp.ui.fragment.search
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.View.OnClickListener
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
-import com.farionik.yandextestapp.ui.model.SearchModel
 
 class SearchAdapter(private val interaction: Interaction? = null) :
     ListAdapter<ISearchModel, SearchAdapter.SearchHolder>(SearchModelDC()) {

@@ -9,11 +9,10 @@ import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class RefreshStockWorkManager(
-    appContext: Context, workerParams: WorkerParameters
-) : CoroutineWorker(appContext, workerParams), KoinComponent {
+class RefreshStockWorkManager(appContext: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(appContext, workerParams), KoinComponent {
 
-    private val stockRepository : StockRepository by inject()
+    private val stockRepository: StockRepository by inject()
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         return@withContext try {

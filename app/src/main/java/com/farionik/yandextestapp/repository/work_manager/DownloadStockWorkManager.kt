@@ -9,9 +9,8 @@ import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class DownloadStockWorkManager(
-    appContext: Context, workerParams: WorkerParameters
-) : CoroutineWorker(appContext, workerParams), KoinComponent {
+class DownloadStockWorkManager(appContext: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(appContext, workerParams), KoinComponent {
 
     companion object {
         const val KEY_COUNT = "KEY_COUNT"
@@ -21,7 +20,7 @@ class DownloadStockWorkManager(
 
     override suspend fun doWork() = withContext(Dispatchers.IO) {
         return@withContext try {
-            val count =  inputData.getInt(KEY_COUNT, 0)
+            val count = inputData.getInt(KEY_COUNT, 0)
             stockRepository.loadMoreStocks(count)
         } catch (error: Throwable) {
             if (runAttemptCount < 3) {

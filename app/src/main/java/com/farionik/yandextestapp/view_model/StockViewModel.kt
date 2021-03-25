@@ -9,10 +9,9 @@ import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
 import com.farionik.yandextestapp.repository.work_manager.DownloadStockWorkManager
 import com.farionik.yandextestapp.repository.work_manager.RefreshStockWorkManager
-import kotlinx.coroutines.launch
 
 open class StockViewModel(
-    private val context: Context,
+    context: Context,
     private val appDatabase: AppDatabase,
     private val stockRepository: StockRepository,
     private val webServicesProvider: WebServicesProvider

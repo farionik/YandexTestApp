@@ -11,6 +11,3 @@ data class ChartResponse(
     val high: Float,
     val label: String
 )
-
-
-val noNetworkStatus = NetworkState.ERROR(Throwable("Please, check internet connection"))

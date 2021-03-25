@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.TextView
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.repository.database.chart.ChartEntity
 import com.farionik.yandextestapp.repository.database.chart.ChartValues
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry

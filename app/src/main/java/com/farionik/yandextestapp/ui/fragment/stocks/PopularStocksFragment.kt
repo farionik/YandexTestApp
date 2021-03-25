@@ -26,8 +26,8 @@ class PopularStocksFragment : BaseStockFragment() {
         })
 
         stockViewModel.downloadStockState.observe(viewLifecycleOwner, {
-            workState = it.state
-            if (it != null) {
+            it?.let {
+                workState = it.state
                 binding.swipeRefresh.isRefreshing = it.state == WorkInfo.State.RUNNING
             }
         })

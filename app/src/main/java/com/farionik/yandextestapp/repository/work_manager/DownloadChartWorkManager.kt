@@ -10,8 +10,8 @@ import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class DownloadChartWorkManager(appContext: Context, workerParams: WorkerParameters
-) : CoroutineWorker(appContext, workerParams), KoinComponent {
+class DownloadChartWorkManager(appContext: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(appContext, workerParams), KoinComponent {
 
     private val companyRepository: CompanyRepository by inject()
 

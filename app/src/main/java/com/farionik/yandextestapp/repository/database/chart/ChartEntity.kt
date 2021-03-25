@@ -6,7 +6,6 @@ import androidx.room.TypeConverters
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import com.farionik.yandextestapp.ui.util.getFormattedCurrentDate
 import com.farionik.yandextestapp.ui.util.sdf
-import java.text.SimpleDateFormat
 import java.util.*
 
 @Entity(tableName = "ChartTable")

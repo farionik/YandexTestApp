@@ -3,7 +3,6 @@ package com.farionik.yandextestapp.repository.database.company
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.farionik.yandextestapp.repository.database.company.CompanyConverter
 
 @Entity(tableName = "CompanyTable")
 @TypeConverters(CompanyConverter::class)

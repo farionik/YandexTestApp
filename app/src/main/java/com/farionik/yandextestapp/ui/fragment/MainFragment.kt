@@ -12,7 +12,6 @@ import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.di.Containers.MAIN_FRAGMENT_CONTAINER
 import com.farionik.yandextestapp.di.LocalCiceroneHolder
 import com.farionik.yandextestapp.ui.AppScreens
-import com.farionik.yandextestapp.ui.fragment.search.ISearchModel
 import com.farionik.yandextestapp.ui.fragment.search.SearchViewManager
 import com.farionik.yandextestapp.view_model.SearchViewModel
 import com.farionik.yandextestapp.view_model.StockViewModel

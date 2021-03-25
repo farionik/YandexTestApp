@@ -4,7 +4,6 @@ import android.content.Context
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
 import com.farionik.yandextestapp.repository.database.company.StockEntity
 
 fun TextView.formatPriceValue(stockEntity: StockEntity) {

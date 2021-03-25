@@ -16,7 +16,7 @@ open class StockRepositoryImpl(
     private val api: Api,
     private val appDatabase: AppDatabase,
     private val logoRepository: LogoRepository
-) : BaseRepository(), StockRepository {
+) : StockRepository {
 
     override fun likeStock(symbol: String) {
         GlobalScope.launch(IO) {
