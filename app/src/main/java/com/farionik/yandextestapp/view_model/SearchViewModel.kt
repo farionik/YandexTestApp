@@ -11,7 +11,6 @@ import com.farionik.yandextestapp.ui.fragment.search.ISearchModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -34,7 +33,7 @@ class SearchViewModel(
     private var loadingJob: Job? = null
 
     fun searchCompanies(searchRequest: String) {
-        _loadingStocksStateLiveData.postValue(NetworkState.LOADING("Loading companies..."))
+        /*_loadingStocksStateLiveData.postValue(NetworkState.LOADING("Loading companies..."))
         loadingJob = viewModelScope.launch(Dispatchers.IO) {
             appDatabase.withTransaction {
                 appDatabase.stockDAO().updateUserSearch()
@@ -51,7 +50,7 @@ class SearchViewModel(
                 else NetworkState.ERROR(Throwable(e.message))
             }
             _loadingStocksStateLiveData.postValue(state)
-        }
+        }*/
     }
 
     fun likeStock(symbol: String) {

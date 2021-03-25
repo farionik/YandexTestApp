@@ -7,7 +7,6 @@ import androidx.work.WorkInfo
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
 import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.ui.adapter.PaginationListener
-import timber.log.Timber
 
 class PopularStocksFragment : BaseStockFragment() {
 
@@ -21,19 +20,16 @@ class PopularStocksFragment : BaseStockFragment() {
 
         recyclerView.addOnScrollListener(object : PaginationListener() {
             override fun loadMoreItems(totalCount: Int) {
-                stockViewModel.fetchCompanies(totalCount)
+                stockViewModel.loadMoreStocks(totalCount)
             }
 
             override fun isLoading() = networkState is NetworkState.LOADING
         })
 
         stockViewModel.downloadStockState.observe(viewLifecycleOwner, {
-            swipeRefreshLayout.isRefreshing = it.state == WorkInfo.State.RUNNING
-        })
-
-        stockViewModel.loadingStocksStateLiveData.observe(viewLifecycleOwner, {
-            networkState = it
-            swipeRefreshLayout.isRefreshing = it is NetworkState.LOADING
+            if (it != null) {
+                swipeRefreshLayout.isRefreshing = it.state == WorkInfo.State.RUNNING
+            }
         })
     }
 }

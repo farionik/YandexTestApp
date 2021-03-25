@@ -1,11 +1,11 @@
 package com.farionik.yandextestapp.repository
 
 import androidx.work.ListenableWorker
+import androidx.work.workDataOf
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.StartStockEntity
 import com.farionik.yandextestapp.repository.database.company.StockEntity
 import com.farionik.yandextestapp.repository.network.Api
-import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.ui.adapter.PaginationListener.Companion.PAGE_SIZE
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -18,6 +18,91 @@ open class StockRepositoryImpl(
     private val appDatabase: AppDatabase,
     private val logoRepository: LogoRepository
 ) : BaseRepository(), StockRepository {
+
+    override suspend fun likeStock(symbol: String) {
+        val companyEntity = appDatabase.stockDAO().stockEntity(symbol)
+        companyEntity.isFavourite = !companyEntity.isFavourite
+        appDatabase.stockDAO().update(companyEntity)
+    }
+
+    override suspend fun loadMoreStocks(totalCount: Int): ListenableWorker.Result {
+        Timber.d("total count $totalCount")
+        // почистить поиск
+        appDatabase.stockDAO().updateUserSearch()
+
+        // получить список 500 акций с сервера. Будет списком популярных акций
+        val result = loadSP500()
+        if (result is ListenableWorker.Result.Failure) {
+            return result
+        }
+
+        val savedStocks = appDatabase.stockDAO().stockList()
+        val convertedSavedStocks = savedStocks.asSequence()
+            .map { StartStockEntity(it.symbol, it.companyName) }
+            .toMutableList()
+        val startList = appDatabase.startStockDAO().stockList().toMutableList()
+        // вычитаем список, чтоб понять какие акции из популярного загрузить
+        startList.minusAssign(convertedSavedStocks)
+
+        val list = startList.subList(0, PAGE_SIZE)
+        return loadStocks(list)
+    }
+
+    private suspend fun loadSP500(): ListenableWorker.Result {
+        if (appDatabase.startStockDAO().stockList().isNullOrEmpty()) {
+
+            val response = api.loadStocks(500)
+            return if (response.isSuccessful) {
+                val data = response.body() as List<StartStockEntity>
+                if (data.isNullOrEmpty()) {
+                    val data = workDataOf(
+                        "error_message" to "Loaded data is empty",
+                    )
+                    ListenableWorker.Result.failure(data)
+                } else {
+                    appDatabase.startStockDAO().insertAll(data)
+                    ListenableWorker.Result.success()
+                }
+            } else {
+                val errorMessage = response.message()
+                val data = workDataOf(
+                    "error_message" to errorMessage,
+                )
+                ListenableWorker.Result.failure(data)
+            }
+        }
+        return ListenableWorker.Result.success()
+
+        /*val fileInputStream = context.resources.openRawResource(R.raw.sp_500)
+        val bufferedReader = fileInputStream.bufferedReader()
+        var content: String
+        bufferedReader.use { content = it.readText() }
+        return Gson().fromJson(content, object : TypeToken<List<SPStoredModel>>() {}.type)*/
+    }
+
+    override suspend fun loadStocks(
+        startList: List<StartStockEntity>,
+        isUserSearch: Boolean
+    ): ListenableWorker.Result {
+        val symbols = startList.joinToString { it.symbol }
+        val response = api.updateStockPrices(symbols, "quote")
+
+        return if (response.isSuccessful) {
+            val data = response.body() as Map<String, Map<String, StockEntity>>
+            val stocks = data.map { it.value["quote"] as StockEntity }
+            // для понимания на каком это экране загрузка
+            stocks.map { it.isUserSearch = isUserSearch }
+            logoRepository.loadCompaniesLogo(stocks)
+            appDatabase.stockDAO().insertAll(stocks)
+            ListenableWorker.Result.success()
+        } else {
+            val errorMessage = response.message()
+            val data = workDataOf(
+                "error_message" to errorMessage,
+            )
+            ListenableWorker.Result.failure(data)
+        }
+    }
 
     override suspend fun loadStockPrice(symbol: String) {
         val response = api.loadCompanyStockPrice(symbol)
@@ -34,97 +119,11 @@ open class StockRepositoryImpl(
         appDatabase.stockDAO().update(stockResponse)
     }
 
-    override suspend fun likeStock(symbol: String) {
-        val companyEntity = appDatabase.stockDAO().stockEntity(symbol)
-        companyEntity.isFavourite = !companyEntity.isFavourite
-        appDatabase.stockDAO().update(companyEntity)
-    }
-
-    override suspend fun loadMoreStocks(totalCount: Int): NetworkState {
-        Timber.d("total count $totalCount")
-        // почистить поиск
-        appDatabase.stockDAO().updateUserSearch()
-
-        // получить список 500 акций с сервера. Будет списком популярных акций
-        val result = loadSP500()
-        if (result is NetworkState.ERROR) {
-            return result
-        }
-
-        val savedStocks = appDatabase.stockDAO().stockList()
-        return if ((totalCount == 0) and savedStocks.isNotEmpty()) {
-            // case - пользователь делает swipe
-            //updateLocalData()
-            return NetworkState.SUCCESS
-        } else {
-            pagination()
-        }
-    }
-
-    private suspend fun pagination(): NetworkState {
-        val savedStocks = appDatabase.stockDAO().stockList()
-        val convertedSavedStocks = savedStocks.asSequence()
-            .map { StartStockEntity(it.symbol, it.companyName) }
-            .toMutableList()
-        val startList = appDatabase.startStockDAO().stockList().toMutableList()
-        // вычитаем список, чтоб понять какие акции из популярного загрузить
-        startList.minusAssign(convertedSavedStocks)
-
-        Timber.d("list size to load ${startList.size}")
-
-        val list = startList.subList(0, PAGE_SIZE)
-        return loadStocks(list)
-    }
-
-    override suspend fun loadStocks(
-        startList: List<StartStockEntity>,
-        isUserSearch: Boolean
-    ): NetworkState {
-        val symbols = startList.joinToString { it.symbol }
-        val response = api.updateStockPrices(symbols, "quote")
-
-        return if (response.isSuccessful) {
-            val data = response.body() as Map<String, Map<String, StockEntity>>
-            val stocks = data.map { it.value["quote"] as StockEntity }
-            // для понимания на каком это экране загрузка
-            stocks.map { it.isUserSearch = isUserSearch }
-            logoRepository.loadCompaniesLogo(stocks)
-            appDatabase.stockDAO().insertAll(stocks)
-            NetworkState.SUCCESS
-        } else {
-            val errorMessage = response.message()
-            NetworkState.ERROR(Throwable(errorMessage))
-        }
-    }
-
-    private suspend fun loadSP500(): NetworkState {
-        if (appDatabase.startStockDAO().stockList().isNullOrEmpty()) {
-
-            val response = api.loadStocks(500)
-            return if (response.isSuccessful) {
-                val data = response.body() as List<StartStockEntity>
-                if (data.isNullOrEmpty()) {
-                    NetworkState.ERROR(Throwable("Loaded data is empty"))
-                } else {
-                    appDatabase.startStockDAO().insertAll(data)
-                    NetworkState.SUCCESS
-                }
-            } else {
-                val errorMessage = response.message()
-                NetworkState.ERROR(Throwable(errorMessage))
-            }
-        }
-        return NetworkState.SUCCESS
-
-        /*val fileInputStream = context.resources.openRawResource(R.raw.sp_500)
-        val bufferedReader = fileInputStream.bufferedReader()
-        var content: String
-        bufferedReader.use { content = it.readText() }
-        return Gson().fromJson(content, object : TypeToken<List<SPStoredModel>>() {}.type)*/
-    }
-
     override suspend fun updateLocalData(): ListenableWorker.Result {
         val companiesList = appDatabase.stockDAO().stockList()
+        if (companiesList.isEmpty()) {
+            loadMoreStocks(0)
+        }
 
         // сервер поддерживает загрузку для 100 акций
         val stockLists = companiesList.chunked(100)
@@ -138,7 +137,8 @@ open class StockRepositoryImpl(
             }
         }
         val awaitAll = results.awaitAll()
-        return awaitAll.firstOrNull { it is ListenableWorker.Result.Failure } ?: ListenableWorker.Result.success()
+        return awaitAll.firstOrNull { it is ListenableWorker.Result.Failure }
+            ?: ListenableWorker.Result.success()
     }
 
     private suspend fun updateStockData(list: List<StockEntity>): ListenableWorker.Result {
@@ -153,8 +153,10 @@ open class StockRepositoryImpl(
             ListenableWorker.Result.success()
         } else {
             val errorMessage = response.message()
-            //NetworkState.ERROR(Throwable(errorMessage))
-            ListenableWorker.Result.failure()
+            val data = workDataOf(
+                "error_message" to errorMessage,
+            )
+            ListenableWorker.Result.failure(data)
         }
     }
 }

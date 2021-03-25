@@ -12,6 +12,6 @@ class FavouriteStockFragment : BaseStockFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //swipeRefreshLayout.isVisible = false
+        swipeRefreshLayout.isVisible = false
     }
 }

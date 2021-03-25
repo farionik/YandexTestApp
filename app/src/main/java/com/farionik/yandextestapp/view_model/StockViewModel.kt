@@ -3,15 +3,12 @@ package com.farionik.yandextestapp.view_model
 import android.content.Context
 import androidx.lifecycle.*
 import androidx.work.*
-import com.farionik.yandextestapp.repository.DownloadStockWorkManager
 import com.farionik.yandextestapp.repository.StockRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.company.StockModelRelation
-import com.farionik.yandextestapp.repository.network.NetworkState
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import com.farionik.yandextestapp.repository.work_manager.DownloadStockWorkManager
+import com.farionik.yandextestapp.repository.work_manager.RefreshStockWorkManager
 import kotlinx.coroutines.launch
 
 open class StockViewModel(
@@ -22,6 +19,9 @@ open class StockViewModel(
 ) : ViewModel(), LifecycleObserver {
 
     private val workManager = WorkManager.getInstance(context)
+    private val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
 
     // величина скрола toolBar
     var appBarOffsetMutableLiveData: MutableLiveData<Int> = MutableLiveData()
@@ -34,55 +34,45 @@ open class StockViewModel(
         get() = appDatabase.stockDAO().favouriteStocksFlow()
             .asLiveData(viewModelScope.coroutineContext)
 
-    private val _loadingStocksStateLiveData = MutableLiveData<NetworkState>()
-    val loadingStocksStateLiveData: LiveData<NetworkState>
-        get() = _loadingStocksStateLiveData
-
-
-
     private val _downloadStockState = MutableLiveData<WorkInfo>()
     val downloadStockState: LiveData<WorkInfo>
         get() = _downloadStockState
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun updateData() {
-        //fetchCompanies(0)
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
+        val refreshWorkRequest = OneTimeWorkRequestBuilder<RefreshStockWorkManager>()
+            .setConstraints(constraints)
             .build()
+        workManager.enqueueUniqueWork(
+            "refresh_request",
+            ExistingWorkPolicy.REPLACE,
+            refreshWorkRequest
+        )
+        workManager.getWorkInfoByIdLiveData(refreshWorkRequest.id)
+            .observeForever { _downloadStockState.postValue(it) }
+    }
+
+    fun loadMoreStocks(totalCount: Int) {
+        val data = workDataOf(
+            DownloadStockWorkManager.KEY_COUNT to totalCount,
+        )
 
         val downloadWorkRequest = OneTimeWorkRequestBuilder<DownloadStockWorkManager>()
             .setConstraints(constraints)
+            .setInputData(data)
             .build()
-        workManager.enqueue(downloadWorkRequest)
+        workManager.enqueueUniqueWork(
+            "download_more_stocks",
+            ExistingWorkPolicy.KEEP,
+            downloadWorkRequest
+        )
         workManager.getWorkInfoByIdLiveData(downloadWorkRequest.id)
             .observeForever { _downloadStockState.postValue(it) }
-        //workManager.enqueue(OneTimeWorkRequest.from(DownloadStockWorkManager::class.java))
-    }
-
-    private var loadingJob: Job? = null
-
-    fun fetchCompanies(totalCount: Int) {
-        cancelAllJob()
-        // подключения sse. Только быстро съедает кредиты api
-//        webServicesProvider.stopSocket()
-
-        _loadingStocksStateLiveData.postValue(NetworkState.LOADING("Loading companies..."))
-        loadingJob = viewModelScope.launch(Dispatchers.IO) {
-            val state = try {
-                stockRepository.loadMoreStocks(totalCount)
-            } catch (e: Exception) {
-                if (e is CancellationException) NetworkState.SUCCESS
-                else NetworkState.ERROR(Throwable(e.message))
-            }
-            _loadingStocksStateLiveData.postValue(state)
-        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun cancelAllJob() {
         webServicesProvider.stopSocket()
-        loadingJob?.cancel()
     }
 
     fun likeStock(symbol: String) {

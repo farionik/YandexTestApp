@@ -1,9 +1,9 @@
 package com.farionik.yandextestapp.repository
 
-import com.farionik.yandextestapp.repository.network.NetworkState
+import androidx.work.ListenableWorker
 
 interface SearchRepository : StockRepository{
 
-    suspend fun searchCompanies(searchRequest: String): NetworkState
+    suspend fun searchCompanies(searchRequest: String): ListenableWorker.Result
 
 }
