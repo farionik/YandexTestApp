@@ -2,22 +2,25 @@ package com.farionik.yandextestapp.view_model
 
 import android.content.Context
 import androidx.lifecycle.*
-import androidx.work.*
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.work_manager.DownloadCryptoWorkManager
 import com.farionik.yandextestapp.repository.work_manager.RefreshCryptoWorkManger
+import kotlinx.coroutines.flow.take
 
 class CryptoViewModel(
-    context: Context
-): ViewModel(), LifecycleObserver {
-
-    private val workManager = WorkManager.getInstance(context)
-    private val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.CONNECTED)
-        .build()
+    context: Context,
+    appDatabase: AppDatabase
+) : BaseViewModel(context) {
 
     private val _downloadCryptoState = MutableLiveData<WorkInfo>()
     val downloadCryptoState: LiveData<WorkInfo>
         get() = _downloadCryptoState
+
+    val cryptoLiveData =
+        appDatabase.cryptoDAO().cryptoFlow().asLiveData(viewModelScope.coroutineContext)
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun loadStartData() {

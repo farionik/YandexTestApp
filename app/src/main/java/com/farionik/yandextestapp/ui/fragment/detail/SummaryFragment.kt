@@ -23,7 +23,9 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.FragmentSummaryBinding
 import com.farionik.yandextestapp.ui.fragment.BaseFragment
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class SummaryFragment : BaseFragment() {
 
     private lateinit var binding: FragmentSummaryBinding

@@ -21,7 +21,9 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.appbar.AppBarLayout
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class MainFragment : Fragment(R.layout.fragment_main), BackButtonListener {
 
     private lateinit var searchEditText: EditText

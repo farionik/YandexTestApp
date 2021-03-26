@@ -2,7 +2,9 @@ package com.farionik.yandextestapp.view_model
 
 import android.content.Context
 import androidx.lifecycle.*
-import androidx.work.*
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import com.farionik.yandextestapp.repository.StockRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
@@ -15,12 +17,7 @@ open class StockViewModel(
     private val appDatabase: AppDatabase,
     private val stockRepository: StockRepository,
     private val webServicesProvider: WebServicesProvider
-) : ViewModel(), LifecycleObserver {
-
-    private val workManager = WorkManager.getInstance(context)
-    private val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.CONNECTED)
-        .build()
+) : BaseViewModel(context) {
 
     // величина скрола toolBar
     var appBarOffsetMutableLiveData: MutableLiveData<Int> = MutableLiveData()

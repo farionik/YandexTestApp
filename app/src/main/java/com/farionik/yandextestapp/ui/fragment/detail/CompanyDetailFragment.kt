@@ -14,7 +14,9 @@ import com.farionik.yandextestapp.ui.fragment.detail.news.NewsFragment
 import com.farionik.yandextestapp.ui.util.TabLayoutScreenType
 import com.farionik.yandextestapp.ui.util.addTabChangeListener
 import com.farionik.yandextestapp.ui.util.initTabLayoutMediator
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class CompanyDetailFragment : BaseFragment(), BackButtonListener {
 
     private lateinit var binding: FragmentCompanyDetailBinding

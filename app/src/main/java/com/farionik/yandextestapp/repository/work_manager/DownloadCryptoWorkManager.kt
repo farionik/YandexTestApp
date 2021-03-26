@@ -6,9 +6,11 @@ import androidx.work.WorkerParameters
 import com.farionik.yandextestapp.repository.CryptoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+@KoinApiExtension
 class DownloadCryptoWorkManager(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams), KoinComponent {
 
@@ -16,7 +18,7 @@ class DownloadCryptoWorkManager(appContext: Context, workerParams: WorkerParamet
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         return@withContext try {
-            cryptoRepository.loadMoreData()
+            cryptoRepository.loadCryptoPrice()
             Result.success()
         } catch (error: Throwable) {
             if (runAttemptCount < 3) {

@@ -19,18 +19,15 @@ import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class CompanyViewModel(
     context: Context,
     private val companyDetailRepository: CompanyRepository,
     private val appDatabase: AppDatabase,
     private val router: Router
-) : ViewModel(), LifecycleObserver {
-
-    private val workManager = WorkManager.getInstance(context)
-    private val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.CONNECTED)
-        .build()
+) : BaseViewModel(context) {
 
     // выбранная компания на просмотр
     private val _companyDetailSymbolLiveData = MutableLiveData<String>()

@@ -7,9 +7,11 @@ import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+@KoinApiExtension
 class DownloadChartWorkManager(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams), KoinComponent {
 

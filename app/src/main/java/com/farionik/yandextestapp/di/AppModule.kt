@@ -5,10 +5,7 @@ import com.farionik.yandextestapp.repository.*
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.network.NetworkProvider
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
-import com.farionik.yandextestapp.view_model.CompanyViewModel
-import com.farionik.yandextestapp.view_model.CryptoViewModel
-import com.farionik.yandextestapp.view_model.SearchViewModel
-import com.farionik.yandextestapp.view_model.StockViewModel
+import com.farionik.yandextestapp.view_model.*
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Cicerone.Companion.create
 import com.github.terrakok.cicerone.Router
@@ -53,7 +50,11 @@ val appViewModelModule = module {
     }
 
     viewModel {
-        CryptoViewModel(get())
+        CryptoViewModel(get(), get())
+    }
+
+    viewModel {
+        SplashViewModel(get(), get())
     }
 }
 

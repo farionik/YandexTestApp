@@ -7,6 +7,8 @@ interface StockRepository {
 
     fun likeStock(symbol: String)
 
+    suspend fun loadStartData()
+
     suspend fun loadMoreStocks(): ListenableWorker.Result
 
     suspend fun updateLocalData(): ListenableWorker.Result

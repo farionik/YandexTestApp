@@ -8,7 +8,7 @@ data class CryptoEntity(
     @PrimaryKey(autoGenerate = false)
     val symbol: String,
     val name: String,
-    val region: String = "",
-    val currency: String = "",
-    val price: String,
+    var price: String? = null,
+    val currency: String,
+    val region: String
 )

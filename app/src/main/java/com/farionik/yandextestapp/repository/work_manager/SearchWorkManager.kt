@@ -6,9 +6,11 @@ import androidx.work.WorkerParameters
 import com.farionik.yandextestapp.repository.SearchRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+@KoinApiExtension
 class SearchWorkManager(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams), KoinComponent {
 

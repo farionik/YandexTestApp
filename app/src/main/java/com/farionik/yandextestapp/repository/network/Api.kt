@@ -1,5 +1,6 @@
 package com.farionik.yandextestapp.repository.network
 
+import com.farionik.yandextestapp.repository.database.crypto.CryptoEntity
 import com.farionik.yandextestapp.repository.database.stock.CompanyEntity
 import com.farionik.yandextestapp.repository.database.stock.StartStockEntity
 import com.farionik.yandextestapp.repository.database.stock.StockEntity
@@ -55,4 +56,10 @@ interface Api {
 
     @GET("stock/{symbol}/news")
     suspend fun loadNews(@Path("symbol") symbol: String): Response<List<NewsEntity>>
+
+    @GET("ref-data/crypto/symbols")
+    suspend fun loadCryptoSymbols(): Response<List<CryptoEntity>>
+
+    @GET("crypto/{symbol}/price")
+    suspend fun loadCryptoPrice(@Path("symbol") symbol: String) : Response<CryptoEntity>
 }

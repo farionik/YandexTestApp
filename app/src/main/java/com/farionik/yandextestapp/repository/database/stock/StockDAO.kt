@@ -47,11 +47,5 @@ abstract class StockDAO : BaseDao<StockEntity> {
             list.map { it.isUserSearch = false }
             insertAll(list)
         }
-        /*stocksRelationFlow(true).collect {
-            it.map { relation ->
-                relation.stock.isUserSearch = false
-                update(relation.stock)
-            }
-        }*/
     }
 }

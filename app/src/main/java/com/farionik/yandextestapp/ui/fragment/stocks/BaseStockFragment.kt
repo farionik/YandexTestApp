@@ -27,7 +27,6 @@ abstract class BaseStockFragment : Fragment(R.layout.fragment_stocks) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentStocksBinding.bind(view)
-
         viewLifecycleOwner.lifecycle.addObserver(stockViewModel)
 
         initAdapter()

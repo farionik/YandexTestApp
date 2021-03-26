@@ -27,6 +27,14 @@ open class StockRepositoryImpl(
         }
     }
 
+    override suspend fun loadStartData() {
+        val response = api.loadStocks(500)
+        if (response.isSuccessful) {
+            val data = response.body() as List<StartStockEntity>
+            appDatabase.startStockDAO().insertAll(data)
+        }
+    }
+
     override suspend fun loadMoreStocks(): ListenableWorker.Result {
         appDatabase.stockDAO().updateUserSearch()
 

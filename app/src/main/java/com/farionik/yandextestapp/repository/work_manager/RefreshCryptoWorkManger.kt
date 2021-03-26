@@ -16,7 +16,7 @@ class RefreshCryptoWorkManger(appContext: Context, workerParams: WorkerParameter
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         return@withContext try {
-            cryptoRepository.loadStartData()
+            cryptoRepository.loadCryptoPrice()
             Result.success()
         } catch (error: Throwable) {
             if (runAttemptCount < 3) {

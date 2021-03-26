@@ -4,6 +4,5 @@ interface CryptoRepository {
 
     suspend fun loadStartData()
 
-    suspend fun loadMoreData()
-
+    suspend fun loadCryptoPrice()
 }

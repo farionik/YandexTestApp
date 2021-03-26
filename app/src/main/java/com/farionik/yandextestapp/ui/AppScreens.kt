@@ -7,7 +7,9 @@ import com.farionik.yandextestapp.ui.fragment.search.SearchFragment
 import com.farionik.yandextestapp.ui.fragment.search.SearchResultFragment
 import com.farionik.yandextestapp.ui.fragment.stocks.StockFragment
 import com.github.terrakok.cicerone.androidx.FragmentScreen
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 object AppScreens {
     fun startScreen() = FragmentScreen() { SplashFragment() }
 

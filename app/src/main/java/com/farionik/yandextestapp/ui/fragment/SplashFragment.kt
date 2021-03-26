@@ -3,24 +3,16 @@ package com.farionik.yandextestapp.ui.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.ui.AppScreens
-import com.github.terrakok.cicerone.Router
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import com.farionik.yandextestapp.view_model.SplashViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class SplashFragment : Fragment(R.layout.fragment_splash) {
 
-    private val router by inject<Router>()
+    private val splashViewModel by viewModel<SplashViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(1000)
-            router.replaceScreen(AppScreens.mainScreen())
-        }
+        viewLifecycleOwner.lifecycle.addObserver(splashViewModel)
     }
 }
