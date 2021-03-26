@@ -2,8 +2,8 @@ package com.farionik.yandextestapp.repository
 
 import android.content.Context
 import com.farionik.yandextestapp.repository.database.AppDatabase
-import com.farionik.yandextestapp.repository.database.company.CompanyLogoEntity
-import com.farionik.yandextestapp.repository.database.company.StockEntity
+import com.farionik.yandextestapp.repository.database.stock.CompanyLogoEntity
+import com.farionik.yandextestapp.repository.database.stock.StockEntity
 import com.farionik.yandextestapp.repository.network.Api
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.coroutineScope

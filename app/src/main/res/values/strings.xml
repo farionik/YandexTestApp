@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">YandexTestApp</string>
 
+    <string name="data_loading_text">Data is loading. Please wait…</string>
+
     <string name="tab_stock">Stock</string>
     <string name="tab_favourite">Favourite</string>
-    <string name="tab_all">All stocks</string>
+    <string name="tab_crypto">Crypto</string>
 
     <string name="tab_chart">Chart</string>
     <string name="tab_summary">Summary</string>

@@ -19,7 +19,7 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            delay(100)
+            delay(1000)
             router.replaceScreen(AppScreens.mainScreen())
         }
     }

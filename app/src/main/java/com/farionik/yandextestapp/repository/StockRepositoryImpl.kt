@@ -4,13 +4,12 @@ import androidx.room.withTransaction
 import androidx.work.ListenableWorker
 import androidx.work.workDataOf
 import com.farionik.yandextestapp.repository.database.AppDatabase
-import com.farionik.yandextestapp.repository.database.company.StartStockEntity
-import com.farionik.yandextestapp.repository.database.company.StockEntity
+import com.farionik.yandextestapp.repository.database.stock.StartStockEntity
+import com.farionik.yandextestapp.repository.database.stock.StockEntity
 import com.farionik.yandextestapp.repository.network.Api
 import com.farionik.yandextestapp.ui.adapter.PaginationListener.Companion.PAGE_SIZE
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import timber.log.Timber
 
 open class StockRepositoryImpl(
     private val api: Api,
@@ -28,9 +27,7 @@ open class StockRepositoryImpl(
         }
     }
 
-    override suspend fun loadMoreStocks(totalCount: Int): ListenableWorker.Result {
-        Timber.d("total count $totalCount")
-        // почистить поиск
+    override suspend fun loadMoreStocks(): ListenableWorker.Result {
         appDatabase.stockDAO().updateUserSearch()
 
         // получить список 500 акций с сервера. Будет списком популярных акций
@@ -125,7 +122,7 @@ open class StockRepositoryImpl(
     override suspend fun updateLocalData(): ListenableWorker.Result {
         val companiesList = appDatabase.stockDAO().stockList()
         if (companiesList.isEmpty()) {
-            loadMoreStocks(0)
+            loadMoreStocks()
         }
 
         // сервер поддерживает загрузку для 100 акций

@@ -8,8 +8,8 @@ import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.chart.ChartEntity
 import com.farionik.yandextestapp.repository.database.chart.createChartID
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.database.stock.CompanyEntity
+import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import com.farionik.yandextestapp.repository.work_manager.DownloadChartWorkManager
 import com.farionik.yandextestapp.repository.work_manager.DownloadCompanyInfoWorkManager

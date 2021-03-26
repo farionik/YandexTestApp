@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.work.*
 import com.farionik.yandextestapp.repository.SearchRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.repository.work_manager.SearchWorkManager
 import com.farionik.yandextestapp.ui.fragment.search.ISearchModel
 import kotlinx.coroutines.flow.Flow

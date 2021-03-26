@@ -1,4 +1,4 @@
-package com.farionik.yandextestapp.repository.database.company
+package com.farionik.yandextestapp.repository.database.stock
 
 import androidx.room.Embedded
 import androidx.room.Relation

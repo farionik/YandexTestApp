@@ -5,7 +5,7 @@ import androidx.lifecycle.*
 import androidx.work.*
 import com.farionik.yandextestapp.repository.StockRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
 import com.farionik.yandextestapp.repository.work_manager.DownloadStockWorkManager
 import com.farionik.yandextestapp.repository.work_manager.RefreshStockWorkManager
@@ -51,14 +51,9 @@ open class StockViewModel(
             .observeForever { _downloadStockState.postValue(it) }
     }
 
-    fun loadMoreStocks(totalCount: Int) {
-        val data = workDataOf(
-            DownloadStockWorkManager.KEY_COUNT to totalCount,
-        )
-
+    fun loadMoreStocks() {
         val downloadWorkRequest = OneTimeWorkRequestBuilder<DownloadStockWorkManager>()
             .setConstraints(constraints)
-            .setInputData(data)
             .build()
         workManager.enqueueUniqueWork(
             "download_more_stocks",

@@ -4,7 +4,7 @@ import android.content.Context
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.repository.database.company.StockEntity
+import com.farionik.yandextestapp.repository.database.stock.StockEntity
 
 fun TextView.formatPriceValue(stockEntity: StockEntity) {
     val totalPriceText = "$${stockEntity.latestPrice}"

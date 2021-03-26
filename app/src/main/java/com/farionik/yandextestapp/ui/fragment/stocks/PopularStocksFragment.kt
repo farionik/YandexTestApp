@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.work.WorkInfo
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.ui.adapter.PaginationListener
 
 class PopularStocksFragment : BaseStockFragment() {
@@ -19,7 +19,7 @@ class PopularStocksFragment : BaseStockFragment() {
 
         binding.recyclerView.addOnScrollListener(object : PaginationListener() {
             override fun loadMoreItems(totalCount: Int) {
-                stockViewModel.loadMoreStocks(totalCount)
+                stockViewModel.loadMoreStocks()
             }
 
             override fun isLoading() = workState == WorkInfo.State.RUNNING

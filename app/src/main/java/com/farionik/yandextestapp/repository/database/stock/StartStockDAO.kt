@@ -1,4 +1,4 @@
-package com.farionik.yandextestapp.repository.database.company
+package com.farionik.yandextestapp.repository.database.stock
 
 import androidx.room.Dao
 import androidx.room.Query

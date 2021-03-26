@@ -1,15 +1,13 @@
 package com.farionik.yandextestapp.ui.fragment.stocks
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.FragmentStocksBinding
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.ui.adapter.StockAdapter
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
 import com.farionik.yandextestapp.view_model.CompanyViewModel

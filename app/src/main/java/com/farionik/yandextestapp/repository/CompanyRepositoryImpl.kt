@@ -2,7 +2,7 @@ package com.farionik.yandextestapp.repository
 
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.chart.*
-import com.farionik.yandextestapp.repository.database.company.CompanyEntity
+import com.farionik.yandextestapp.repository.database.stock.CompanyEntity
 import com.farionik.yandextestapp.repository.network.Api
 import com.farionik.yandextestapp.ui.fragment.detail.chart.ChartRange
 import com.farionik.yandextestapp.ui.fragment.detail.chart.apiRange

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
 import com.farionik.yandextestapp.R
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.ui.adapter.StockAdapter
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
 import kotlinx.coroutines.flow.collect

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 
 class FavouriteStockFragment : BaseStockFragment() {
     override val stockSource: LiveData<List<StockModelRelation>>
@@ -12,6 +12,6 @@ class FavouriteStockFragment : BaseStockFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.swipeRefresh.isVisible = false
+        binding.swipeRefresh.isEnabled = false
     }
 }

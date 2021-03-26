@@ -1,13 +1,13 @@
 package com.farionik.yandextestapp.repository
 
 import androidx.work.ListenableWorker
-import com.farionik.yandextestapp.repository.database.company.StartStockEntity
+import com.farionik.yandextestapp.repository.database.stock.StartStockEntity
 
 interface StockRepository {
 
     fun likeStock(symbol: String)
 
-    suspend fun loadMoreStocks(totalCount: Int): ListenableWorker.Result
+    suspend fun loadMoreStocks(): ListenableWorker.Result
 
     suspend fun updateLocalData(): ListenableWorker.Result
 

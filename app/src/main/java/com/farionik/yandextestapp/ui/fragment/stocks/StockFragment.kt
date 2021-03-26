@@ -1,9 +1,7 @@
 package com.farionik.yandextestapp.ui.fragment.stocks
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.farionik.yandextestapp.R
@@ -20,7 +18,7 @@ class StockFragment : Fragment(R.layout.fragment_stock) {
     private val fragments = listOf(
         PopularStocksFragment(),
         FavouriteStockFragment(),
-        AllStocksFragment()
+        CryptoFragment()
     )
 
     private val mainViewModel by sharedViewModel<StockViewModel>()
@@ -48,7 +46,7 @@ class StockFragment : Fragment(R.layout.fragment_stock) {
             val tabTitles = listOf(
                 getString(R.string.tab_stock),
                 getString(R.string.tab_favourite),
-                getString(R.string.tab_all)
+                getString(R.string.tab_crypto)
             )
 
             binding.viewPager.adapter = ScreenPagerAdapter(this@StockFragment, fragments)

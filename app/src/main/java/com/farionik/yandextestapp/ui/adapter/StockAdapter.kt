@@ -11,7 +11,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.RvItemCompanyBinding
-import com.farionik.yandextestapp.repository.database.company.StockModelRelation
+import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.ui.util.formatChangeValue
 import com.farionik.yandextestapp.ui.util.formatPercentValue
 import com.farionik.yandextestapp.ui.util.formatPriceValue
