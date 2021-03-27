@@ -22,7 +22,9 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class ChartFragment : BaseFragment() {
 
     private lateinit var binding: FragmentChartBinding

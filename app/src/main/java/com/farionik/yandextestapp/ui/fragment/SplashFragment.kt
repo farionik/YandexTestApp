@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.view_model.SplashViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class SplashFragment : Fragment(R.layout.fragment_splash) {
 
     private val splashViewModel by viewModel<SplashViewModel>()

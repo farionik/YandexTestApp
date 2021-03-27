@@ -55,16 +55,16 @@ class CompanyDetailFragment : BaseFragment(), BackButtonListener {
         val tabTitles = listOf(
             getString(R.string.tab_chart),
             getString(R.string.tab_summary),
-            getString(R.string.tab_news),
-            getString(R.string.tab_forecast),
-            getString(R.string.tab_ideas)
+            getString(R.string.tab_news)
+            //getString(R.string.tab_forecast),
+            //getString(R.string.tab_ideas)
         )
         val fragments = listOf(
             ChartFragment(),
             SummaryFragment(),
-            NewsFragment(),
-            ForecastFragment(),
-            IdeasFragment()
+            NewsFragment()
+            //ForecastFragment(),
+            //IdeasFragment()
         )
 
         for (name in tabTitles) {

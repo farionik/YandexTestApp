@@ -4,8 +4,8 @@ import androidx.room.withTransaction
 import androidx.work.ListenableWorker
 import androidx.work.workDataOf
 import com.farionik.yandextestapp.repository.database.AppDatabase
-import com.farionik.yandextestapp.repository.database.stock.StartStockEntity
 import com.farionik.yandextestapp.repository.database.search.UserSearchEntity
+import com.farionik.yandextestapp.repository.database.stock.StartStockEntity
 import com.farionik.yandextestapp.repository.network.Api
 
 class SearchRepositoryImpl(

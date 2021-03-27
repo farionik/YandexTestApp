@@ -1,10 +1,10 @@
 package com.farionik.yandextestapp.repository.network
 
 import com.farionik.yandextestapp.repository.database.crypto.CryptoEntity
+import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import com.farionik.yandextestapp.repository.database.stock.CompanyEntity
 import com.farionik.yandextestapp.repository.database.stock.StartStockEntity
 import com.farionik.yandextestapp.repository.database.stock.StockEntity
-import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET

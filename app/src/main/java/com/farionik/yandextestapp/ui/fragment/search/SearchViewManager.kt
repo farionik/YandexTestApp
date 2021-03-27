@@ -15,7 +15,9 @@ import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.ui.AppScreens
 import com.farionik.yandextestapp.view_model.SearchViewModel
 import com.github.terrakok.cicerone.Router
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class SearchViewManager(
     private val editText: EditText,
     private val router: Router,

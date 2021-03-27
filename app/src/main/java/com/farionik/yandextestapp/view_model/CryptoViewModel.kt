@@ -6,9 +6,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import com.farionik.yandextestapp.repository.database.AppDatabase
-import com.farionik.yandextestapp.repository.work_manager.DownloadCryptoWorkManager
 import com.farionik.yandextestapp.repository.work_manager.RefreshCryptoWorkManger
-import kotlinx.coroutines.flow.take
 
 class CryptoViewModel(
     context: Context,
@@ -35,19 +33,4 @@ class CryptoViewModel(
         workManager.getWorkInfoByIdLiveData(refreshWorkRequest.id)
             .observeForever { _downloadCryptoState.postValue(it) }
     }
-
-    fun loadMore() {
-        val downloadWorkRequest = OneTimeWorkRequestBuilder<DownloadCryptoWorkManager>()
-            .setConstraints(constraints)
-            .build()
-
-        workManager.enqueueUniqueWork(
-            "download_more_crypto",
-            ExistingWorkPolicy.KEEP,
-            downloadWorkRequest
-        )
-        workManager.getWorkInfoByIdLiveData(downloadWorkRequest.id)
-            .observeForever { _downloadCryptoState.postValue(it) }
-    }
-
 }

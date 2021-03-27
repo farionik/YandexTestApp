@@ -1,16 +1,21 @@
 package com.farionik.yandextestapp.view_model
 
 import android.content.Context
-import androidx.lifecycle.*
-import androidx.work.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.workDataOf
 import com.blankj.utilcode.util.NetworkUtils
 import com.farionik.yandextestapp.repository.CompanyRepository
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.chart.ChartEntity
 import com.farionik.yandextestapp.repository.database.chart.createChartID
+import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import com.farionik.yandextestapp.repository.database.stock.CompanyEntity
 import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
-import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import com.farionik.yandextestapp.repository.work_manager.DownloadChartWorkManager
 import com.farionik.yandextestapp.repository.work_manager.DownloadCompanyInfoWorkManager
 import com.farionik.yandextestapp.repository.work_manager.DownloadNewsWorkManager
@@ -84,7 +89,7 @@ class CompanyViewModel(
 
 
     fun openDetail(stockModelRelation: StockModelRelation) {
-        router.navigateTo(AppScreens.companyDetailScreen())
+        router.navigateTo(AppScreens.companyDetailScreen(), false)
 
         val stockSymbol = stockModelRelation.stock.symbol
         _companyDetailSymbolLiveData.value = stockSymbol

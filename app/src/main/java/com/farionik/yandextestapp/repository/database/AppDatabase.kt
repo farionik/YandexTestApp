@@ -6,11 +6,11 @@ import com.farionik.yandextestapp.repository.database.chart.ChartDAO
 import com.farionik.yandextestapp.repository.database.chart.ChartEntity
 import com.farionik.yandextestapp.repository.database.crypto.CryptoDAO
 import com.farionik.yandextestapp.repository.database.crypto.CryptoEntity
-import com.farionik.yandextestapp.repository.database.stock.*
 import com.farionik.yandextestapp.repository.database.news.NewsDAO
 import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import com.farionik.yandextestapp.repository.database.search.UserSearchDAO
 import com.farionik.yandextestapp.repository.database.search.UserSearchEntity
+import com.farionik.yandextestapp.repository.database.stock.*
 
 @Database(
     entities = [

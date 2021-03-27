@@ -9,7 +9,9 @@ import com.farionik.yandextestapp.view_model.SearchViewModel
 import com.github.terrakok.cicerone.Router
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 open class BaseSearchFragment : Fragment(), BackButtonListener {
 
     private val localCiceroneHolder by inject<LocalCiceroneHolder>()

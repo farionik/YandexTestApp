@@ -9,8 +9,10 @@ import com.farionik.yandextestapp.databinding.FragmentStockBinding
 import com.farionik.yandextestapp.ui.util.*
 import com.farionik.yandextestapp.view_model.StockViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.core.component.KoinApiExtension
 import kotlin.math.roundToInt
 
+@KoinApiExtension
 class StockFragment : Fragment(R.layout.fragment_stock) {
 
     private lateinit var binding: FragmentStockBinding

@@ -13,7 +13,9 @@ import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.repository.work_manager.SearchWorkManager
 import com.farionik.yandextestapp.ui.fragment.search.ISearchModel
 import kotlinx.coroutines.flow.Flow
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class SearchViewModel(
     context: Context,
     appDatabase: AppDatabase,

@@ -11,7 +11,9 @@ import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.repository.network.WebServicesProvider
 import com.farionik.yandextestapp.repository.work_manager.DownloadStockWorkManager
 import com.farionik.yandextestapp.repository.work_manager.RefreshStockWorkManager
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 open class StockViewModel(
     context: Context,
     private val appDatabase: AppDatabase,

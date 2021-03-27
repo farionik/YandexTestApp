@@ -11,7 +11,9 @@ import com.farionik.yandextestapp.databinding.FragmentSearchBinding
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.SearchSpaceItemDecoration
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class SearchFragment : BaseSearchFragment() {
 
     private lateinit var binding: FragmentSearchBinding

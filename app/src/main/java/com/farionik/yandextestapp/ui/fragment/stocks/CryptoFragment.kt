@@ -8,7 +8,6 @@ import androidx.work.WorkInfo
 import com.farionik.yandextestapp.R
 import com.farionik.yandextestapp.databinding.FragmentStocksBinding
 import com.farionik.yandextestapp.ui.adapter.CryptoAdapter
-import com.farionik.yandextestapp.ui.adapter.PaginationListener
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
 import com.farionik.yandextestapp.view_model.CryptoViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel

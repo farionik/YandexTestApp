@@ -16,7 +16,9 @@ import com.farionik.yandextestapp.ui.adapter.StockAdapter
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class SearchResultFragment : BaseSearchFragment() {
 
     override fun onCreateView(

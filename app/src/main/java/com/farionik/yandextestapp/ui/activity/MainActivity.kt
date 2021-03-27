@@ -13,7 +13,9 @@ import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Replace
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import org.koin.android.ext.android.inject
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class MainActivity : AppCompatActivity() {
 
     private val navigatorHolder: NavigatorHolder by inject()

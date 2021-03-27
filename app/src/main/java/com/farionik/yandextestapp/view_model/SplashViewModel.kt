@@ -7,11 +7,12 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import com.blankj.utilcode.util.NetworkUtils
-import com.farionik.yandextestapp.repository.work_manager.RefreshStockWorkManager
 import com.farionik.yandextestapp.repository.work_manager.SplashWorkManager
 import com.farionik.yandextestapp.ui.AppScreens
 import com.github.terrakok.cicerone.Router
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class SplashViewModel(
     context: Context,
     private val router: Router

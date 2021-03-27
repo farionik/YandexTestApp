@@ -5,7 +5,9 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.farionik.yandextestapp.view_model.CompanyViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 abstract class BaseFragment : Fragment() {
 
     val companyViewModel by sharedViewModel<CompanyViewModel>()

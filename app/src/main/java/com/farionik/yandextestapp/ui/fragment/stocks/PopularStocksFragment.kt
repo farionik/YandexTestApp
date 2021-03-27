@@ -6,7 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.work.WorkInfo
 import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.ui.adapter.PaginationListener
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class PopularStocksFragment : BaseStockFragment() {
 
     private var workState: WorkInfo.State? = null

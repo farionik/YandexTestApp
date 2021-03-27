@@ -13,7 +13,9 @@ import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceIte
 import com.farionik.yandextestapp.view_model.CompanyViewModel
 import com.farionik.yandextestapp.view_model.StockViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 abstract class BaseStockFragment : Fragment(R.layout.fragment_stocks) {
 
     abstract val stockSource: LiveData<List<StockModelRelation>>

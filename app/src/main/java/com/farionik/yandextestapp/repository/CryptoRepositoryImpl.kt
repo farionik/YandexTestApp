@@ -2,9 +2,7 @@ package com.farionik.yandextestapp.repository
 
 import com.farionik.yandextestapp.repository.database.AppDatabase
 import com.farionik.yandextestapp.repository.database.crypto.CryptoEntity
-import com.farionik.yandextestapp.repository.database.stock.StartStockEntity
 import com.farionik.yandextestapp.repository.network.Api
-import com.farionik.yandextestapp.ui.adapter.PaginationListener
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
