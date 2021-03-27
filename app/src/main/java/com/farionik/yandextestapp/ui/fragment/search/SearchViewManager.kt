@@ -148,6 +148,7 @@ class SearchViewManager(
                         if (x >= (right - it - padding)) {
                             setText("")
                             router.exit()
+                            changeEditTextState(SearchState.ACTIVE)
                             return true
                         }
                     }

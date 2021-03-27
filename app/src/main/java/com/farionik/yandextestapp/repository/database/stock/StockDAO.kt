@@ -14,7 +14,7 @@ abstract class StockDAO : BaseDao<StockEntity> {
     abstract suspend fun stockList(): List<StockEntity>
 
     @Query("SELECT * FROM StockTable WHERE symbol =:symbol")
-    abstract suspend fun stockEntity(symbol: String): StockEntity
+    abstract suspend fun stockEntity(symbol: String): StockEntity?
 
     @Transaction
     @Query("SELECT * FROM StockTable WHERE symbol =:symbol")

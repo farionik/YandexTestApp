@@ -21,8 +21,10 @@ open class StockRepositoryImpl(
         GlobalScope.launch(IO) {
             appDatabase.withTransaction {
                 val companyEntity = appDatabase.stockDAO().stockEntity(symbol)
-                companyEntity.isFavourite = !companyEntity.isFavourite
-                appDatabase.stockDAO().update(companyEntity)
+                companyEntity?.let {
+                    companyEntity.isFavourite = !companyEntity.isFavourite
+                    appDatabase.stockDAO().update(companyEntity)
+                }
             }
         }
     }
@@ -101,7 +103,10 @@ open class StockRepositoryImpl(
             // для понимания на каком это экране загрузка
             stocks.map { it.isUserSearch = isUserSearch }
             logoRepository.loadCompaniesLogo(stocks)
-            appDatabase.stockDAO().insertAll(stocks)
+            stocks.forEach {
+                updateStockData(it)
+            }
+            //appDatabase.stockDAO().insertAll(stocks)
             ListenableWorker.Result.success()
         } else {
             val errorMessage = response.message()
@@ -123,8 +128,12 @@ open class StockRepositoryImpl(
     private suspend fun updateStockData(stockResponse: StockEntity) {
         val symbol = stockResponse.symbol
         val savedStock = appDatabase.stockDAO().stockEntity(symbol)
-        stockResponse.isFavourite = savedStock.isFavourite
-        appDatabase.stockDAO().update(stockResponse)
+        if (savedStock == null) {
+            appDatabase.stockDAO().insert(stockResponse)
+        } else {
+            stockResponse.isFavourite = savedStock.isFavourite
+            appDatabase.stockDAO().update(stockResponse)
+        }
     }
 
     override suspend fun updateLocalData(): ListenableWorker.Result {
