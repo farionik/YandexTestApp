@@ -78,6 +78,7 @@ class MainFragment : Fragment(R.layout.fragment_main), BackButtonListener {
                 val symbol = it.title()
                 searchEditText.setText(symbol)
                 searchEditText.setSelection(symbol.length)
+                searchViewManager.searchAction()
             }
         )
     }

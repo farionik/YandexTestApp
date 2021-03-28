@@ -43,30 +43,10 @@ class SearchViewManager(
     }
 
     private fun EditText.initTextChangeListener() {
-        addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                if (s.isNullOrEmpty()) {
-                    changeEditTextState(SearchState.NOT_ACTIVE)
-                }
-            }
-        })
-
-
         setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    if (state != SearchState.SEARCH) {
-                        router.navigateTo(AppScreens.searchResultScreen())
-                        changeEditTextState(SearchState.SEARCH)
-                    }
-                    KeyboardUtils.hideSoftInput(editText)
-                    searchViewModel.searchCompanies(text.toString())
+                    searchAction()
                     return true
                 }
                 return false
@@ -77,7 +57,7 @@ class SearchViewManager(
             run {
                 hint = if (hasFocus) {
                     changeEditTextState(SearchState.ACTIVE)
-                    router.navigateTo(AppScreens.searchScreen())
+                    router.navigateTo(AppScreens.searchScreen(), false)
                     ""
                 } else {
                     changeEditTextState(SearchState.NOT_ACTIVE)
@@ -86,6 +66,16 @@ class SearchViewManager(
             }
         }
     }
+
+    fun searchAction(){
+        if (state != SearchState.SEARCH) {
+            router.navigateTo(AppScreens.searchResultScreen(), false)
+            editText.changeEditTextState(SearchState.SEARCH)
+        }
+        KeyboardUtils.hideSoftInput(editText)
+        searchViewModel.searchCompanies(editText.text.toString())
+    }
+
 
     private fun EditText.initFilter() {
         // фильтровать ввод пробела как первого символа
@@ -128,7 +118,6 @@ class SearchViewManager(
                 null
             )
         }
-
     }
 
     private fun EditText.initTouchListener() {

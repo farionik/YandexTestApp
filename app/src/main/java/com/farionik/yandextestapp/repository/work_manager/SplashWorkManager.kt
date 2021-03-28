@@ -24,11 +24,7 @@ class SplashWorkManager(appContext: Context, workerParams: WorkerParameters) :
             cryptoRepository.loadStartData()
             Result.success()
         } catch (error: Throwable) {
-            if (runAttemptCount < 3) {
-                Result.retry()
-            } else {
-                Result.failure()
-            }
+            Result.failure()
         }
     }
 }

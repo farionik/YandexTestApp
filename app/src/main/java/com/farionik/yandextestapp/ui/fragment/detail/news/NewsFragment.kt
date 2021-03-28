@@ -13,7 +13,9 @@ import com.farionik.yandextestapp.repository.database.news.NewsEntity
 import com.farionik.yandextestapp.repository.database.stock.StockModelRelation
 import com.farionik.yandextestapp.ui.adapter.list_item_decorator.CompanySpaceItemDecoration
 import com.farionik.yandextestapp.ui.fragment.BaseFragment
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class NewsFragment : BaseFragment() {
 
     private lateinit var binding: FragmentNewsBinding
